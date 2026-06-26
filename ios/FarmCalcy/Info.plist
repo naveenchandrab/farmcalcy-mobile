@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+
+  <!-- ─── App Identity ─────────────────────────────────────────────────── -->
+  <key>CFBundleDisplayName</key>
+  <string>FarmCalcy</string>
+
+  <key>CFBundleIdentifier</key>
+  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+
+  <key>CFBundleName</key>
+  <string>$(PRODUCT_NAME)</string>
+
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+
+  <key>CFBundleShortVersionString</key>
+  <string>$(MARKETING_VERSION)</string>
+
+  <key>CFBundleVersion</key>
+  <string>$(CURRENT_PROJECT_VERSION)</string>
+
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+
+  <key>CFBundleSignature</key>
+  <string>????</string>
+
+  <!-- ─── Supported Interfaces ─────────────────────────────────────────── -->
+  <!-- Portrait only — poultry field app; landscape not designed -->
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+  </array>
+
+  <key>UISupportedInterfaceOrientations~ipad</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
+
+  <!-- ─── App Transport Security ───────────────────────────────────────── -->
+  <!-- Allow localhost for Metro bundler in debug; prod traffic must be HTTPS -->
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSExceptionDomains</key>
+    <dict>
+      <key>localhost</key>
+      <dict>
+        <key>NSExceptionAllowsInsecureHTTPLoads</key>
+        <true/>
+      </dict>
+    </dict>
+  </dict>
+
+  <!-- ─── Privacy Usage Descriptions ──────────────────────────────────── -->
+  <!-- REQUIRED: App Store Review rejects apps missing any used permission. -->
+
+  <!-- Camera: photo capture for mortality / weight / harvest records (Phase 8+) -->
+  <key>NSCameraUsageDescription</key>
+  <string>FarmCalcy needs camera access to capture photos for batch and mortality records.</string>
+
+  <!-- Photo Library: attach saved photos to records -->
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>FarmCalcy needs photo library access to attach images to your farm records.</string>
+
+  <!-- Photo Library Add: save captured photos -->
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>FarmCalcy needs permission to save photos to your photo library.</string>
+
+  <!-- Face ID: biometric unlock (Phase 12) -->
+  <!-- CRITICAL: omitting this causes a crash on Face ID devices at runtime -->
+  <key>NSFaceIDUsageDescription</key>
+  <string>FarmCalcy uses Face ID for quick and secure app unlock.</string>
+
+  <!-- Push Notifications: batch alerts, payment reminders (Phase 11) -->
+  <key>NSUserNotificationUsageDescription</key>
+  <string>FarmCalcy sends notifications for batch updates, payment alerts, and contract reminders.</string>
+
+  <!-- Location: farm geo-tagging (future) — placeholder, disabled until used -->
+  <!-- Uncomment when implementing geo-tagging:
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>FarmCalcy uses your location to tag farm records with GPS coordinates.</string>
+  -->
+
+  <!-- ─── Background Modes ──────────────────────────────────────────────── -->
+  <!-- remote-notification: FCM push in background / quit state (Phase 11) -->
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>remote-notification</string>
+  </array>
+
+  <!-- ─── React Native / Metro ─────────────────────────────────────────── -->
+  <!-- Points Xcode to the JS bundle. Metro updates this automatically. -->
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string></string>
+
+  <!-- ─── Status Bar ────────────────────────────────────────────────────── -->
+  <!-- Let React Native manage the status bar style -->
+  <key>UIViewControllerBasedStatusBarAppearance</key>
+  <false/>
+
+  <!-- ─── Launch Screen ────────────────────────────────────────────────── -->
+  <key>UILaunchStoryboardName</key>
+  <string>LaunchScreen</string>
+
+  <!-- ─── Main storyboard (required for SceneDelegate) ─────────────────── -->
+  <key>UIMainStoryboardFile</key>
+  <string>Main</string>
+
+  <!-- ─── Executable ────────────────────────────────────────────────────── -->
+  <key>CFBundleExecutable</key>
+  <string>$(EXECUTABLE_NAME)</string>
+
+  <!-- ─── Privacy Manifest (required iOS 17.4+ / App Store 2024+) ───────── -->
+  <!-- See ios/FarmCalcy/PrivacyInfo.xcprivacy -->
+  <!-- Declared API reasons for: UserDefaults (NSPrivacyAccessedAPICategoryUserDefaults) -->
+
+</dict>
+</plist>

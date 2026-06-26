@@ -1,0 +1,80 @@
+# FarmCalcy — CocoaPods configuration for React Native 0.76.5
+# Run: cd ios && pod install
+# After updating native deps: pod install --repo-update
+
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+# ─── Deployment target ────────────────────────────────────────────────────────
+# iOS 15.0 covers 97%+ of active devices as of 2026.
+platform :ios, '15.0'
+
+prepare_react_native_project!
+
+# ─── Flipper (debug tooling) ──────────────────────────────────────────────────
+# Disable Flipper in production. Enable locally for network / layout inspection.
+flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'FarmCalcy' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # Hermes engine — required for New Architecture
+    :hermes_enabled => true,
+    # New Architecture (Fabric + TurboModules) — required for RN 0.76+
+    :fabric_enabled => true,
+    # Flipper config
+    :flipper_configuration => flipper_config,
+    # App entry file (relative to ios/)
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # ─── Third-party pods ───────────────────────────────────────────────────────
+  # react-native-keychain (Keychain Services)
+  pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
+
+  # react-native-config (env vars)
+  pod 'ReactNativeConfig', :path => '../node_modules/react-native-config'
+
+  # react-native-vector-icons (MaterialCommunityIcons)
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
+  # react-native-safe-area-context
+  pod 'SafeAreaContextModule', :path => '../node_modules/react-native-safe-area-context'
+
+  # react-native-gesture-handler
+  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+
+  # react-native-screens
+  pod 'RNScreens', :path => '../node_modules/react-native-screens'
+
+  # react-native-reanimated
+  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
+
+  target 'FarmCalcyTests' do
+    inherit! :complete
+  end
+
+  post_install do |installer|
+    # React Native post-install hook — required for RN 0.76+
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false
+    )
+
+    # Enforce iOS 15.0 on all pods (prevents linking errors from pods with lower targets)
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      end
+    end
+  end
+end

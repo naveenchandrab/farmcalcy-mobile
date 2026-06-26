@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!--
+  Privacy Manifest — required for App Store submission (iOS 17.4+).
+  Declares which privacy-sensitive APIs the app uses and WHY.
+  Apple rejects builds missing this file or with missing reason codes.
+  See: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+
+  Third-party SDKs (RN, Firebase, etc.) must ship their own xcprivacy files.
+  This file covers ONLY direct usage in FarmCalcy JS/native code.
+-->
+<dict>
+
+  <!-- ─── Tracking: we do NOT track users across apps/websites ─────────── -->
+  <key>NSPrivacyTracking</key>
+  <false/>
+
+  <!-- No tracking domains -->
+  <key>NSPrivacyTrackingDomains</key>
+  <array/>
+
+  <!-- ─── Collected data types ─────────────────────────────────────────── -->
+  <key>NSPrivacyCollectedDataTypes</key>
+  <array>
+    <!-- Name + email — used for authentication, linked to identity -->
+    <dict>
+      <key>NSPrivacyCollectedDataType</key>
+      <string>NSPrivacyCollectedDataTypeName</string>
+      <key>NSPrivacyCollectedDataTypeLinked</key>
+      <true/>
+      <key>NSPrivacyCollectedDataTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedDataTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+      </array>
+    </dict>
+    <dict>
+      <key>NSPrivacyCollectedDataType</key>
+      <string>NSPrivacyCollectedDataTypeEmailAddress</string>
+      <key>NSPrivacyCollectedDataTypeLinked</key>
+      <true/>
+      <key>NSPrivacyCollectedDataTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedDataTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+      </array>
+    </dict>
+    <!-- Phone number — optional, used for account contact -->
+    <dict>
+      <key>NSPrivacyCollectedDataType</key>
+      <string>NSPrivacyCollectedDataTypePhoneNumber</string>
+      <key>NSPrivacyCollectedDataTypeLinked</key>
+      <true/>
+      <key>NSPrivacyCollectedDataTypeTracking</key>
+      <false/>
+      <key>NSPrivacyCollectedDataTypePurposes</key>
+      <array>
+        <string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+      </array>
+    </dict>
+  </array>
+
+  <!-- ─── Required reason APIs ─────────────────────────────────────────── -->
+  <key>NSPrivacyAccessedAPITypes</key>
+  <array>
+    <!-- UserDefaults: used by AsyncStorage (Zustand persist) for theme/user prefs -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <!-- CA92.1: Read/write info that the app wrote to UserDefaults -->
+        <string>CA92.1</string>
+      </array>
+    </dict>
+    <!-- File timestamp: React Native internal file handling -->
+    <dict>
+      <key>NSPrivacyAccessedAPIType</key>
+      <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+      <key>NSPrivacyAccessedAPITypeReasons</key>
+      <array>
+        <!-- C617.1: File timestamps for files the app created -->
+        <string>C617.1</string>
+      </array>
+    </dict>
+  </array>
+
+</dict>
+</plist>

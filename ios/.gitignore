@@ -1,0 +1,23 @@
+# CocoaPods
+Pods/
+*.xcworkspace
+
+# Xcode build artifacts
+build/
+DerivedData/
+*.xcuserstate
+*.xcscheme
+xcuserdata/
+
+# Provisioning profiles — store in Apple Developer portal, not git
+*.mobileprovision
+*.p12
+
+# Simulator
+*.app
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/

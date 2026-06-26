@@ -1,0 +1,69 @@
+# OSX
+.DS_Store
+
+# Xcode
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+ios/.xcode.env.local
+
+# Android/IntelliJ
+build/
+.idea
+.gradle
+local.properties
+*.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
+android/keystore/keystore.properties
+android/keystore/*.keystore
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment — never commit actual env values
+.env
+.env.development
+.env.staging
+.env.production
+.env.*.local
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Jest
+coverage/
+
+# Metro
+.metro-health-check*
+
+# Storybook — auto-generated on every Metro start, not source-controlled
+.storybook/storybook.requires.ts
+
+# Misc
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
