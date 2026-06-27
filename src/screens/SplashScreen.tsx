@@ -35,29 +35,15 @@ const FARM_H = H * 0.26;
 const LOGO_H = H * 0.19;
 const LOGO_W = LOGO_H * 1.088; // content aspect of cropped asset (668 / 614)
 
-// ─── Corner leaf cluster ─────────────────────────────────────────────────────
+// ─── Corner leaf artwork ─────────────────────────────────────────────────────
+// Decorative leaf images from the design (UI/UX/Screens) that bleed off the
+// top-left and top-right corners. Assets are pre-cropped to their content.
 
-const LEAF_W = W * 0.2;
-const LEAF_H = LEAF_W * 1.45;
+const LEFT_LEAF_W = W * 0.22;
+const LEFT_LEAF_H = LEFT_LEAF_W / 1.036; // cropped asset aspect (343 / 331)
 
-const LeafCluster: React.FC<{ right?: boolean }> = ({ right }) => (
-  <Svg
-    width={LEAF_W}
-    height={LEAF_H}
-    viewBox="0 0 108 156"
-    style={[styles.leafBase, right ? styles.leafRight : styles.leafLeft]}>
-    <Path d="M4,150 Q-12,78 50,18 Q74,2 96,30 Q60,92 4,150 Z" fill="#B8CE86" opacity={0.55} />
-    <Path d="M24,150 Q10,86 64,28 Q88,14 104,42 Q72,96 24,150 Z" fill="#9CC061" opacity={0.6} />
-    <Path d="M0,112 Q-8,54 44,10 Q64,0 82,22 Q50,68 0,112 Z" fill="#CBDCA0" opacity={0.55} />
-    <Path
-      d="M36,150 Q54,96 86,38"
-      stroke="#7FA94A"
-      strokeWidth="1.4"
-      fill="none"
-      opacity={0.5}
-    />
-  </Svg>
-);
+const RIGHT_LEAF_W = W * 0.195;
+const RIGHT_LEAF_H = RIGHT_LEAF_W / 0.642; // cropped asset aspect (296 / 461)
 
 // ─── Wordmark leaf accent (top-right of "Calcy") ─────────────────────────────
 
@@ -179,8 +165,16 @@ const SplashScreen: React.FC = () => {
         <Rect x="0" y="0" width={W} height={H} fill="url(#bg)" />
       </Svg>
 
-      <LeafCluster />
-      <LeafCluster right />
+      <Image
+        source={require('../assets/images/leaf-left.png')}
+        style={styles.leafLeft}
+        resizeMode="contain"
+      />
+      <Image
+        source={require('../assets/images/leaf-right.png')}
+        style={styles.leafRight}
+        resizeMode="contain"
+      />
 
       {/* Brand / logo area */}
       <View style={styles.brand}>
@@ -250,18 +244,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FBFCF7',
   },
-  // Leaves
-  leafBase: {
-    position: 'absolute',
-  },
+  // Corner leaf artwork
   leafLeft: {
-    top: H * 0.055,
-    left: 0,
+    position: 'absolute',
+    top: H * 0.04,
+    left: -W * 0.03,
+    width: LEFT_LEAF_W,
+    height: LEFT_LEAF_H,
+    opacity: 0.5,
   },
   leafRight: {
-    top: H * 0.05,
-    right: 0,
-    transform: [{ scaleX: -1 }],
+    position: 'absolute',
+    top: H * 0.035,
+    right: -W * 0.02,
+    width: RIGHT_LEAF_W,
+    height: RIGHT_LEAF_H,
+    opacity: 0.5,
   },
   // Brand
   brand: {

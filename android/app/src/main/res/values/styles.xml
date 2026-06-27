@@ -7,12 +7,13 @@
 
     <!--
         System splash screen (Android 12+ / API 31+).
-        Uses a plain cream background with no icon so it blends invisibly
-        into our custom JS splash screen.
+        Plain background matching the JS splash, with a transparent icon so no
+        launcher icon flashes before our custom JS splash (SplashScreen.tsx)
+        takes over. The native splash thus blends invisibly into the JS one.
     -->
     <style name="SplashTheme" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_transparent</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
     </style>
 

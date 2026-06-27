@@ -3,6 +3,8 @@
     <!-- App icon adaptive background — matches the dark green in the icon -->
     <color name="ic_launcher_background">#03441A</color>
 
-    <!-- System splash screen background — matches our JS splash screen -->
-    <color name="splash_background">#EEF8EE</color>
+    <!-- System splash screen background — matches the JS splash screen's first
+         paint (SplashScreen.tsx root backgroundColor) so the native splash blends
+         invisibly into the custom JS splash. -->
+    <color name="splash_background">#FBFCF7</color>
 </resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fully transparent splash icon. The Android 12+ SplashScreen API always
+    renders a centered icon; pointing it at this transparent drawable hides it
+    so the native splash is a plain background that blends into the JS splash.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+</shape>
