@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App icon adaptive background — matches the dark green in the icon -->
+    <color name="ic_launcher_background">#03441A</color>
+
+    <!-- System splash screen background — matches our JS splash screen -->
+    <color name="splash_background">#EEF8EE</color>
+</resources>

@@ -101,6 +101,8 @@ dependencies {
     // React Native core
     implementation("com.facebook.react:react-android")
     implementation("com.facebook.react:hermes-android")
+    // Android 12+ splash screen API
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
 
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")

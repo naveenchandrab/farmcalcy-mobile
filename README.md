@@ -269,6 +269,9 @@ farmcalcy-mobile/
 │   ├── api/
 │   │   ├── axios.ts         # Axios instance (BASE_URL from react-native-config)
 │   │   └── interceptors.ts  # JWT attach, 401 → token refresh → retry
+│   ├── assets/
+│   │   ├── fonts/           # Inter (Regular/Medium/SemiBold/Bold/ExtraBold) — see Fonts
+│   │   └── images/          # splash-logo.png, splash-farm.png (brand splash art)
 │   ├── config/
 │   │   └── env.ts           # Typed, validated access to react-native-config values
 │   ├── constants/           # STORAGE_KEY_USER, STORAGE_KEY_THEME, etc.
@@ -277,11 +280,15 @@ farmcalcy-mobile/
 │   │   ├── theme/           # ThemeProvider, useTheme(), ThemeContext
 │   │   └── tokens/          # colors, typography, spacing, radius, shadows, zIndex
 │   ├── features/
-│   │   ├── auth/            # Login, Splash, session restore, role-based navigation
+│   │   ├── auth/            # Login, Register, session restore, role-based navigation
+│   │   │   ├── components/  # Logo, AuthInput, AuthButton, Checkbox, authTokens
+│   │   │   ├── screens/     # LoginScreen, RegisterScreen, ForgotPassword, OTP, Reset
+│   │   │   ├── hooks/       # useLogin, useLogout
+│   │   │   └── types/       # loginSchema, registerSchema (Zod)
 │   │   └── users/           # User list, details, create, edit (SAAS_ADMIN)
 │   ├── navigation/
 │   │   ├── RootNavigator.tsx   # Splash → Auth | App (conditional stack)
-│   │   ├── AuthNavigator.tsx   # Login, ForgotPassword, OTP, Reset
+│   │   ├── AuthNavigator.tsx   # Login, Register, ForgotPassword, OTP, Reset
 │   │   └── AppNavigator.tsx    # Role → SaasAdminNavigator | TenantAdminNavigator
 │   ├── screens/
 │   │   └── SplashScreen.tsx
@@ -379,6 +386,52 @@ API calls
 - `TokenService.ts` is the only class that calls Keychain APIs — no other file imports `react-native-keychain` directly.
 - URLs come from `react-native-config` — never hardcoded.
 - `keystore.properties` and `*.keystore` (except `debug.keystore`) are gitignored.
+
+---
+
+## Branding & Assets
+
+### Splash screen
+
+`src/screens/SplashScreen.tsx` renders the branded FarmCalcy splash (logo badge,
+"FarmCalcy / Poultry Suite" wordmark, farm banner with a misty top and curved
+bottom wave, and animated loading dots). It is shown by `RootNavigator` while
+`authStore.initialize()` restores the session. The brief native launch screen
+(Android 12+ `SplashTheme`) uses `@color/splash_background` so it blends into it.
+
+### App icon
+
+The launcher icon is an Android **adaptive icon**:
+
+- `mipmap-anydpi-v26/ic_launcher.xml` composes `@color/ic_launcher_background`
+  (`#03441A`, matching the icon's green) with `ic_launcher_foreground.png`.
+- The foreground art is scaled to **~80% of the canvas** so the OEM mask
+  (circle / squircle / rounded-square) never crops the logo. Legacy
+  `ic_launcher.png` / `ic_launcher_round.png` carry the same safe padding.
+- Master source: `../Logo/app-icon.png`. iOS variants live in
+  `ios/FarmCalcy/Images.xcassets/AppIcon.appiconset/`.
+
+### Fonts (Inter)
+
+The UI uses [Inter](https://rsms.me/inter/). Static instances live in
+`src/assets/fonts/` and are referenced by `fontFamily` (e.g. `Inter-SemiBold`)
+rather than `fontWeight`, so weights render consistently on both platforms.
+
+Wiring:
+
+- **Registration:** `react-native.config.js` → `assets: ['./src/assets/fonts']`
+- **Android:** copied to `android/app/src/main/assets/fonts/`
+- **iOS:** registered via `UIAppFonts` in `ios/FarmCalcy/Info.plist`
+
+After adding or changing a font file, re-link the native projects:
+
+```bash
+npx react-native-asset
+```
+
+> The `fontFamily` value must match each file's **PostScript name**
+> (`Inter-Regular`, `Inter-Medium`, `Inter-SemiBold`, `Inter-Bold`,
+> `Inter-ExtraBold`) — already verified for the bundled files.
 
 ---
 

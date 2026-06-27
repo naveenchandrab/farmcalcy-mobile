@@ -57,6 +57,12 @@ These apply across all phases. Verify both platforms at each phase boundary.
 - [x] **Android:** `gradle.properties` heap (4 GB JVM, parallel + caching) + `app/build.gradle` signing config (keystore.properties file, CI env-var fallback, R8 + shrinkResources on release, ProGuard rules) — `android/` directory created
 - [x] **iOS:** `ios/Podfile` (platform 15.0, New Arch, all third-party pods) + `ios/FarmCalcy/Info.plist` (all permission strings, background modes, ATS localhost exception) + `ios/FarmCalcy/PrivacyInfo.xcprivacy` (App Store privacy manifest, required since May 2024)
 
+### Branding & Native Assets
+
+- [x] **App icons** — Android adaptive icons (foreground + `colors.xml` background, `ic_launcher` / `ic_launcher_round` across all mipmap densities + `anydpi-v26` XML) and iOS `AppIcon.appiconset` (full size set, 20pt → 1024pt)
+- [x] **Inter font family** — `Inter-Regular/Medium/SemiBold/Bold/ExtraBold` bundled, linked via `react-native.config.js` and copied to `android/app/src/main/assets/fonts`
+- [x] **Splash assets** — `splash-logo.png` + `splash-farm.png` wired into `SplashScreen`; Android `styles.xml` themed launch screen
+
 ### Design System (`src/design-system/`)
 
 Custom component library built on React Native primitives. **React Native Paper removed** — all UI owned by this design system.
@@ -126,8 +132,10 @@ Custom component library built on React Native primitives. **React Native Paper 
 
 ### Auth Feature (`features/auth`)
 
-- [x] **Splash Screen** — calls `authStore.initialize()`; conditional stack auto-transitions
-- [x] **Login Screen** — React Hook Form + Zod; email or 10-digit mobile validation
+- [x] **Splash Screen** — calls `authStore.initialize()`; conditional stack auto-transitions; branded logo + farm artwork
+- [x] **Auth UI kit** (`features/auth/components`) — `Logo`, `AuthInput`, `AuthButton`, `Checkbox`, and `authTokens` (auth-screen-scoped styling); replaced legacy `BrandHeader`
+- [x] **Login Screen** — React Hook Form + Zod; email or 10-digit mobile validation; redesigned with auth UI kit
+- [x] **Register Screen** — new sign-up form; wired into Auth stack (`Register` route)
 - [x] Login API call (`POST /auth/login`) via TanStack Query mutation (`useLogin`)
 - [x] Store access + refresh tokens in Keychain (`com.farmcalcy.pcfms` service name)
 - [x] `AuthStore` (Zustand): `user`, `isAuthenticated`, `isInitializing`, `login()`, `logout()`, `initialize()`
@@ -456,6 +464,7 @@ All Phase 1 items are done. Phase 2 is next.
 | --------------------- | --------------------- | ---------- |
 | Splash                | `Splash`              | All        |
 | Login                 | `Login`               | All        |
+| Register              | `Register`            | All        |
 | Forgot Password       | `ForgotPassword`      | All        |
 | OTP Verification      | `OtpVerification`     | All        |
 | Reset Password        | `ResetPassword`       | All        |
@@ -501,4 +510,4 @@ All Phase 1 items are done. Phase 2 is next.
 
 ---
 
-*Last updated: 2026-06-26 — Phase 1 native build config complete; only Storybook remains*
+*Last updated: 2026-06-27 — Phase 1 complete; app branding (icons, Inter fonts, splash), auth UI kit, and Register screen added*

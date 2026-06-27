@@ -7,6 +7,7 @@ import type { AuthStackParamList } from './types';
 // are used here so the auth bundle is always available offline.
 // Placeholder screens will be replaced in Phase 1.
 const LoginScreen = React.lazy(() => import('@features/auth/screens/LoginScreen'));
+const RegisterScreen = React.lazy(() => import('@features/auth/screens/RegisterScreen'));
 const ForgotPasswordScreen = React.lazy(
   () => import('@features/auth/screens/ForgotPasswordScreen'),
 );
@@ -31,6 +32,7 @@ const AuthNavigator: React.FC = () => (
     }}
   >
     <Stack.Screen name="Login" component={LoginScreen as React.ComponentType} />
+    <Stack.Screen name="Register" component={RegisterScreen as React.ComponentType} />
     <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen as React.ComponentType} />
     <Stack.Screen
       name="OtpVerification"

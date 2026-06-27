@@ -116,6 +116,20 @@
   <key>CFBundleExecutable</key>
   <string>$(EXECUTABLE_NAME)</string>
 
+  <!-- ─── Bundled Fonts (Inter) ─────────────────────────────────────────── -->
+  <!-- Font files live in src/assets/fonts and are wired via react-native.config.js.
+       These filenames register the fonts so `fontFamily: 'Inter-*'` resolves on iOS.
+       The matching Copy-Bundle-Resources references are added by `npx react-native-asset`
+       once the Xcode project exists. -->
+  <key>UIAppFonts</key>
+  <array>
+    <string>Inter-Regular.ttf</string>
+    <string>Inter-Medium.ttf</string>
+    <string>Inter-SemiBold.ttf</string>
+    <string>Inter-Bold.ttf</string>
+    <string>Inter-ExtraBold.ttf</string>
+  </array>
+
   <!-- ─── Privacy Manifest (required iOS 17.4+ / App Store 2024+) ───────── -->
   <!-- See ios/FarmCalcy/PrivacyInfo.xcprivacy -->
   <!-- Declared API reasons for: UserDefaults (NSPrivacyAccessedAPICategoryUserDefaults) -->

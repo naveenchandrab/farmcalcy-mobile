@@ -1,36 +1,40 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useTheme, Typography, Checkbox } from '@design-system';
-import Button from '@components/Button';
-import Input from '@components/Input';
-import KeyboardAvoidingWrapper from '@components/KeyboardAvoidingWrapper';
 import type { AuthScreenProps } from '@navigation/types';
 
-import BrandHeader from '../components/BrandHeader';
+import AuthButton from '../components/AuthButton';
+import AuthInput from '../components/AuthInput';
+import Checkbox from '../components/Checkbox';
+import Logo from '../components/Logo';
+import { AUTH_COLORS, AUTH_FONT, AUTH_SPACING, AUTH_TYPE } from '../components/authTokens';
 import { useLogin } from '../hooks/useLogin';
 import { loginSchema } from '../types';
 import type { LoginFormValues } from '../types';
 
 type Props = AuthScreenProps<'Login'>;
 
-/**
- * Login screen — matches PCFMS UI reference.
- *
- * Layout:
- *   BrandHeader (logo + illustration + "Welcome Back!")
- *   Form card:
- *     ├── Email / Mobile input
- *     ├── Password input (with reveal toggle)
- *     ├── Remember me checkbox  +  Forgot password link
- *     ├── Login button
- *     └── Register link
- */
+const ENTER_DURATION = 500;
+
 const LoginScreen: React.FC<Props> = ({ navigation }) => {
-  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   const { mutate: login, isPending } = useLogin();
+  const [secure, setSecure] = useState(true);
+  const passwordRef = useRef<TextInput>(null);
 
   const {
     control,
@@ -38,153 +42,194 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      identifier: '',
-      password: '',
-      rememberMe: false,
-    },
+    defaultValues: { identifier: '', password: '', rememberMe: true },
   });
 
-  const onSubmit = (values: LoginFormValues): void => {
-    login(values);
-  };
+  const onSubmit = useCallback(
+    (values: LoginFormValues): void => {
+      Keyboard.dismiss();
+      login(values);
+    },
+    [login],
+  );
+
+  const submit = handleSubmit(onSubmit);
+  const toggleSecure = useCallback(() => setSecure(prev => !prev), []);
+  const focusPassword = useCallback(() => passwordRef.current?.focus(), []);
+  const goToForgot = useCallback(() => navigation.navigate('ForgotPassword'), [navigation]);
+  const goToRegister = useCallback(() => navigation.navigate('Register'), [navigation]);
 
   return (
-    <KeyboardAvoidingWrapper>
-      <View style={[styles.screen, { backgroundColor: colors.background }]}>
-        <BrandHeader />
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={[
+            styles.content,
+            { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 },
+          ]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <Logo />
 
-        <View style={[styles.card, { backgroundColor: colors.surface }]}>
-          <Controller
-            control={control}
-            name="identifier"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Username / Mobile Number"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                errorMessage={errors.identifier?.message}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="next"
-                leftIcon="account-outline"
-              />
-            )}
-          />
+          <Animated.View
+            entering={FadeInDown.delay(120).duration(ENTER_DURATION)}
+            style={styles.welcomeSection}
+          >
+            <Text style={styles.heading}>Welcome Back!</Text>
+            <Text style={styles.subheading}>Login to continue</Text>
+          </Animated.View>
 
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                label="Password"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                errorMessage={errors.password?.message}
-                secureTextEntry
-                returnKeyType="done"
-                onSubmitEditing={handleSubmit(onSubmit)}
-                leftIcon="lock-outline"
-              />
-            )}
-          />
+          <Animated.View entering={FadeInDown.delay(220).duration(ENTER_DURATION)}>
+            <Controller
+              control={control}
+              name="identifier"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AuthInput
+                  leftIcon="account-outline"
+                  placeholder="Username / Mobile Number"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  errorMessage={errors.identifier?.message}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="next"
+                  onSubmitEditing={focusPassword}
+                  blurOnSubmit={false}
+                />
+              )}
+            />
+          </Animated.View>
 
-          <View style={styles.row}>
+          <Animated.View
+            entering={FadeInDown.delay(300).duration(ENTER_DURATION)}
+            style={styles.passwordWrap}
+          >
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <AuthInput
+                  ref={passwordRef}
+                  leftIcon="lock-outline"
+                  rightIcon={secure ? 'eye-off-outline' : 'eye-outline'}
+                  onRightIconPress={toggleSecure}
+                  placeholder="Password"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  errorMessage={errors.password?.message}
+                  secureTextEntry={secure}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  onSubmitEditing={submit}
+                />
+              )}
+            />
+          </Animated.View>
+
+          <Animated.View
+            entering={FadeInDown.delay(380).duration(ENTER_DURATION)}
+            style={styles.optionsRow}
+          >
             <Controller
               control={control}
               name="rememberMe"
               render={({ field: { onChange, value } }) => (
-                <Checkbox
-                  value={value ?? false}
-                  onValueChange={onChange}
-                  label="Remember me"
-                />
+                <Checkbox value={value ?? false} onValueChange={onChange} label="Remember me" />
               )}
             />
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ForgotPassword')}
-              activeOpacity={0.7}
-            >
-              <Typography preset="bodyMd" style={[styles.forgotLink, { color: colors.primary }]}>
-                Forgot Password?
-              </Typography>
+            <TouchableOpacity onPress={goToForgot} activeOpacity={0.7}>
+              <Text style={styles.forgot}>Forgot Password?</Text>
             </TouchableOpacity>
-          </View>
+          </Animated.View>
 
-          <Button
-            variant="primary"
-            fullWidth
-            loading={isPending}
-            onPress={handleSubmit(onSubmit)}
-            style={styles.loginButton}
+          <Animated.View
+            entering={FadeInDown.delay(460).duration(ENTER_DURATION)}
+            style={styles.loginWrap}
           >
-            Login
-          </Button>
+            <AuthButton label="Login" onPress={submit} loading={isPending} />
+          </Animated.View>
 
-          <View style={styles.registerRow}>
-            <Typography preset="bodyMd" style={{ color: colors.textSecondary }}>
-              Don&apos;t have an account?{' '}
-            </Typography>
-            <TouchableOpacity activeOpacity={0.7}>
-              <Typography preset="bodyMd" style={[styles.registerLink, { color: colors.primary }]}>
-                Register
-              </Typography>
+          <Animated.View
+            entering={FadeInDown.delay(540).duration(ENTER_DURATION)}
+            style={styles.registerRow}
+          >
+            <Text style={styles.registerMuted}>Don&apos;t have an account? </Text>
+            <TouchableOpacity onPress={goToRegister} activeOpacity={0.7}>
+              <Text style={styles.registerLink}>Register</Text>
             </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </KeyboardAvoidingWrapper>
+          </Animated.View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
+  flex: {
     flex: 1,
+    backgroundColor: AUTH_COLORS.background,
   },
-  card: {
-    marginHorizontal: 16,
-    marginTop: 8,
-    borderRadius: 16,
-    padding: 20,
-    paddingBottom: 28,
-    // Subtle card elevation
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
-    gap: 4,
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: AUTH_SPACING.screenHorizontal,
   },
-  row: {
+  welcomeSection: {
+    alignItems: 'center',
+    marginTop: AUTH_SPACING.logoToWelcome,
+    marginBottom: AUTH_SPACING.logoToWelcome,
+  },
+  heading: {
+    fontSize: AUTH_TYPE.heading,
+    fontFamily: AUTH_FONT.bold,
+    color: AUTH_COLORS.primary,
+  },
+  subheading: {
+    marginTop: 6,
+    fontSize: AUTH_TYPE.subheading,
+    fontFamily: AUTH_FONT.regular,
+    color: AUTH_COLORS.textSecondary,
+  },
+  passwordWrap: {
+    marginTop: AUTH_SPACING.fieldGap,
+  },
+  optionsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: AUTH_SPACING.passwordToRemember,
   },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+  forgot: {
+    fontSize: AUTH_TYPE.register,
+    fontFamily: AUTH_FONT.semibold,
+    color: AUTH_COLORS.primary,
   },
-  forgotLink: {
-    fontWeight: '600',
-  },
-  loginButton: {
-    marginTop: 8,
-    borderRadius: 8,
+  loginWrap: {
+    marginTop: AUTH_SPACING.rememberToLogin,
   },
   registerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 16,
+    alignItems: 'center',
+    marginTop: AUTH_SPACING.loginToRegister,
+  },
+  registerMuted: {
+    fontSize: AUTH_TYPE.register,
+    fontFamily: AUTH_FONT.regular,
+    color: AUTH_COLORS.textSecondary,
   },
   registerLink: {
-    fontWeight: '600',
+    fontSize: AUTH_TYPE.register,
+    fontFamily: AUTH_FONT.medium,
+    color: AUTH_COLORS.primary,
   },
 });
 

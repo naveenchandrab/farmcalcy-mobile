@@ -1,6 +1,9 @@
 const path = require('path');
 
 module.exports = {
+  // Bundled custom fonts (Inter). Run `npx react-native-asset` after changes to
+  // copy these into the native projects (Android assets/fonts + iOS Info.plist).
+  assets: ['./src/assets/fonts'],
   dependencies: {
     // react-native-config 1.6.1 has no `react-native` field in its package.json,
     // so the autolinking system returns android: null. Provide the config explicitly.

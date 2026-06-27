@@ -48,7 +48,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
       {label && (
         <Typography
           preset="bodyMd"
-          style={{ color: colors.textPrimary, marginLeft: 10, flex: 1 }}
+          style={{ color: colors.textPrimary, marginLeft: 10, flexShrink: 1 }}
         >
           {label}
         </Typography>
