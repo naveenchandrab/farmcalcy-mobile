@@ -1,5 +1,7 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React from 'react';
+
+import { useAuthStore } from '@store/authStore';
 
 import type { AuthStackParamList } from './types';
 
@@ -23,27 +25,40 @@ const ForceChangePasswordScreen = React.lazy(
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-const AuthNavigator: React.FC = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerShown: false,
-      animation: 'slide_from_right',
-      gestureEnabled: true,
-    }}
-  >
-    <Stack.Screen name="Login" component={LoginScreen as React.ComponentType} />
-    <Stack.Screen name="Register" component={RegisterScreen as React.ComponentType} />
-    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen as React.ComponentType} />
-    <Stack.Screen
-      name="OtpVerification"
-      component={OtpVerificationScreen as React.ComponentType}
-    />
-    <Stack.Screen name="ResetPassword" component={ResetPasswordScreen as React.ComponentType} />
-    <Stack.Screen
-      name="ForceChangePassword"
-      component={ForceChangePasswordScreen as React.ComponentType}
-    />
-  </Stack.Navigator>
-);
+const AuthNavigator: React.FC = () => {
+  // When the app cold-starts with a session that still requires a forced
+  // password change, land directly on that screen instead of Login.
+  const mustChangePassword = useAuthStore(state => state.mustChangePassword);
+  const email = useAuthStore(state => state.user?.email ?? '');
+
+  return (
+    <Stack.Navigator
+      initialRouteName={mustChangePassword ? 'ForceChangePassword' : 'Login'}
+      screenOptions={{
+        headerShown: false,
+        animation: 'slide_from_right',
+        gestureEnabled: true,
+      }}
+    >
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPasswordScreen}
+      />
+      <Stack.Screen
+        name="OtpVerification"
+        component={OtpVerificationScreen}
+      />
+      <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      <Stack.Screen
+        name="ForceChangePassword"
+        component={ForceChangePasswordScreen}
+        initialParams={{ email }}
+        options={{ gestureEnabled: false }}
+      />
+    </Stack.Navigator>
+  );
+};
 
 export default AuthNavigator;

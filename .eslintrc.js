@@ -14,14 +14,22 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'import', 'react', 'react-hooks', 'react-native'],
   settings: {
+    // Alias resolution is provided by the babel module-resolver (babel.config.js).
+    // The `typescript` resolver is intentionally not configured here because its
+    // package is not installed; `plugin:import/typescript` already teaches the
+    // import plugin about TS extensions and type-only imports.
     'import/resolver': {
       'babel-module': {},
-      typescript: {
-        project: './tsconfig.json',
-      },
     },
   },
   rules: {
+    // The shared `@react-native` (0.76) config enables a handful of stylistic
+    // rules that were removed from `@typescript-eslint` v8 (the version installed
+    // here). They are delegated to Prettier anyway, so disable the stale
+    // references to keep ESLint from erroring on a missing rule definition.
+    '@typescript-eslint/func-call-spacing': 'off',
+    '@typescript-eslint/no-extra-semi': 'off',
+
     // TypeScript
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/explicit-function-return-type': 'off',
@@ -47,8 +55,17 @@ module.exports = {
       },
     ],
     'import/no-duplicates': 'error',
+    // `import/namespace` cannot parse React Native's Flow-typed entry point and
+    // recurses through barrel re-exports, producing false positives on every
+    // file that imports from `react-native`. Type safety is already enforced by
+    // TypeScript, so this rule is disabled (standard practice in RN projects).
+    'import/namespace': 'off',
 
     // General
+    // `no-floating-promises` (error) requires `void` to mark intentional
+    // fire-and-forget calls, so disable the conflicting `no-void` warning that
+    // a shared config turns on. The codebase uses the `void` idiom throughout.
+    'no-void': 'off',
     'no-console': ['warn', { allow: ['warn', 'error'] }],
     eqeqeq: ['error', 'always'],
     curly: ['error', 'all'],

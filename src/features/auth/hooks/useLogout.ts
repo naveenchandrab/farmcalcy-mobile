@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 
+import { queryClient } from '@services/queryClient';
 import { TokenService } from '@services/TokenService';
 import { useAuthStore } from '@store/authStore';
-import { queryClient } from '@services/queryClient';
 
 import { authService } from '../services/auth.service';
 

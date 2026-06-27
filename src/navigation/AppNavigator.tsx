@@ -1,8 +1,9 @@
-import React, { Suspense } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, { Suspense } from 'react';
 
 import Loader from '@components/Loader';
 import { useAuthStore } from '@store/authStore';
+
 import type {
   SaasAdminStackParamList,
   SupervisorStackParamList,
@@ -39,10 +40,10 @@ const SaasAdminNavigator: React.FC = () => (
     }}
   >
     {/* Phase 1: User Management */}
-    <SaasStack.Screen name="UserList" component={UserListScreen as React.ComponentType} />
-    <SaasStack.Screen name="UserDetails" component={UserDetailsScreen as React.ComponentType} />
-    <SaasStack.Screen name="CreateUser" component={CreateUserScreen as React.ComponentType} />
-    <SaasStack.Screen name="EditUser" component={EditUserScreen as React.ComponentType} />
+    <SaasStack.Screen name="UserList" component={UserListScreen} />
+    <SaasStack.Screen name="UserDetails" component={UserDetailsScreen} />
+    <SaasStack.Screen name="CreateUser" component={CreateUserScreen} />
+    <SaasStack.Screen name="EditUser" component={EditUserScreen} />
 
     {/* Phase 2: Company Management (screens added when phase ships) */}
     {/* <SaasStack.Screen name="SaasDashboard" component={SaasDashboardScreen} /> */}

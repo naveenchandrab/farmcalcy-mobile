@@ -1,92 +1,147 @@
 import type { ApiErrorCode } from '@app-types';
 
 /**
- * Maps backend error codes to human-readable English strings.
+ * Translates transport- and HTTP-level failures into safe, user-facing strings.
  *
- * Design intent: keys are backend ApiErrorCode values; values are the
- * display strings shown to the user. When i18n is introduced, replace
- * the string values with i18n keys and run them through the translator.
+ * The NestJS backend returns errors as
+ *   { success: false, message: string, errors: string[], timestamp, path }
+ * (see GlobalExceptionFilter) — there is no machine `errorCode`, so this mapper
+ * is driven primarily by the HTTP status code. Raw server messages for 5xx are
+ * never surfaced; validation arrays (class-validator) are safe and are shown for
+ * 400/422 because they are field-level and user-actionable.
  */
-const ERROR_MESSAGE_MAP: Record<ApiErrorCode, string> = {
-  INVALID_EMAIL: 'Please enter a valid email address.',
-  INVALID_PASSWORD: 'The password you entered is incorrect.',
-  USER_NOT_FOUND: 'No account found with these credentials.',
-  USER_ALREADY_EXISTS: 'An account with this email already exists.',
-  TOKEN_EXPIRED: 'Your session has expired. Please log in again.',
-  TOKEN_INVALID: 'Your session is invalid. Please log in again.',
-  TOKEN_MISSING: 'Authentication is required. Please log in.',
-  REFRESH_TOKEN_EXPIRED: 'Your session has expired. Please log in again.',
-  REFRESH_TOKEN_INVALID: 'Your session is invalid. Please log in again.',
-  UNAUTHORIZED: 'You are not authorized to perform this action.',
-  FORBIDDEN: 'You do not have permission to access this resource.',
-  NOT_FOUND: 'The requested resource could not be found.',
-  VALIDATION_FAILED: 'Please check the form and correct the highlighted errors.',
-  COMPANY_NOT_FOUND: 'Company account not found.',
-  COMPANY_SUSPENDED: 'Your company account has been suspended. Please contact support.',
-  SUBSCRIPTION_EXPIRED: 'Your subscription has expired. Please renew to continue.',
-  INVALID_OTP: 'The OTP you entered is incorrect.',
-  OTP_EXPIRED: 'The OTP has expired. Please request a new one.',
-  MUST_CHANGE_PASSWORD: 'You must set a new password before continuing.',
-  NETWORK_ERROR: 'Unable to connect to the server. Please check your internet connection.',
-  TIMEOUT: 'The request timed out. Please try again.',
-  SERVER_ERROR: 'Something went wrong on our end. Please try again later.',
-  UNKNOWN: 'Something went wrong. Please try again.',
+
+// ─── Public types ──────────────────────────────────────────────────────────────
+
+export type ApiErrorKind = 'network' | 'timeout' | 'http' | 'unknown';
+
+export interface NormalizedApiError {
+  /** HTTP status code, or null when the request never reached the server. */
+  readonly status: number | null;
+  readonly kind: ApiErrorKind;
+  /** A safe, user-friendly message ready to display. */
+  readonly message: string;
+  /** Field-level validation messages from the backend `errors[]`, if any. */
+  readonly fieldErrors: readonly string[];
+}
+
+// ─── Status → friendly message defaults ────────────────────────────────────────
+
+const STATUS_MESSAGES: Record<number, string> = {
+  400: 'Please check the details you entered and try again.',
+  401: 'Authentication failed. Please check your details and try again.',
+  403: 'You do not have permission to perform this action.',
+  404: 'We could not find what you were looking for.',
+  409: 'This action conflicts with existing data. Please refresh and try again.',
+  422: 'Some of the information looks invalid. Please review and try again.',
+  429: 'Too many attempts. Please wait a moment before trying again.',
 };
 
-const FALLBACK_MESSAGE = ERROR_MESSAGE_MAP.UNKNOWN;
+const NETWORK_MESSAGE =
+  'Unable to connect to the server. Please check your internet connection and try again.';
+const TIMEOUT_MESSAGE = 'The request timed out. Please try again.';
+const SERVER_MESSAGE = 'Something went wrong on our end. Please try again shortly.';
+const FALLBACK_MESSAGE = 'Something went wrong. Please try again.';
+
+// ─── Core normalisation ────────────────────────────────────────────────────────
 
 /**
- * Returns a user-friendly error message for the given backend error code.
- * Falls back to the UNKNOWN message for any unrecognised code, making the
- * mapper forward-compatible with new backend codes that haven't been added yet.
+ * Reduces any thrown value (Axios error, network failure, etc.) into a single
+ * normalised shape that screens and hooks can branch on without touching Axios.
  */
+export const normalizeApiError = (error: unknown): NormalizedApiError => {
+  if (isErrorWithResponse(error)) {
+    const status = error.response.status;
+    const fieldErrors = extractFieldErrors(error.response.data);
+
+    if (status >= 500) {
+      return { status, kind: 'http', message: SERVER_MESSAGE, fieldErrors };
+    }
+
+    // For validation failures, the field messages are the most actionable text.
+    if ((status === 400 || status === 422) && fieldErrors.length > 0) {
+      return { status, kind: 'http', message: fieldErrors[0], fieldErrors };
+    }
+
+    return {
+      status,
+      kind: 'http',
+      message: STATUS_MESSAGES[status] ?? FALLBACK_MESSAGE,
+      fieldErrors,
+    };
+  }
+
+  if (isTimeoutError(error)) {
+    return { status: null, kind: 'timeout', message: TIMEOUT_MESSAGE, fieldErrors: [] };
+  }
+
+  if (isNetworkError(error)) {
+    return { status: null, kind: 'network', message: NETWORK_MESSAGE, fieldErrors: [] };
+  }
+
+  return { status: null, kind: 'unknown', message: FALLBACK_MESSAGE, fieldErrors: [] };
+};
+
+/**
+ * Returns a display string for any error.
+ *
+ * @param error      The thrown value.
+ * @param overrides  Optional per-status message overrides so a caller can give
+ *                   flow-specific copy (e.g. 401 on login → "Invalid email or
+ *                   password") without leaking raw backend text.
+ */
+export const extractErrorMessage = (
+  error: unknown,
+  overrides?: Partial<Record<number, string>>,
+): string => {
+  const normalized = normalizeApiError(error);
+
+  if (overrides && normalized.status !== null && overrides[normalized.status]) {
+    return overrides[normalized.status] as string;
+  }
+
+  return normalized.message;
+};
+
+/** Convenience accessor for callers that branch purely on status. */
+export const getErrorStatus = (error: unknown): number | null =>
+  normalizeApiError(error).status;
+
+// ─── Backward-compatible error-code mapper ─────────────────────────────────────
+//
+// Retained for forward compatibility: if the backend later adds an `errorCode`
+// field, callers can map it without another refactor.
+
+const ERROR_CODE_MESSAGES: Partial<Record<ApiErrorCode, string>> = {
+  INVALID_PASSWORD: 'The password you entered is incorrect.',
+  USER_NOT_FOUND: 'No account found with these credentials.',
+  TOKEN_EXPIRED: 'Your session has expired. Please log in again.',
+  INVALID_OTP: 'The OTP you entered is incorrect.',
+  OTP_EXPIRED: 'The OTP has expired. Please request a new one.',
+  COMPANY_SUSPENDED: 'Your company account has been suspended. Please contact support.',
+  SUBSCRIPTION_EXPIRED: 'Your subscription has expired. Please renew to continue.',
+  NETWORK_ERROR: NETWORK_MESSAGE,
+  TIMEOUT: TIMEOUT_MESSAGE,
+  SERVER_ERROR: SERVER_MESSAGE,
+  UNKNOWN: FALLBACK_MESSAGE,
+};
+
 export const mapApiErrorCode = (errorCode: string | undefined): string => {
   if (!errorCode) {
     return FALLBACK_MESSAGE;
   }
-  return ERROR_MESSAGE_MAP[errorCode as ApiErrorCode] ?? FALLBACK_MESSAGE;
+  return ERROR_CODE_MESSAGES[errorCode as ApiErrorCode] ?? FALLBACK_MESSAGE;
 };
 
-/**
- * Extracts the most relevant message to display from an Axios error object.
- * Checks the backend error envelope first, then falls back through network
- * and timeout signals, and finally uses the UNKNOWN fallback.
- */
-export const extractErrorMessage = (error: unknown): string => {
-  if (!isErrorWithResponse(error)) {
-    if (isNetworkError(error)) {
-      return ERROR_MESSAGE_MAP.NETWORK_ERROR;
-    }
-    if (isTimeoutError(error)) {
-      return ERROR_MESSAGE_MAP.TIMEOUT;
-    }
-    return FALLBACK_MESSAGE;
-  }
-
-  const { data } = error.response;
-
-  // Backend sent a known error code — prefer mapped message
-  if (data?.errorCode) {
-    return mapApiErrorCode(data.errorCode);
-  }
-
-  // Backend sent a plain message — use it directly
-  if (data?.message && typeof data.message === 'string') {
-    return data.message;
-  }
-
-  return FALLBACK_MESSAGE;
-};
-
-// ─── Type Guards ──────────────────────────────────────────────────────────────
+// ─── Type guards ───────────────────────────────────────────────────────────────
 
 interface ErrorWithResponse {
   response: {
     status: number;
-    data: {
+    data?: {
       success?: boolean;
       message?: string;
-      errorCode?: string;
+      errors?: unknown;
     };
   };
 }
@@ -95,16 +150,25 @@ const isErrorWithResponse = (error: unknown): error is ErrorWithResponse =>
   typeof error === 'object' &&
   error !== null &&
   'response' in error &&
-  typeof (error as ErrorWithResponse).response === 'object';
+  typeof (error as ErrorWithResponse).response === 'object' &&
+  (error as ErrorWithResponse).response !== null &&
+  typeof (error as ErrorWithResponse).response.status === 'number';
+
+const extractFieldErrors = (data: ErrorWithResponse['response']['data']): string[] => {
+  if (data && Array.isArray(data.errors)) {
+    return data.errors.filter((item): item is string => typeof item === 'string');
+  }
+  return [];
+};
 
 const isNetworkError = (error: unknown): boolean =>
   typeof error === 'object' &&
   error !== null &&
   'message' in error &&
-  (error as { message: string }).message === 'Network Error';
+  (error as { message?: unknown }).message === 'Network Error';
 
 const isTimeoutError = (error: unknown): boolean =>
   typeof error === 'object' &&
   error !== null &&
   'code' in error &&
-  (error as { code: string }).code === 'ECONNABORTED';
+  (error as { code?: unknown }).code === 'ECONNABORTED';

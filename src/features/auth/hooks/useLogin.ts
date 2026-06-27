@@ -5,38 +5,54 @@ import { useAuthStore } from '@store/authStore';
 import { showError } from '@utils/toast';
 
 import { authService } from '../services/auth.service';
-import type { LoginFormValues } from '../types';
+import { mapAuthUserToUser } from '../types';
+import type { LoginApiResponse, LoginFormValues } from '../types';
+
+/** Friendly, non-revealing copy for the statuses the login endpoint can return. */
+const LOGIN_ERROR_OVERRIDES: Partial<Record<number, string>> = {
+  400: 'Please enter a valid email and password.',
+  401: 'The email or password you entered is incorrect.',
+  403: 'Your account does not have access. Please contact your administrator.',
+  429: 'Too many login attempts. Please wait a moment and try again.',
+};
 
 /**
- * Wraps the login API call in a TanStack Query mutation.
+ * Login mutation.
  *
- * On success → persists tokens + user to Keychain / AsyncStorage via AuthStore.
- *             The RootNavigator's conditional stack switch handles navigation
- *             automatically — no explicit navigate() call needed here.
+ * On success:
+ *  - normal user        → persists tokens + user and grants access; the
+ *    RootNavigator's conditional stack swaps to the app automatically.
+ *  - mustChangePassword → persists the session WITHOUT granting access; the
+ *    caller navigates to the forced password-change screen.
  *
- * On error   → shows a toast with the mapped error message.
- *              The caller can still read `error` from the mutation result
- *              for field-level inline errors if needed.
+ * On error → a mapped, user-safe toast (backend messages are never surfaced raw).
+ * The caller can branch on `data.user.mustChangePassword` in its own onSuccess.
  */
 export const useLogin = () => {
   const login = useAuthStore(state => state.login);
+  const beginForcedPasswordChange = useAuthStore(state => state.beginForcedPasswordChange);
 
-  return useMutation({
-    mutationFn: async (values: LoginFormValues) => {
-      const response = await authService.login({
-        email: values.identifier,
+  return useMutation<LoginApiResponse, unknown, LoginFormValues>({
+    mutationFn: async (values: LoginFormValues) =>
+      authService.login({
+        email: values.email.trim(),
         password: values.password,
-      });
-      return response.data;
-    },
-    onSuccess: async loginData => {
-      await login(loginData.user, {
-        accessToken: loginData.accessToken,
-        refreshToken: loginData.refreshToken,
-      });
+      }),
+    onSuccess: async response => {
+      const user = mapAuthUserToUser(response.user);
+      const tokens = {
+        accessToken: response.accessToken,
+        refreshToken: response.refreshToken,
+      };
+
+      if (response.user.mustChangePassword) {
+        await beginForcedPasswordChange(user, tokens);
+      } else {
+        await login(user, tokens);
+      }
     },
     onError: (error: unknown) => {
-      showError(extractErrorMessage(error));
+      showError(extractErrorMessage(error, LOGIN_ERROR_OVERRIDES));
     },
   });
 };

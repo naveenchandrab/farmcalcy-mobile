@@ -61,7 +61,8 @@ These apply across all phases. Verify both platforms at each phase boundary.
 
 - [x] **App icons** — Android adaptive icons (foreground + `colors.xml` background, `ic_launcher` / `ic_launcher_round` across all mipmap densities + `anydpi-v26` XML) and iOS `AppIcon.appiconset` (full size set, 20pt → 1024pt)
 - [x] **Inter font family** — `Inter-Regular/Medium/SemiBold/Bold/ExtraBold` bundled, linked via `react-native.config.js` and copied to `android/app/src/main/assets/fonts`
-- [x] **Splash assets** — `splash-logo.png` + `splash-farm.png` wired into `SplashScreen`; Android `styles.xml` themed launch screen
+- [x] **Splash assets** — `splash-logo.png` + `splash-farm.png` + corner leaf artwork (`leaf-left.png` / `leaf-right.png`, pre-cropped to content) wired into `SplashScreen`
+- [x] **Seamless native splash** — native system splash blends invisibly into the custom JS `SplashScreen`: background matched to `#FBFCF7` and a transparent splash icon so no launcher icon flashes. **Android:** `SplashTheme` (`styles.xml` + `splash_icon_transparent` drawable + `colors.xml`). **iOS:** `LaunchScreen.storyboard` (solid matching background, no logo)
 
 ### Design System (`src/design-system/`)
 
@@ -510,4 +511,4 @@ All Phase 1 items are done. Phase 2 is next.
 
 ---
 
-*Last updated: 2026-06-27 — Phase 1 complete; app branding (icons, Inter fonts, splash), auth UI kit, and Register screen added*
+*Last updated: 2026-06-27 — Phase 1 complete; app branding (icons, Inter fonts, splash), seamless native splash + leaf artwork, auth UI kit, and Register screen added*

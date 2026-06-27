@@ -1,13 +1,13 @@
-import React, { Suspense } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import React, { Suspense } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
-import { useAuthStore } from '@store/authStore';
 import Loader from '@components/Loader';
-import type { RootStackParamList } from './types';
+import { useAuthStore } from '@store/authStore';
+
 import AppNavigator from './AppNavigator';
 import AuthNavigator from './AuthNavigator';
+import type { RootStackParamList } from './types';
 
 // Splash screen checks token presence then immediately navigates away —
 // it is always small so it is not lazy-loaded.

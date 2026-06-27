@@ -1,4 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useCallback, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import type {
+  TextInput} from 'react-native';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -6,23 +10,20 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import type { AuthScreenProps } from '@navigation/types';
 import { showSuccess } from '@utils/toast';
 
 import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
-import Logo from '../components/Logo';
 import { AUTH_COLORS, AUTH_FONT, AUTH_SPACING, AUTH_TYPE } from '../components/authTokens';
+import Logo from '../components/Logo';
 import { registerSchema } from '../types';
 import type { RegisterFormValues } from '../types';
 
@@ -45,7 +46,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: '', identifier: '', password: '', confirmPassword: '' },
+    defaultValues: { fullName: '', email: '', password: '', confirmPassword: '' },
   });
 
   const onSubmit = useCallback(
@@ -127,16 +128,16 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
           >
             <Controller
               control={control}
-              name="identifier"
+              name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <AuthInput
                   ref={identifierRef}
                   leftIcon="email-outline"
-                  placeholder="Email / Mobile Number"
+                  placeholder="Email Address"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  errorMessage={errors.identifier?.message}
+                  errorMessage={errors.email?.message}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -199,7 +200,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
                   autoCapitalize="none"
                   autoCorrect={false}
                   returnKeyType="done"
-                  onSubmitEditing={submit}
+                  onSubmitEditing={() => void submit()}
                 />
               )}
             />
@@ -209,7 +210,7 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
             entering={FadeInDown.delay(500).duration(ENTER_DURATION)}
             style={styles.submitWrap}
           >
-            <AuthButton label="Register" onPress={submit} />
+            <AuthButton label="Register" onPress={() => void submit()} />
           </Animated.View>
 
           <Animated.View

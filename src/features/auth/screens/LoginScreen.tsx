@@ -1,4 +1,9 @@
-import React, { useCallback, useRef, useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import type {
+  TextInput} from 'react-native';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -6,25 +11,23 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { STORAGE_KEY_REMEMBERED_EMAIL } from '@constants';
 import type { AuthScreenProps } from '@navigation/types';
 
 import AuthButton from '../components/AuthButton';
 import AuthInput from '../components/AuthInput';
+import { AUTH_COLORS, AUTH_FONT, AUTH_SPACING, AUTH_TYPE } from '../components/authTokens';
 import Checkbox from '../components/Checkbox';
 import Logo from '../components/Logo';
-import { AUTH_COLORS, AUTH_FONT, AUTH_SPACING, AUTH_TYPE } from '../components/authTokens';
 import { useLogin } from '../hooks/useLogin';
 import { loginSchema } from '../types';
-import type { LoginFormValues } from '../types';
+import type { LoginApiResponse, LoginFormValues } from '../types';
 
 type Props = AuthScreenProps<'Login'>;
 
@@ -39,18 +42,57 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { identifier: '', password: '', rememberMe: true },
+    mode: 'onBlur',
+    defaultValues: { email: '', password: '', rememberMe: true },
   });
+
+  // Restore the remembered email (never the password) on mount.
+  useEffect(() => {
+    let active = true;
+    void AsyncStorage.getItem(STORAGE_KEY_REMEMBERED_EMAIL).then(saved => {
+      if (active && saved) {
+        setValue('email', saved);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [setValue]);
+
+  const persistRememberedEmail = useCallback(
+    (values: LoginFormValues): void => {
+      if (values.rememberMe) {
+        void AsyncStorage.setItem(STORAGE_KEY_REMEMBERED_EMAIL, values.email.trim());
+      } else {
+        void AsyncStorage.removeItem(STORAGE_KEY_REMEMBERED_EMAIL);
+      }
+    },
+    [],
+  );
 
   const onSubmit = useCallback(
     (values: LoginFormValues): void => {
+      if (isPending) {
+        return; // guard against duplicate submissions
+      }
       Keyboard.dismiss();
-      login(values);
+
+      login(values, {
+        onSuccess: (response: LoginApiResponse) => {
+          persistRememberedEmail(values);
+          // A normal login swaps stacks automatically via the auth store.
+          // A forced first-login change must route to its dedicated screen.
+          if (response.user.mustChangePassword) {
+            navigation.navigate('ForceChangePassword', { email: response.user.email });
+          }
+        },
+      });
     },
-    [login],
+    [isPending, login, navigation, persistRememberedEmail],
   );
 
   const submit = handleSubmit(onSubmit);
@@ -80,28 +122,34 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             entering={FadeInDown.delay(120).duration(ENTER_DURATION)}
             style={styles.welcomeSection}
           >
-            <Text style={styles.heading}>Welcome Back!</Text>
+            <Text style={styles.heading} accessibilityRole="header">
+              Welcome Back!
+            </Text>
             <Text style={styles.subheading}>Login to continue</Text>
           </Animated.View>
 
           <Animated.View entering={FadeInDown.delay(220).duration(ENTER_DURATION)}>
             <Controller
               control={control}
-              name="identifier"
+              name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <AuthInput
-                  leftIcon="account-outline"
-                  placeholder="Username / Mobile Number"
+                  leftIcon="email-outline"
+                  placeholder="Email Address"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  errorMessage={errors.identifier?.message}
+                  errorMessage={errors.email?.message}
                   keyboardType="email-address"
+                  textContentType="emailAddress"
+                  autoComplete="email"
                   autoCapitalize="none"
                   autoCorrect={false}
                   returnKeyType="next"
                   onSubmitEditing={focusPassword}
                   blurOnSubmit={false}
+                  editable={!isPending}
+                  accessibilityLabel="Email address"
                 />
               )}
             />
@@ -126,10 +174,14 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   onBlur={onBlur}
                   errorMessage={errors.password?.message}
                   secureTextEntry={secure}
+                  textContentType="password"
+                  autoComplete="password"
                   autoCapitalize="none"
                   autoCorrect={false}
                   returnKeyType="done"
-                  onSubmitEditing={submit}
+                  onSubmitEditing={() => void submit()}
+                  editable={!isPending}
+                  accessibilityLabel="Password"
                 />
               )}
             />
@@ -146,7 +198,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
                 <Checkbox value={value ?? false} onValueChange={onChange} label="Remember me" />
               )}
             />
-            <TouchableOpacity onPress={goToForgot} activeOpacity={0.7}>
+            <TouchableOpacity
+              onPress={goToForgot}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Forgot password"
+            >
               <Text style={styles.forgot}>Forgot Password?</Text>
             </TouchableOpacity>
           </Animated.View>
@@ -155,7 +212,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             entering={FadeInDown.delay(460).duration(ENTER_DURATION)}
             style={styles.loginWrap}
           >
-            <AuthButton label="Login" onPress={submit} loading={isPending} />
+            <AuthButton label="Login" onPress={() => void submit()} loading={isPending} />
           </Animated.View>
 
           <Animated.View
@@ -163,7 +220,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             style={styles.registerRow}
           >
             <Text style={styles.registerMuted}>Don&apos;t have an account? </Text>
-            <TouchableOpacity onPress={goToRegister} activeOpacity={0.7}>
+            <TouchableOpacity
+              onPress={goToRegister}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Register"
+            >
               <Text style={styles.registerLink}>Register</Text>
             </TouchableOpacity>
           </Animated.View>

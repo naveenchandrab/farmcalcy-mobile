@@ -12,6 +12,7 @@ React Native mobile app for Android and iOS.
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
 - [Environment Configuration](#environment-configuration)
+- [Backend API (local development)](#backend-api-local-development)
 - [Running the App](#running-the-app)
 - [Storybook](#storybook)
 - [Project Structure](#project-structure)
@@ -141,7 +142,7 @@ npm run start:prod       # ENVFILE=.env.production
 | File | Purpose |
 |------|---------|
 | `.env` | **Required at the repo root** — used by `dotenv.gradle` during every Android Gradle build |
-| `.env.development` | Development API (`http://localhost:3000/api/v1`) |
+| `.env.development` | Development API (defaults to the Android emulator host `http://10.0.2.2:3000/api/v1`) |
 | `.env.staging` | Staging API |
 | `.env.production` | Production API |
 
@@ -150,13 +151,87 @@ All `.env*` files are gitignored. Never commit real API endpoints or secrets.
 ### Required variables
 
 ```dotenv
-BASE_URL=http://localhost:3000/api/v1   # NestJS REST API — no trailing slash
+BASE_URL=http://10.0.2.2:3000/api/v1    # NestJS REST API — no trailing slash
 APP_ENV=development                      # development | staging | production
 ```
+
+> **`BASE_URL` host depends on where the app runs** (the dev API listens on the
+> *host machine's* `localhost:3000`):
+>
+> | Target | `BASE_URL` host |
+> |--------|-----------------|
+> | Android emulator (AVD) | `http://10.0.2.2:3000/api/v1` ← repo default |
+> | iOS simulator | `http://localhost:3000/api/v1` |
+> | Physical device (any OS) | `http://<your-machine-LAN-IP>:3000/api/v1` (same Wi-Fi) |
+>
+> `react-native-config` **bakes `.env` into the native binary at build time**, so
+> after changing `BASE_URL` you must rebuild (`npm run android` / `npm run ios`) —
+> a Metro reload is not enough. Cleartext HTTP is already allowed for **debug**
+> builds only (`android/app/src/debug/AndroidManifest.xml`); release builds remain
+> HTTPS-only.
 
 ### TypeScript types
 
 `src/types/react-native-config.d.ts` declares the `Config` type so every `Config.BASE_URL` access is fully typed.
+
+---
+
+## Backend API (local development)
+
+The app talks to the **FarmCalcy NestJS API** (`../farmcalcy-api`). Auth screens
+(Login, Forgot Password, OTP, Reset Password) will show **"Unable to connect to
+the server"** until that API — and its Postgres, Redis and mail services — are
+running. Start them from the `farmcalcy-api` directory:
+
+```bash
+cd ../farmcalcy-api
+
+# 1. Start Postgres + Redis (Docker Desktop must be running)
+docker compose up -d postgres redis
+
+# 2. Apply the DB schema and seed the first login account (first run only)
+npm run prisma:generate
+npx prisma migrate deploy        # or: npm run prisma:migrate:dev
+npm run prisma:seed
+
+# 3. Start the API in watch mode (listens on http://localhost:3000)
+npm run start:dev
+```
+
+Verify it is up: `curl http://localhost:3000/api/v1/health` → `{"status":"ok",…}`.
+
+### Seed login
+
+| Field | Value |
+|-------|-------|
+| Email | `admin@farmcalcy.com` |
+| Password | `ChangeMe123@` |
+| Role | `SAAS_ADMIN` |
+
+### OTP emails (Forgot Password / forced password change)
+
+OTPs are **emailed**, not returned in the API response. In development the API
+sends to SMTP `localhost:1025`. Run a local inbox to read the codes — Mailpit is
+a maintained, Apple-Silicon-native, MailHog-compatible drop-in on the same ports:
+
+```bash
+docker run -d --name farmcalcy-mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
+```
+
+Open the inbox at **http://localhost:8025** to read the 6-digit OTP (valid 10
+minutes, 5 attempts). Trigger one from the app's Forgot Password screen, or:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/auth/forgot-password \
+  -H "Content-Type: application/json" -d '{"email":"admin@farmcalcy.com"}'
+```
+
+### Shutting down
+
+```bash
+docker rm -f farmcalcy-mailpit          # stop the mail inbox
+cd ../farmcalcy-api && docker compose down   # stop Postgres + Redis
+```
 
 ---
 
@@ -472,6 +547,46 @@ Open `ios/FarmCalcy.xcworkspace` in Xcode, select a real device or "Any iOS Devi
 ---
 
 ## Troubleshooting
+
+### "Unable to connect to the server" on the Login / Auth screens
+
+The app cannot reach the backend API. Check, in order:
+
+1. **Is the API running?** `curl http://localhost:3000/api/v1/health` should return
+   `{"status":"ok"}`. If not, start it — see [Backend API (local development)](#backend-api-local-development).
+   Remember it also needs Postgres + Redis (`docker compose up -d postgres redis`).
+2. **Right `BASE_URL` host for your target?** Android emulator must use
+   `10.0.2.2` (not `localhost`); iOS simulator uses `localhost`; a physical device
+   uses your machine's LAN IP. See [Required variables](#required-variables).
+3. **Rebuilt after editing `.env`?** `react-native-config` bakes `BASE_URL` into
+   the binary at build time — rerun `npm run android` / `npm run ios`, not just a
+   Metro reload.
+4. **Physical device:** confirm the phone and your machine are on the same Wi-Fi
+   and no firewall blocks port 3000.
+
+### OTP never arrives (Forgot Password / forced password change)
+
+OTPs are emailed, not returned by the API. Start the local mail inbox and read the
+code at `http://localhost:8025` — see [OTP emails](#otp-emails-forgot-password--forced-password-change).
+
+### Android build fails with `No connected devices!`
+
+The app compiled fine — `react-native run-android` just has **no device to install
+on**. Start an emulator first, then re-run `npm run android`:
+
+```bash
+# Make sure the SDK tools are on PATH (add these to ~/.zshrc to persist):
+export ANDROID_HOME="$HOME/Library/Android/sdk"
+export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+
+emulator -list-avds                 # see available virtual devices
+emulator -avd <AVD_NAME> &          # e.g. Pixel_9_API_35
+adb wait-for-device                 # wait until it appears
+npm run android                     # build + install + launch
+```
+
+Confirm the device is visible with `adb devices` before building. For a physical
+device, enable USB debugging and accept the RSA prompt.
 
 ### `TypeError: Cannot read property 'getConfig' of null`
 

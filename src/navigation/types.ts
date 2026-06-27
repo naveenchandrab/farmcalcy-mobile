@@ -6,9 +6,19 @@ export type AuthStackParamList = {
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
+  /** Carries the email the OTP was sent to. */
   OtpVerification: { email: string };
-  ResetPassword: { token: string };
-  ForceChangePassword: undefined;
+  /**
+   * Carries the email + the OTP entered on the verification screen.
+   * The backend verifies-and-consumes the OTP at reset time, so it is passed
+   * through rather than verified separately.
+   */
+  ResetPassword: { email: string; otp: string };
+  /**
+   * Forced first-login password change. Reached after a login whose user has
+   * mustChangePassword = true; the temporary session tokens live in the auth store.
+   */
+  ForceChangePassword: { email: string };
 };
 
 // ─── SAAS Admin Stack ─────────────────────────────────────────────────────────
