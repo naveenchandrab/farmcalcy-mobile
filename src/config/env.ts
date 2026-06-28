@@ -1,4 +1,6 @@
-import Config from 'react-native-config';
+// react-native-config also publishes a named `Config` export, which trips
+// import/no-named-as-default on a same-named default import; alias to avoid it.
+import RNConfig from 'react-native-config';
 
 type AppEnv = 'development' | 'staging' | 'production';
 
@@ -13,8 +15,8 @@ interface AppConfig {
 }
 
 const resolveConfig = (): AppConfig => {
-  const baseUrl = Config.BASE_URL;
-  const rawEnv = Config.APP_ENV ?? 'development';
+  const baseUrl = RNConfig.BASE_URL;
+  const rawEnv = RNConfig.APP_ENV ?? 'development';
 
   if (!baseUrl) {
     throw new Error(

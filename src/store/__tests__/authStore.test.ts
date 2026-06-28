@@ -80,7 +80,7 @@ describe('logout', () => {
 });
 
 describe('setUser', () => {
-  it('updates the cached profile and persists it', async () => {
+  it('updates the cached profile and persists it', () => {
     const user = makeUser({ name: 'Updated Name' });
     useAuthStore.getState().setUser(user);
     expect(useAuthStore.getState().user?.name).toBe('Updated Name');

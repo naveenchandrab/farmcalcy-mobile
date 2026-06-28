@@ -1,5 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import type { ImageSourcePropType } from 'react-native';
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -16,17 +17,8 @@ const BADGE_WIDTH = BADGE_HEIGHT * 1.088; // content aspect of the cropped logo 
 /** Small leaf that sits on the top-right of the "Calcy" wordmark. */
 const LeafAccent: React.FC = () => (
   <Svg width={20} height={20} viewBox="0 0 24 24" style={styles.leafAccent}>
-    <Path
-      d="M21,3 C11,3 4,9 3,19 C3,20 4,21 5,21 C15,20 21,13 21,3 Z"
-      fill={AUTH_COLORS.primary}
-    />
-    <Path
-      d="M6,18 Q12,12 18,8"
-      stroke="#FFFFFF"
-      strokeWidth="1.1"
-      fill="none"
-      opacity={0.85}
-    />
+    <Path d="M21,3 C11,3 4,9 3,19 C3,20 4,21 5,21 C15,20 21,13 21,3 Z" fill={AUTH_COLORS.primary} />
+    <Path d="M6,18 Q12,12 18,8" stroke="#FFFFFF" strokeWidth="1.1" fill="none" opacity={0.85} />
   </Svg>
 );
 
@@ -54,7 +46,7 @@ const Logo: React.FC = () => {
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
       <Image
-        source={require('@assets/images/splash-logo.png')}
+        source={require('@assets/images/splash-logo.png') as ImageSourcePropType}
         style={styles.badge}
         resizeMode="contain"
         accessibilityRole="image"

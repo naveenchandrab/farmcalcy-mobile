@@ -1,20 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Dimensions,
-  Image,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import Svg, {
-  Defs,
-  LinearGradient,
-  Path,
-  Rect,
-  Stop,
-} from 'react-native-svg';
+import { Animated, Dimensions, Image, StatusBar, StyleSheet, Text, View } from 'react-native';
+import type { ImageSourcePropType } from 'react-native';
+import Svg, { Defs, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 
 import { useAuthStore } from '@store/authStore';
 
@@ -49,17 +36,8 @@ const RIGHT_LEAF_H = RIGHT_LEAF_W / 0.642; // cropped asset aspect (296 / 461)
 
 const LeafAccent: React.FC = () => (
   <Svg width={22} height={22} viewBox="0 0 24 24" style={styles.leafAccent}>
-    <Path
-      d="M21,3 C11,3 4,9 3,19 C3,20 4,21 5,21 C15,20 21,13 21,3 Z"
-      fill={MID_GREEN}
-    />
-    <Path
-      d="M6,18 Q12,12 18,8"
-      stroke="#FFFFFF"
-      strokeWidth="1.1"
-      fill="none"
-      opacity={0.85}
-    />
+    <Path d="M21,3 C11,3 4,9 3,19 C3,20 4,21 5,21 C15,20 21,13 21,3 Z" fill={MID_GREEN} />
+    <Path d="M6,18 Q12,12 18,8" stroke="#FFFFFF" strokeWidth="1.1" fill="none" opacity={0.85} />
   </Svg>
 );
 
@@ -166,12 +144,12 @@ const SplashScreen: React.FC = () => {
       </Svg>
 
       <Image
-        source={require('../assets/images/leaf-left.png')}
+        source={require('../assets/images/leaf-left.png') as ImageSourcePropType}
         style={styles.leafLeft}
         resizeMode="contain"
       />
       <Image
-        source={require('../assets/images/leaf-right.png')}
+        source={require('../assets/images/leaf-right.png') as ImageSourcePropType}
         style={styles.leafRight}
         resizeMode="contain"
       />
@@ -179,7 +157,7 @@ const SplashScreen: React.FC = () => {
       {/* Brand / logo area */}
       <View style={styles.brand}>
         <Image
-          source={require('../assets/images/splash-logo.png')}
+          source={require('../assets/images/splash-logo.png') as ImageSourcePropType}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -205,16 +183,12 @@ const SplashScreen: React.FC = () => {
       {/* Farm photo: soft misty top fade + crisp bottom wave */}
       <View style={styles.farm}>
         <Image
-          source={require('../assets/images/splash-farm.png')}
+          source={require('../assets/images/splash-farm.png') as ImageSourcePropType}
           style={styles.farmImg}
           resizeMode="cover"
         />
         {/* Top mist: fade the photo top back into the background */}
-        <Svg
-          width={W}
-          height={FARM_H * 0.32}
-          style={styles.topFade}
-          pointerEvents="none">
+        <Svg width={W} height={FARM_H * 0.32} style={styles.topFade} pointerEvents="none">
           <Defs>
             <LinearGradient id="mist" x1="0" y1="0" x2="0" y2="1">
               <Stop offset="0" stopColor="#FBFCF7" stopOpacity={1} />
@@ -229,7 +203,8 @@ const SplashScreen: React.FC = () => {
           height={FARM_H}
           viewBox={`0 0 ${W} ${FARM_H}`}
           style={styles.bottomWave}
-          pointerEvents="none">
+          pointerEvents="none"
+        >
           <Path d={bottomWave} fill={WAVE_FILL} />
         </Svg>
       </View>

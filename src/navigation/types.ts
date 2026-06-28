@@ -1,4 +1,8 @@
 import type { NavigatorScreenParams } from '@react-navigation/native';
+import type {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
 // ─── Auth Stack ───────────────────────────────────────────────────────────────
 
@@ -85,11 +89,6 @@ export type RootStackParamList = {
 // Example:
 //   const navigation = useTypedNavigation<'TenantAdmin'>();
 
-import type {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from '@react-navigation/native-stack';
-
 export type RootNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export type AuthScreenProps<T extends keyof AuthStackParamList> = NativeStackScreenProps<
@@ -97,8 +96,10 @@ export type AuthScreenProps<T extends keyof AuthStackParamList> = NativeStackScr
   T
 >;
 
-export type SaasAdminScreenProps<T extends keyof SaasAdminStackParamList> =
-  NativeStackScreenProps<SaasAdminStackParamList, T>;
+export type SaasAdminScreenProps<T extends keyof SaasAdminStackParamList> = NativeStackScreenProps<
+  SaasAdminStackParamList,
+  T
+>;
 
 export type TenantAdminScreenProps<T extends keyof TenantAdminStackParamList> =
   NativeStackScreenProps<TenantAdminStackParamList, T>;

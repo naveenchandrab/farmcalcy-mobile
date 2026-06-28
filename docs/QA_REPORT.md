@@ -98,6 +98,19 @@ reset→consumes, post-reset verify→invalid. Spec: `farmcalcy-api/src/modules/
 
 Run them all: see [maestro/run-e2e.sh](../maestro/run-e2e.sh) and [maestro/README.md](../maestro/README.md).
 
+## Lint & type-check
+- `npm run type-check` — **0 errors**.
+- `npm run lint` — **0 problems**, including `--max-warnings=0` (the pre-commit gate).
+  Cleared the pre-existing debt: typed the TanStack-Query user hooks with explicit
+  `UseQueryResult<…>` returns (the complex inferred union was resolving to `any`
+  at consumers), typed the lazy-required DateTimePicker, `void`-wrapped async
+  `onPress`, cast image `require()`s to `ImageSourcePropType`, fixed import order,
+  and justified the two RN-idiom disables: `no-require-imports` off (Metro asset
+  `require()`) and `no-inline-styles` off (the DS computes styles from theme
+  tokens at runtime). The interceptor re-rejects the original Axios error on
+  purpose (bug #2 depends on `response.status` surviving) — kept with a local,
+  documented disable.
+
 ## Unit / integration (Jest)
 - **225 tests across 23 suites pass.** Coverage **93.2% stmts / 87.0% branch / 94.7% lines**.
 - New/updated: interceptor auth-401 regression, users `mapApiUser*`, OTP-screen
@@ -129,5 +142,5 @@ Run them all: see [maestro/run-e2e.sh](../maestro/run-e2e.sh) and [maestro/READM
 1. **Backend `/users` DTO**: include `role` (and a `status` enum) so the role badge is accurate.
 2. **Token refresh e2e**: add a backend test hook to revoke a session so `session-expiry` can run unattended.
 3. **CI**: gate on `type-check`, `lint`, `test:ci`, then the Maestro suite on an API-35 AVD with the API + Mailpit in docker-compose.
-4. **Lint debt**: remaining warnings are inline-styles / `any` in the design-system + users screens (pre-existing); worth a focused cleanup pass.
+4. **Lint debt**: cleared in this pass — `npm run lint` is now clean at `--max-warnings=0`, so the pre-commit hook passes without `--no-verify`.
 5. **Edge-to-edge**: audit any other custom headers/footers for status-bar / nav-bar insets now that API 35 is the target.

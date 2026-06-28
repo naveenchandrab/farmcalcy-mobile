@@ -50,10 +50,16 @@ const CreateUserScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
       <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.headerBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Icon name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
-        <Typography preset="headingSm" style={styles.headerTitle}>Add User</Typography>
+        <Typography preset="headingSm" style={styles.headerTitle}>
+          Add User
+        </Typography>
         <View style={styles.headerBtn} />
       </View>
 
@@ -114,11 +120,7 @@ const CreateUserScreen: React.FC<Props> = ({ navigation }) => {
           control={control}
           name="role"
           render={({ field: { onChange, value } }) => (
-            <RoleSelector
-              value={value}
-              onChange={onChange}
-              errorMessage={errors.role?.message}
-            />
+            <RoleSelector value={value} onChange={onChange} errorMessage={errors.role?.message} />
           )}
         />
 
@@ -144,7 +146,7 @@ const CreateUserScreen: React.FC<Props> = ({ navigation }) => {
           variant="primary"
           fullWidth
           loading={isPending}
-          onPress={handleSubmit(onSubmit)}
+          onPress={() => void handleSubmit(onSubmit)()}
           style={styles.submitButton}
         >
           Create User

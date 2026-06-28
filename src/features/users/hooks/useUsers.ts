@@ -1,15 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
 
-import type { User, UserStatus } from '@app-types';
+import type { ApiResponse, PaginatedResponse, User, UserStatus } from '@app-types';
 import { extractErrorMessage } from '@services/ApiErrorMapper';
 import { showError, showSuccess } from '@utils/toast';
 
 import { usersService } from '../services/users.service';
-import type {
-  CreateUserFormValues,
-  EditUserFormValues,
-  UserListFilters,
-} from '../types';
+import type { CreateUserFormValues, EditUserFormValues, UserListFilters } from '../types';
 
 // ─── Query Keys ───────────────────────────────────────────────────────────────
 
@@ -22,8 +19,10 @@ export const userKeys = {
 // ─── List ─────────────────────────────────────────────────────────────────────
 
 /** Paginated, filtered user list. Refetches when filters change. */
-export const useUserList = (filters: Partial<UserListFilters>) =>
-  useQuery({
+export const useUserList = (
+  filters: Partial<UserListFilters>,
+): UseQueryResult<PaginatedResponse<User>, Error> =>
+  useQuery<ApiResponse<PaginatedResponse<User>>, Error, PaginatedResponse<User>>({
     queryKey: userKeys.list(filters),
     queryFn: () => usersService.getUsers(filters),
     select: response => response.data,
@@ -32,8 +31,8 @@ export const useUserList = (filters: Partial<UserListFilters>) =>
 // ─── Single ───────────────────────────────────────────────────────────────────
 
 /** Single user by ID. Enabled only when userId is truthy. */
-export const useUser = (userId: string) =>
-  useQuery({
+export const useUser = (userId: string): UseQueryResult<User, Error> =>
+  useQuery<ApiResponse<User>, Error, User>({
     queryKey: userKeys.detail(userId),
     queryFn: () => usersService.getUserById(userId),
     enabled: Boolean(userId),
@@ -107,9 +106,7 @@ export const useToggleUserStatus = () => {
       // Cancel any in-flight refetches that would overwrite the optimistic update
       await queryClient.cancelQueries({ queryKey: userKeys.detail(userId) });
 
-      const previousUser = queryClient.getQueryData<{ data: User }>(
-        userKeys.detail(userId),
-      );
+      const previousUser = queryClient.getQueryData<{ data: User }>(userKeys.detail(userId));
 
       // Apply the optimistic update
       queryClient.setQueryData(userKeys.detail(userId), (old: { data: User } | undefined) => {

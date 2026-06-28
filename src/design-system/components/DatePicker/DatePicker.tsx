@@ -21,8 +21,18 @@ interface DatePickerProps {
 }
 
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ];
 
 const formatDate = (date: Date, mode: 'date' | 'time' | 'datetime'): string => {
@@ -30,8 +40,10 @@ const formatDate = (date: Date, mode: 'date' | 'time' | 'datetime'): string => {
     return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
   }
   if (mode === 'datetime') {
-    return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}, ` +
-      date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    return (
+      `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}, ` +
+      date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+    );
   }
   return `${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
 };
@@ -61,7 +73,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const displayText = value ? formatDate(value, mode) : null;
 
   const handlePress = () => {
-    if (disabled) {return;}
+    if (disabled) {
+      return;
+    }
     if (Platform.OS === 'android') {
       // On Android, use the native picker directly via the package
       setOpen(true);
@@ -70,10 +84,23 @@ const DatePicker: React.FC<DatePickerProps> = ({
     }
   };
 
-  // Lazy-require to avoid crash when package is not yet installed
-  let DateTimePicker: React.ComponentType<any> | null = null;
+  // Lazy-require to avoid crash when package is not yet installed.
+  type NativeDatePickerProps = {
+    value: Date;
+    mode?: 'date' | 'time' | 'datetime';
+    display?: 'default' | 'spinner' | 'calendar' | 'clock';
+    onChange?: (event: unknown, date?: Date) => void;
+    minimumDate?: Date;
+    maximumDate?: Date;
+    textColor?: string;
+  };
+  let DateTimePicker: React.ComponentType<NativeDatePickerProps> | null = null;
   try {
-    DateTimePicker = require('@react-native-community/datetimepicker').default;
+    DateTimePicker = (
+      require('@react-native-community/datetimepicker') as {
+        default: React.ComponentType<NativeDatePickerProps>;
+      }
+    ).default;
   } catch {
     // Package not installed — picker falls back to manual entry
   }
@@ -121,15 +148,16 @@ const DatePicker: React.FC<DatePickerProps> = ({
       )}
 
       {/* iOS: show in BottomSheet; Android: native modal */}
-      {open && DateTimePicker && (
-        Platform.OS === 'ios' ? (
+      {open &&
+        DateTimePicker &&
+        (Platform.OS === 'ios' ? (
           <BottomSheet visible={open} onClose={() => setOpen(false)} title={label ?? 'Select date'}>
             <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
               <DateTimePicker
                 value={draft}
                 mode={mode}
                 display="spinner"
-                onChange={(_: any, date?: Date) => date && setDraft(date)}
+                onChange={(_: unknown, date?: Date) => date && setDraft(date)}
                 minimumDate={minimumDate}
                 maximumDate={maximumDate}
                 textColor={colors.textPrimary}
@@ -150,15 +178,16 @@ const DatePicker: React.FC<DatePickerProps> = ({
             value={draft}
             mode={mode}
             display="default"
-            onChange={(_: any, date?: Date) => {
+            onChange={(_: unknown, date?: Date) => {
               setOpen(false);
-              if (date) { onChange(date); }
+              if (date) {
+                onChange(date);
+              }
             }}
             minimumDate={minimumDate}
             maximumDate={maximumDate}
           />
-        )
-      )}
+        ))}
     </View>
   );
 };

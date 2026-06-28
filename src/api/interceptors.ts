@@ -108,10 +108,7 @@ const responseError = async (error: AxiosError): Promise<unknown> => {
   // Not a 401, the refresh endpoint itself failing, or an auth endpoint → bail out
   if (!is401 || isRefreshEndpoint || isAuthEndpoint || originalRequest._retry) {
     if (appConfig.isDev && error.response) {
-      console.warn(
-        `[API ←] ${error.response.status} ${originalRequest?.url}`,
-        error.response.data,
-      );
+      console.warn(`[API ←] ${error.response.status} ${originalRequest?.url}`, error.response.data);
     }
     return Promise.reject(error);
   }
@@ -123,6 +120,9 @@ const responseError = async (error: AxiosError): Promise<unknown> => {
       originalRequest._retry = true;
       return await axios(attachBearer(originalRequest, newToken));
     } catch (queueError) {
+      // Re-throw the original caught value unchanged so downstream handlers see
+      // the real failure (an Axios error carrying response.status).
+      // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
       return Promise.reject(queueError);
     }
   }
@@ -164,6 +164,8 @@ const responseError = async (error: AxiosError): Promise<unknown> => {
     // AuthStore subscribes to this in its `initialize` method.
     refreshQueue = [];
 
+    // Re-throw the original refresh failure unchanged (preserves its status).
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     return Promise.reject(refreshError);
   }
 };
@@ -177,6 +179,8 @@ const responseError = async (error: AxiosError): Promise<unknown> => {
 export const setupInterceptors = (client: AxiosInstance): void => {
   client.interceptors.request.use(
     config => requestFulfilled(config),
+    // Pass the original request error through untouched.
+    // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
     (error: unknown) => Promise.reject(error),
   );
 

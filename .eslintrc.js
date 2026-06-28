@@ -39,6 +39,17 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': 'error',
     '@typescript-eslint/no-misused-promises': 'error',
     '@typescript-eslint/await-thenable': 'error',
+    // React Native's Metro bundler resolves static asset references via
+    // `require('./img.png')` — there is no ESM-import equivalent that produces an
+    // asset id, so `require()` is the idiomatic (and only) way to load images.
+    '@typescript-eslint/no-require-imports': 'off',
+
+    // React Native
+    // The design system computes most styles from theme tokens / props at render
+    // time (e.g. `borderWidth: isFocused ? 1.5 : 1`). These are inherently inline
+    // and cannot live in a static StyleSheet, so this stylistic rule produces
+    // false positives across the DS; disable it project-wide.
+    'react-native/no-inline-styles': 'off',
 
     // React
     'react/react-in-jsx-scope': 'off',
