@@ -1,10 +1,10 @@
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 
+import type { ApiResponse, RefreshTokenResponse } from '@app-types';
 import { appConfig } from '@config/env';
 import { AUTH_SKIP_ENDPOINTS, REFRESH_TOKEN_ENDPOINT } from '@constants';
 import { TokenService } from '@services/TokenService';
-import type { ApiResponse, RefreshTokenResponse } from '@app-types';
 
 // ─── Refresh Token Queue ──────────────────────────────────────────────────────
 //
@@ -97,9 +97,16 @@ const responseError = async (error: AxiosError): Promise<unknown> => {
 
   const is401 = error.response?.status === 401;
   const isRefreshEndpoint = originalRequest?.url?.includes(REFRESH_TOKEN_ENDPOINT);
+  // A 401 from an auth endpoint (login, forgot/reset, otp) is a genuine
+  // credential/authorization failure — NOT an expired session. Attempting a
+  // token refresh here is wrong: it discards the original 401 (so callers lose
+  // the real status and show a generic "Something went wrong" message) and, on
+  // a logged-out device, fails with "No refresh token available". These
+  // endpoints must propagate their 401 untouched.
+  const isAuthEndpoint = shouldSkipAuth(originalRequest?.url);
 
-  // Not a 401, or it's the refresh endpoint itself failing → bail out
-  if (!is401 || isRefreshEndpoint || originalRequest._retry) {
+  // Not a 401, the refresh endpoint itself failing, or an auth endpoint → bail out
+  if (!is401 || isRefreshEndpoint || isAuthEndpoint || originalRequest._retry) {
     if (appConfig.isDev && error.response) {
       console.warn(
         `[API ←] ${error.response.status} ${originalRequest?.url}`,

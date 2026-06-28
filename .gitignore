@@ -52,6 +52,11 @@ web-build/
 
 # Jest
 coverage/
+reports/
+junit.xml
+
+# Maestro
+.maestro/tests/**/*.mp4
 
 # Metro
 .metro-health-check*

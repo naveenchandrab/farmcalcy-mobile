@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import Divider from './Divider';
+import { View } from 'react-native';
+
 import Typography from '../Typography/Typography';
+
+import Divider from './Divider';
+
 
 const meta: Meta<typeof Divider> = {
   title: 'Design System/Divider',

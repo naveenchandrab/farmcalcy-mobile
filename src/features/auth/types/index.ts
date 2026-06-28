@@ -171,6 +171,12 @@ export interface SendOtpApiRequest {
   purpose: OtpPurpose;
 }
 
+export interface VerifyOtpApiRequest {
+  email: string;
+  otp: string;
+  purpose: OtpPurpose;
+}
+
 // ─── API Response payloads (exact backend shapes) ──────────────────────────────
 
 /**

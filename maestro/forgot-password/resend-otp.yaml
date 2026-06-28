@@ -1,0 +1,22 @@
+# E2E: the resend control is gated by a cooldown timer, then issues a new code.
+appId: com.farmcalcy.pcfms
+name: Forgot Password - Resend OTP Cooldown
+tags:
+  - auth
+  - forgot-password
+---
+- runFlow: request-otp.yaml
+# While the cooldown runs, the timer is shown and the resend button is hidden.
+- assertVisible:
+    id: "otp-resend-timer"
+- assertNotVisible:
+    id: "otp-resend-button"
+# Wait out the 30s cooldown, then the resend button appears.
+- extendedWaitUntil:
+    visible:
+      id: "otp-resend-button"
+    timeout: 35000
+- tapOn:
+    id: "otp-resend-button"
+- assertVisible:
+    text: ".*new code has been sent.*"

@@ -1,7 +1,9 @@
 import { apiClient } from '@api/axios';
 import type { ApiResponse, PaginatedResponse, User } from '@app-types';
 
+import { mapApiUserList, mapApiUserToUser } from '../types';
 import type {
+  ApiUserDto,
   CreateUserRequest,
   ToggleUserStatusRequest,
   UpdateUserRequest,
@@ -34,28 +36,34 @@ export const usersService = {
       params.status = filters.status;
     }
 
-    const { data } = await apiClient.get<ApiResponse<PaginatedResponse<User>>>('/users', {
-      params,
-    });
-    return data;
+    const { data } = await apiClient.get<
+      ApiResponse<{ items?: ApiUserDto[]; meta?: PaginatedResponse<User>['meta'] }>
+    >('/users', { params });
+    return {
+      ...data,
+      data: mapApiUserList(data.data, Number(params.page), Number(params.limit)),
+    };
   },
 
   /** Fetches a single user by ID. */
   async getUserById(userId: string): Promise<ApiResponse<User>> {
-    const { data } = await apiClient.get<ApiResponse<User>>(`/users/${userId}`);
-    return data;
+    const { data } = await apiClient.get<ApiResponse<ApiUserDto>>(`/users/${userId}`);
+    return { ...data, data: mapApiUserToUser(data.data) };
   },
 
   /** Creates a new system user. */
   async createUser(payload: CreateUserRequest): Promise<ApiResponse<User>> {
-    const { data } = await apiClient.post<ApiResponse<User>>('/users', payload);
-    return data;
+    const { data } = await apiClient.post<ApiResponse<ApiUserDto>>('/users', payload);
+    return { ...data, data: mapApiUserToUser(data.data) };
   },
 
   /** Partially updates a user's profile. */
   async updateUser(userId: string, payload: UpdateUserRequest): Promise<ApiResponse<User>> {
-    const { data } = await apiClient.patch<ApiResponse<User>>(`/users/${userId}`, payload);
-    return data;
+    const { data } = await apiClient.patch<ApiResponse<ApiUserDto>>(
+      `/users/${userId}`,
+      payload,
+    );
+    return { ...data, data: mapApiUserToUser(data.data) };
   },
 
   /**
@@ -66,10 +74,10 @@ export const usersService = {
     userId: string,
     payload: ToggleUserStatusRequest,
   ): Promise<ApiResponse<User>> {
-    const { data } = await apiClient.patch<ApiResponse<User>>(
+    const { data } = await apiClient.patch<ApiResponse<ApiUserDto>>(
       `/users/${userId}/status`,
       payload,
     );
-    return data;
+    return { ...data, data: mapApiUserToUser(data.data) };
   },
 };

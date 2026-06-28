@@ -548,6 +548,25 @@ Open `ios/FarmCalcy.xcworkspace` in Xcode, select a real device or "Any iOS Devi
 
 ## Troubleshooting
 
+### Gradle build fails with "Unsupported class file major version" / a JDK error
+
+Gradle 8.10 (RN 0.76) runs on **JDK 17**, not a newer JDK. If your system default
+is JDK 21/23 the Android build fails. Point the build at JDK 17 explicitly:
+
+```bash
+brew install openjdk@17            # macOS (keg-only; no sudo)
+export JAVA_HOME=/opt/homebrew/opt/openjdk@17
+./android/gradlew -p android :app:assembleDebug   # or: npm run android
+```
+
+### A text field or the submit button is hidden behind the keyboard
+
+Android 15 (API 35) enforces **edge-to-edge**, so the legacy `adjustResize` no
+longer shrinks the window. Screens must drive keyboard avoidance themselves —
+the shared `AuthScreenLayout` and `LoginScreen` set `KeyboardAvoidingView
+behavior="height"` on Android and `scrollToEnd` on keyboard-show. Re-use
+`AuthScreenLayout` for new form screens so they inherit this behaviour.
+
 ### "Unable to connect to the server" on the Login / Auth screens
 
 The app cannot reach the backend API. Check, in order:

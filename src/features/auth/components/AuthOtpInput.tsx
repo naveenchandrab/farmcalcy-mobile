@@ -15,6 +15,8 @@ interface AuthOtpInputProps {
   editable?: boolean;
   length?: number;
   autoFocus?: boolean;
+  /** Base id; each cell is exposed as `${testID}-${index}` for tests / E2E. */
+  testID?: string;
 }
 
 /**
@@ -34,6 +36,7 @@ const AuthOtpInput: React.FC<AuthOtpInputProps> = ({
   editable = true,
   length = OTP_LENGTH,
   autoFocus = true,
+  testID,
 }) => {
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(
@@ -127,6 +130,7 @@ const AuthOtpInput: React.FC<AuthOtpInputProps> = ({
               ]}
             >
               <TextInput
+                testID={testID ? `${testID}-${index}` : undefined}
                 ref={el => {
                   inputRefs.current[index] = el;
                 }}

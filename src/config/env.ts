@@ -23,7 +23,7 @@ const resolveConfig = (): AppConfig => {
     );
   }
 
-  const appEnv = rawEnv as AppEnv;
+  const appEnv = rawEnv;
 
   return {
     BASE_URL: baseUrl.replace(/\/$/, ''), // strip accidental trailing slash

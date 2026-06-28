@@ -17,7 +17,15 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json}\"",
     "type-check": "tsc --noEmit",
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:auth": "jest src/features/auth",
+    "test:ci": "jest --ci --runInBand --coverage --forceExit --reporters=default --reporters=jest-junit",
+    "e2e:install": "command -v maestro || curl -Ls https://get.maestro.mobile.dev | bash",
+    "e2e": "maestro test maestro/",
+    "e2e:login": "maestro test maestro/login",
+    "e2e:forgot": "maestro test maestro/forgot-password",
+    "e2e:session": "maestro test maestro/session",
     "prepare": "husky",
     "storybook": "STORYBOOK=true react-native start",
     "storybook:android": "STORYBOOK=true react-native run-android",
@@ -67,6 +75,8 @@
     "@storybook/addon-ondevice-controls": "^8.3.0",
     "@storybook/addon-ondevice-notes": "^8.3.0",
     "@storybook/react-native": "^8.3.0",
+    "@testing-library/jest-native": "^5.4.3",
+    "@testing-library/react-native": "^12.9.0",
     "@types/jest": "^29.5.14",
     "@types/react": "^18.3.1",
     "@types/react-native-vector-icons": "^6.4.18",
@@ -84,42 +94,20 @@
     "eslint-plugin-react-native": "^4.1.0",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
     "lint-staged": "^15.3.0",
     "prettier": "^3.4.2",
+    "react-test-renderer": "^18.3.1",
     "typescript": "5.0.4"
-  },
-  "jest": {
-    "preset": "react-native",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ],
-    "moduleNameMapper": {
-      "^@assets/(.*)$": "<rootDir>/src/assets/$1",
-      "^@components/(.*)$": "<rootDir>/src/components/$1",
-      "^@constants/(.*)$": "<rootDir>/src/constants/$1",
-      "^@features/(.*)$": "<rootDir>/src/features/$1",
-      "^@hooks/(.*)$": "<rootDir>/src/hooks/$1",
-      "^@navigation/(.*)$": "<rootDir>/src/navigation/$1",
-      "^@screens/(.*)$": "<rootDir>/src/screens/$1",
-      "^@services/(.*)$": "<rootDir>/src/services/$1",
-      "^@store/(.*)$": "<rootDir>/src/store/$1",
-      "^@theme/(.*)$": "<rootDir>/src/theme/$1",
-      "^@app-types/(.*)$": "<rootDir>/src/types/$1",
-      "^@utils/(.*)$": "<rootDir>/src/utils/$1",
-      "^@config/(.*)$": "<rootDir>/src/config/$1",
-      "^@api/(.*)$": "<rootDir>/src/api/$1",
-      "^@design-system$": "<rootDir>/src/design-system/index.ts",
-      "^@design-system/(.*)$": "<rootDir>/src/design-system/$1"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!(react-native|@react-native|@react-navigation|react-native-vector-icons|react-native-keychain|react-native-config|react-native-mmkv|react-native-gesture-handler|react-native-reanimated|react-native-safe-area-context|react-native-screens)/)"
-    ]
   },
   "engines": {
     "node": ">=18"
+  },
+  "jest-junit": {
+    "outputDirectory": "reports",
+    "outputName": "junit.xml",
+    "ancestorSeparator": " › ",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
   }
 }

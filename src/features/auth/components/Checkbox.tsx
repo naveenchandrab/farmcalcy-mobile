@@ -8,17 +8,20 @@ interface CheckboxProps {
   value: boolean;
   onValueChange: (next: boolean) => void;
   label: string;
+  /** Stable id for unit tests and Maestro E2E flows. */
+  testID?: string;
 }
 
 /**
  * Square checkbox + label.
  * Unchecked: bordered box. Checked: filled green box with a white tick.
  */
-const Checkbox: React.FC<CheckboxProps> = ({ value, onValueChange, label }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ value, onValueChange, label, testID }) => {
   const toggle = useCallback(() => onValueChange(!value), [value, onValueChange]);
 
   return (
     <TouchableOpacity
+      testID={testID}
       onPress={toggle}
       activeOpacity={0.7}
       accessibilityRole="checkbox"

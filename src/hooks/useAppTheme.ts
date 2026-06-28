@@ -1,7 +1,7 @@
+import type { ActiveTheme, ThemeMode } from '@app-types';
 import { useTheme } from '@design-system';
 import type { Theme } from '@design-system';
 import { useThemeStore } from '@store/themeStore';
-import type { ActiveTheme, ThemeMode } from '@app-types';
 
 interface UseAppThemeReturn {
   theme: Theme;

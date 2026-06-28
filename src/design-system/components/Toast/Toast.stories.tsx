@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
+import { View } from 'react-native';
+
 import Button from '../Button/Button';
 import Typography from '../Typography/Typography';
+
 import { showSuccess, showError, showInfo, showWarning } from './Toast';
 
 const ToastDemo: React.FC = () => (

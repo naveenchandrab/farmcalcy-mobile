@@ -1,20 +1,18 @@
-import React, { useEffect } from 'react';
-import { Appearance } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import {
+import { NavigationContainer ,
   DarkTheme as NavigationDarkTheme,
   DefaultTheme as NavigationLightTheme,
 } from '@react-navigation/native';
+import { QueryClientProvider } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
+import { Appearance } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { QueryClientProvider } from '@tanstack/react-query';
 
-import { setupInterceptors } from '@api/interceptors';
 import { apiClient } from '@api/axios';
+import { setupInterceptors } from '@api/interceptors';
+import { ThemeProvider, useTheme , ToastProvider, ToastBridge } from '@design-system';
 import { queryClient } from '@services/queryClient';
 import { useThemeStore } from '@store/themeStore';
-import { ThemeProvider, useTheme } from '@design-system';
-import { ToastProvider, ToastBridge } from '@design-system';
 
 // Attach interceptors once — before the first render that might trigger an API call.
 setupInterceptors(apiClient);

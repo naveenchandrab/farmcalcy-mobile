@@ -1,5 +1,6 @@
 import React from 'react';
-import { StatusBar as RNStatusBar, StatusBarStyle } from 'react-native';
+import type { StatusBarStyle } from 'react-native';
+import { StatusBar as RNStatusBar } from 'react-native';
 
 import { useTheme } from '../../theme';
 

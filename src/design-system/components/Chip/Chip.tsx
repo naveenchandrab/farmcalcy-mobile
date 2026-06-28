@@ -30,14 +30,14 @@ const Chip: React.FC<ChipProps> = ({
   const { colors, spacing } = useTheme();
 
   const bgColor = (): string => {
-    if (variant === 'filled') return selected ? colors.primary : colors.surfaceVariant;
-    if (variant === 'outlined') return 'transparent';
+    if (variant === 'filled') {return selected ? colors.primary : colors.surfaceVariant;}
+    if (variant === 'outlined') {return 'transparent';}
     return selected ? colors.primaryContainer : colors.surfaceVariant;
   };
 
   const textColor = (): string => {
-    if (variant === 'filled') return selected ? colors.onPrimary : colors.textSecondary;
-    if (variant === 'outlined') return selected ? colors.primary : colors.textSecondary;
+    if (variant === 'filled') {return selected ? colors.onPrimary : colors.textSecondary;}
+    if (variant === 'outlined') {return selected ? colors.primary : colors.textSecondary;}
     return selected ? colors.primary : colors.textSecondary;
   };
 

@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import AppSafeAreaView from './SafeAreaView';
-import Typography from '../Typography/Typography';
+import { View } from 'react-native';
+
 import Divider from '../Divider/Divider';
+import Typography from '../Typography/Typography';
+
+import AppSafeAreaView from './SafeAreaView';
+
 
 const meta: Meta<typeof AppSafeAreaView> = {
   title: 'Design System/AppSafeAreaView',

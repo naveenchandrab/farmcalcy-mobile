@@ -72,5 +72,47 @@ module.exports = {
     'prefer-const': 'error',
     'no-var': 'error',
   },
-  ignorePatterns: ['node_modules/', 'android/', 'ios/', '*.config.js', 'babel.config.js', 'metro.config.js'],
+  overrides: [
+    {
+      // Storybook CSF `render` functions legitimately call hooks to host
+      // interactive controls, which the rules-of-hooks heuristic (uppercase /
+      // `use*` name detection) cannot recognise. Inline styles and loose story
+      // args are also expected in stories — they are dev-only, not shipped.
+      files: ['**/*.stories.tsx'],
+      rules: {
+        'react-hooks/rules-of-hooks': 'off',
+        'react-native/no-inline-styles': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+      },
+    },
+    {
+      // Test files and the shared test toolkit rely on Jest mocks (typed as
+      // `any`) and pass bound matchers/spies around; the type-checked unsafe
+      // rules and unbound-method produce noise without catching real defects.
+      files: ['**/__tests__/**', '**/*.test.{ts,tsx}', 'src/test-utils/**'],
+      rules: {
+        '@typescript-eslint/unbound-method': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+  ],
+  ignorePatterns: [
+    'node_modules/',
+    'android/',
+    'ios/',
+    'coverage/',
+    '.storybook/',
+    '*.config.js',
+    'babel.config.js',
+    'metro.config.js',
+    '.eslintrc.js',
+    'jest.setup.js',
+  ],
 };

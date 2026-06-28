@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import Modal from './Modal';
+import { View } from 'react-native';
+
+
 import Button from '../Button/Button';
 import Typography from '../Typography/Typography';
+
+import Modal from './Modal';
 
 const meta: Meta<typeof Modal> = {
   title: 'Design System/Modal',

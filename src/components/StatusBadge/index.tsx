@@ -7,7 +7,7 @@ import Typography from '@design-system/components/Typography';
 type StatusVariant = 'active' | 'inactive' | 'suspended' | 'pending' | 'expired' | 'trial' | 'paid';
 
 interface StatusBadgeProps {
-  status: string;
+  status: string | null | undefined;
   variant?: StatusVariant;
 }
 
@@ -34,7 +34,10 @@ const DISPLAY_LABEL: Record<StatusVariant, string> = {
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ status, variant }) => {
   const { colors } = useTheme();
-  const resolved: StatusVariant = variant ?? STATUS_MAP[status.toUpperCase()] ?? 'inactive';
+  // Guard against undefined/non-string status: a presentational badge must
+  // never crash the screen if the backend omits or renames the field.
+  const key = typeof status === 'string' ? status.toUpperCase() : '';
+  const resolved: StatusVariant = variant ?? STATUS_MAP[key] ?? 'inactive';
 
   const statusColors = colors.status[resolved] ?? colors.status.inactive;
   const label = DISPLAY_LABEL[resolved];

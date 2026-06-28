@@ -1,0 +1,30 @@
+# E2E: logging out clears the session and returns the user to Login.
+#
+# Prereq: the post-login home screen exposes a control with testID
+# "logout-button" (see TEST_IDS.session.logoutButton). Adjust the navigation
+# steps below to reach it for your role's home screen.
+appId: com.farmcalcy.pcfms
+name: Session - Logout
+tags:
+  - auth
+  - session
+---
+- runFlow: ../shared/launch-fresh.yaml
+- runFlow: ../shared/login.yaml
+- extendedWaitUntil:
+    notVisible:
+      id: "login-screen"
+    timeout: 10000
+- tapOn:
+    id: "logout-button"
+# Back to the auth stack.
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 10000
+# A restart must NOT restore the cleared session.
+- launchApp:
+    clearState: false
+    stopApp: true
+- assertVisible:
+    id: "login-screen"

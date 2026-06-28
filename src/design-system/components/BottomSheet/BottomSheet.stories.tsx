@@ -1,10 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import BottomSheet from './BottomSheet';
+import { View } from 'react-native';
+
+
 import Button from '../Button/Button';
-import Typography from '../Typography/Typography';
 import ListItem from '../ListItem/ListItem';
+import Typography from '../Typography/Typography';
+
+import BottomSheet from './BottomSheet';
 
 const meta: Meta<typeof BottomSheet> = {
   title: 'Design System/BottomSheet',

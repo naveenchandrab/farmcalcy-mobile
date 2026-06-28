@@ -46,7 +46,7 @@ function Select<T extends string = string>({
   const borderColor = hasError ? colors.error : colors.border;
 
   const handlePress = () => {
-    if (disabled) return;
+    if (disabled) {return;}
 
     if (Platform.OS === 'ios') {
       const titles = options.map(o => o.label);

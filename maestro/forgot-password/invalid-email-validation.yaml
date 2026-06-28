@@ -1,0 +1,24 @@
+# E2E: an invalid email is rejected client-side before any request is sent.
+appId: com.farmcalcy.pcfms
+name: Forgot Password - Invalid Email Validation
+tags:
+  - auth
+  - forgot-password
+  - validation
+---
+- runFlow: ../shared/launch-fresh.yaml
+- tapOn:
+    id: "login-forgot-password-link"
+- tapOn:
+    id: "forgot-password-email-input"
+- inputText: "not-an-email"
+# NB: no `hideKeyboard` here. On Android Maestro dismisses the keyboard with a
+# system BACK gesture, which on a *pushed* screen (Forgot Password) pops back to
+# Login instead of just hiding the IME. The submit button sits above the
+# keyboard, so we tap it directly — Maestro dismisses the IME on tap.
+- tapOn:
+    id: "forgot-password-button"
+- assertVisible:
+    text: "Enter a valid email address"
+- assertVisible:
+    id: "forgot-password-screen"

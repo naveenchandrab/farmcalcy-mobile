@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import Card from './Card';
+import { View } from 'react-native';
+
 import Typography from '../Typography/Typography';
+
+import Card from './Card';
+
 
 const meta: Meta<typeof Card> = {
   title: 'Design System/Card',

@@ -13,6 +13,7 @@ import {
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { OTP_RESEND_COOLDOWN_SECONDS } from '@constants';
+import { TEST_IDS } from '@constants/testIDs';
 import type { AuthScreenProps } from '@navigation/types';
 import { getErrorStatus } from '@services/ApiErrorMapper';
 import { useAuthStore } from '@store/authStore';
@@ -124,6 +125,7 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <AuthScreenLayout
+      testID={TEST_IDS.forceChange.screen}
       title="Set a New Password"
       subtitle={`For your security you must change your password before continuing. We've sent a verification code to ${maskEmail(
         email,
@@ -135,9 +137,11 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           name="currentPassword"
           render={({ field: { onChange, onBlur, value } }) => (
             <AuthInput
+              testID={TEST_IDS.forceChange.currentPasswordInput}
               leftIcon="lock-outline"
               rightIcon={secure ? 'eye-off-outline' : 'eye-outline'}
               onRightIconPress={toggleSecure}
+              rightIconTestID={TEST_IDS.forceChange.currentPasswordToggle}
               placeholder="Current Password"
               value={value}
               onChangeText={onChange}
@@ -163,6 +167,7 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           name="otp"
           render={({ field: { onChange, value } }) => (
             <AuthOtpInput
+              testID={TEST_IDS.forceChange.otpInput}
               value={value}
               onChange={onChange}
               errorMessage={errors.otp?.message}
@@ -173,9 +178,12 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
         />
         <View style={styles.resendRow}>
           {isRunning ? (
-            <Text style={styles.resendTimer}>Resend code in {secondsLeft}s</Text>
+            <Text testID={TEST_IDS.forceChange.resendTimer} style={styles.resendTimer}>
+              Resend code in {secondsLeft}s
+            </Text>
           ) : (
             <TouchableOpacity
+              testID={TEST_IDS.forceChange.resendButton}
               onPress={onResend}
               activeOpacity={0.7}
               disabled={isSending}
@@ -197,6 +205,7 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <AuthInput
               ref={newPasswordRef}
+              testID={TEST_IDS.forceChange.newPasswordInput}
               leftIcon="lock-plus-outline"
               placeholder="New Password"
               value={value}
@@ -228,9 +237,11 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <AuthInput
               ref={confirmRef}
+              testID={TEST_IDS.forceChange.confirmPasswordInput}
               leftIcon="lock-check-outline"
               rightIcon={confirmSecure ? 'eye-off-outline' : 'eye-outline'}
               onRightIconPress={toggleConfirm}
+              rightIconTestID={TEST_IDS.forceChange.confirmPasswordToggle}
               placeholder="Confirm New Password"
               value={value}
               onChangeText={onChange}
@@ -251,6 +262,7 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
       <Animated.View entering={FadeInDown.delay(360).duration(450)} style={styles.buttonWrap}>
         <AuthButton
+          testID={TEST_IDS.forceChange.submitButton}
           label="Update Password"
           onPress={() => void submit()}
           loading={isPending}
@@ -260,6 +272,7 @@ const ForceChangePasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
       <Animated.View entering={FadeInDown.delay(420).duration(450)} style={styles.footerRow}>
         <TouchableOpacity
+          testID={TEST_IDS.forceChange.differentAccountLink}
           onPress={() => void onUseDifferentAccount()}
           activeOpacity={0.7}
           accessibilityRole="button"

@@ -1,0 +1,23 @@
+# Maestro shared configuration for the FarmCalcy auth E2E suite.
+#
+# Flows are organised by area:
+#   login/            — sign-in happy + unhappy paths
+#   forgot-password/  — the full OTP-based reset journey
+#   session/          — logout, session restore, session expiry
+#   shared/           — reusable subflows (runFlow) used across the above
+#
+# Run everything:        maestro test maestro/
+# Run one area:          maestro test maestro/login
+# Run a single flow:     maestro test maestro/login/successful-login.yaml
+#
+# Override credentials at runtime:
+#   maestro test -e EMAIL=you@co.com -e PASSWORD=Secret123 maestro/login
+appId: com.farmcalcy.pcfms
+---
+# Default test data — override with `-e KEY=value`.
+- defineVariables:
+    EMAIL: ${EMAIL ?: 'rajesh@abcpoultry.com'}
+    PASSWORD: ${PASSWORD ?: 'Password123'}
+    WRONG_PASSWORD: ${WRONG_PASSWORD ?: 'WrongPass999'}
+    OTP: ${OTP ?: '123456'}
+    NEW_PASSWORD: ${NEW_PASSWORD ?: 'NewStr0ngPass'}

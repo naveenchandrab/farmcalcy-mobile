@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import ConfirmDialog from '@components/ConfirmDialog';
+import Loader from '@components/Loader';
+import StatusBadge from '@components/StatusBadge';
+import { ROLE_LABELS } from '@constants';
 import {
   useTheme,
   Typography,
@@ -9,14 +13,10 @@ import {
   Divider,
   Switch,
 } from '@design-system';
-import ConfirmDialog from '@components/ConfirmDialog';
-import Loader from '@components/Loader';
-import StatusBadge from '@components/StatusBadge';
-import { ROLE_LABELS } from '@constants';
 import type { SaasAdminScreenProps } from '@navigation/types';
 
-import { useToggleUserStatus, useUser } from '../hooks/useUsers';
 import RoleBadge from '../components/RoleBadge';
+import { useToggleUserStatus, useUser } from '../hooks/useUsers';
 
 type Props = SaasAdminScreenProps<'UserDetails'>;
 

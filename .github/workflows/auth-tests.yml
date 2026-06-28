@@ -1,0 +1,106 @@
+name: Auth Tests
+
+# Runs the authentication test suite (lint + type-check + Jest unit/integration
+# with coverage) on every push and PR that touches the mobile app.
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'farmcalcy-mobile/**'
+  pull_request:
+    paths:
+      - 'farmcalcy-mobile/**'
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref to save CI minutes.
+concurrency:
+  group: auth-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: farmcalcy-mobile
+
+jobs:
+  unit-integration:
+    name: Jest (unit + integration)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: farmcalcy-mobile/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Run tests with coverage (JUnit + lcov)
+        run: npm run test:ci
+        env:
+          # jest-junit output location (consumed by the report step below).
+          JEST_JUNIT_OUTPUT_DIR: reports
+          JEST_JUNIT_OUTPUT_NAME: junit.xml
+
+      - name: Publish test report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Jest Results
+          path: farmcalcy-mobile/reports/junit.xml
+          reporter: jest-junit
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: farmcalcy-mobile/coverage
+          retention-days: 14
+
+  # E2E is a separate, optional job: Maestro needs an emulator and a reachable
+  # backend, so it is gated behind a label / manual dispatch rather than running
+  # on every PR.
+  e2e-android:
+    name: Maestro E2E (Android)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    needs: unit-integration
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: farmcalcy-mobile/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Maestro
+        run: |
+          curl -Ls https://get.maestro.mobile.dev | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+      - name: Build & run E2E on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          arch: x86_64
+          working-directory: farmcalcy-mobile
+          script: |
+            npm run build:android:dev
+            maestro test maestro/ --format junit --output reports/maestro-junit.xml
+      - name: Upload Maestro report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: maestro-report
+          path: farmcalcy-mobile/reports

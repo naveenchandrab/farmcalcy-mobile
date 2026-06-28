@@ -30,6 +30,7 @@ module.exports = {
           '@config': './src/config',
           '@api': './src/api',
           '@design-system': './src/design-system',
+          '@test-utils': './src/test-utils',
         },
       },
     ],

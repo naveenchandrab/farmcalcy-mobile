@@ -19,6 +19,8 @@ interface AuthButtonProps {
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
+  /** Stable id for unit tests and Maestro E2E flows. */
+  testID?: string;
 }
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -31,7 +33,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
  *  - Pressed-state opacity animation (Reanimated)
  *  - Inline activity indicator while loading
  */
-const AuthButton: React.FC<AuthButtonProps> = ({ label, onPress, loading = false, disabled = false }) => {
+const AuthButton: React.FC<AuthButtonProps> = ({ label, onPress, loading = false, disabled = false, testID }) => {
   const opacity = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
@@ -56,6 +58,7 @@ const AuthButton: React.FC<AuthButtonProps> = ({ label, onPress, loading = false
 
   return (
     <AnimatedPressable
+      testID={testID}
       onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}

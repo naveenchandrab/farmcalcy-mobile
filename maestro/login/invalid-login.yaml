@@ -1,0 +1,24 @@
+# E2E: wrong credentials are rejected; the user stays on the Login screen and
+# a non-revealing error toast appears.
+appId: com.farmcalcy.pcfms
+name: Login - Invalid Credentials
+tags:
+  - auth
+  - login
+---
+- runFlow: ../shared/launch-fresh.yaml
+- tapOn:
+    id: "login-email-input"
+- inputText: ${EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${WRONG_PASSWORD}
+# No `hideKeyboard` (unreliable BACK gesture on Android); the button is kept
+# above the keyboard and is tappable directly.
+- tapOn:
+    id: "login-button"
+# The friendly, non-revealing copy from useLogin's 401 override.
+- assertVisible:
+    text: ".*email or password you entered is incorrect.*"
+- assertVisible:
+    id: "login-screen"

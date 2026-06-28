@@ -1,0 +1,27 @@
+# E2E: from Login, request a reset code and reach the OTP screen.
+appId: com.farmcalcy.pcfms
+name: Forgot Password - Request OTP
+tags:
+  - auth
+  - forgot-password
+---
+- runFlow: ../shared/launch-fresh.yaml
+- tapOn:
+    id: "login-forgot-password-link"
+# Wait out the push transition + entrance animation before asserting.
+- extendedWaitUntil:
+    visible:
+      id: "forgot-password-screen"
+    timeout: 10000
+- tapOn:
+    id: "forgot-password-email-input"
+- inputText: ${EMAIL}
+# No `hideKeyboard`: on Android it triggers a BACK gesture that pops this pushed
+# screen back to Login. The button is above the keyboard and tappable directly.
+- tapOn:
+    id: "forgot-password-button"
+# Backend always responds 200 (enumeration-safe) → OTP screen appears.
+- extendedWaitUntil:
+    visible:
+      id: "otp-screen"
+    timeout: 10000

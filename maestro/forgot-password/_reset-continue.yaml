@@ -1,0 +1,39 @@
+# Continuation fragment: assumes the app is already on the OTP screen (run
+# `request-otp.yaml` first). Enters the supplied ${OTP}, sets a new password and
+# verifies the terminal success → Login. Kept separate so an orchestrator can
+# capture the real emailed OTP between requesting it and entering it.
+#
+#   maestro test -e OTP=<captured> maestro/forgot-password/_reset-continue.yaml
+appId: com.farmcalcy.pcfms
+env:
+  NEW_PASSWORD: "NewStr0ngPass"
+---
+- assertVisible:
+    id: "otp-screen"
+- tapOn:
+    id: "otp-input-0"
+- inputText: ${OTP}
+# A complete, valid code auto-advances to the reset screen.
+- extendedWaitUntil:
+    visible:
+      id: "reset-password-screen"
+    timeout: 10000
+- tapOn:
+    id: "reset-password-new-input"
+- inputText: ${NEW_PASSWORD}
+- tapOn:
+    id: "reset-password-confirm-input"
+- inputText: ${NEW_PASSWORD}
+# AuthScreenLayout keeps the submit button scrolled above the keyboard.
+- tapOn:
+    id: "reset-password-button"
+- extendedWaitUntil:
+    visible:
+      id: "reset-password-success"
+    timeout: 10000
+- tapOn:
+    id: "reset-password-success-cta"
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 10000

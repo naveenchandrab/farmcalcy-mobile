@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
+import { View } from 'react-native';
+
 import Chip from './Chip';
 
 const meta: Meta<typeof Chip> = {

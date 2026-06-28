@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import ConfirmDialog from './ConfirmDialog';
+import { View } from 'react-native';
+
 import Button from '../Button/Button';
+
+import ConfirmDialog from './ConfirmDialog';
+
 
 const meta: Meta<typeof ConfirmDialog> = {
   title: 'Design System/ConfirmDialog',

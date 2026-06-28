@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -23,6 +23,10 @@ interface AuthScreenLayoutProps {
   subtitle?: string;
   /** Shows a back chevron in the top-left when provided. */
   onBack?: () => void;
+  /** Stable id applied to the screen root for tests / E2E. */
+  testID?: string;
+  /** Stable id for the back button. */
+  backTestID?: string;
   children: React.ReactNode;
 }
 
@@ -43,17 +47,42 @@ const AuthScreenLayout: React.FC<AuthScreenLayoutProps> = ({
   title,
   subtitle,
   onBack,
+  testID,
+  backTestID,
   children,
 }) => {
   const insets = useSafeAreaInsets();
+  const scrollRef = useRef<ScrollView>(null);
+
+  // When the keyboard opens, scroll the form so the focused field and the
+  // submit button (anchored at the bottom of the content) are revealed above
+  // the keyboard. With Android `adjustResize` the viewport shrinks but the
+  // ScrollView does not auto-scroll, so the bottom-most button would otherwise
+  // stay hidden behind the keyboard.
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const sub = Keyboard.addListener(showEvent, () => {
+      // Defer to the next frame so the resize has settled before scrolling.
+      requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    });
+    return () => sub.remove();
+  }, []);
 
   return (
     <KeyboardAvoidingView
+      testID={testID}
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      // Android 15 (API 35) forces edge-to-edge, so the system no longer honours
+      // `adjustResize` — the keyboard overlays the content instead of shrinking
+      // it. KeyboardAvoidingView must therefore actively shrink the view on
+      // Android too ('height'), not just iOS ('padding'); the `scrollToEnd`
+      // effect then lifts the submit button above the keyboard.
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       {onBack && (
         <TouchableOpacity
+          testID={backTestID}
           onPress={onBack}
           activeOpacity={0.7}
           accessibilityRole="button"
@@ -67,6 +96,7 @@ const AuthScreenLayout: React.FC<AuthScreenLayoutProps> = ({
 
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView
+          ref={scrollRef}
           style={styles.flex}
           contentContainerStyle={[
             styles.content,
@@ -76,6 +106,7 @@ const AuthScreenLayout: React.FC<AuthScreenLayoutProps> = ({
             },
           ]}
           keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}
         >
           <Animated.View
@@ -126,7 +157,12 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   body: {
-    flex: 1,
+    // Intentionally NOT flex:1. Several screens place a `spacer: { flex: 1 }`
+    // after their submit button to push it down on tall screens; if this body
+    // stretched, that spacer would expand to keep the content exactly the
+    // viewport height, making the ScrollView un-scrollable. Leaving the body at
+    // its natural height lets the content grow past the (keyboard-shrunk)
+    // viewport so `scrollToEnd` can lift the button above the keyboard.
   },
 });
 

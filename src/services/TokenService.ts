@@ -1,7 +1,7 @@
 import * as Keychain from 'react-native-keychain';
 
-import { KEYCHAIN_SERVICE } from '@constants';
 import type { AuthTokens } from '@app-types';
+import { KEYCHAIN_SERVICE } from '@constants';
 
 /**
  * The "username" field in Keychain is repurposed as a fixed key.

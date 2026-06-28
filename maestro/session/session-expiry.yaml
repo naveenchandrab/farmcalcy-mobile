@@ -1,0 +1,35 @@
+# E2E: when both the access AND refresh tokens are invalid/expired, the next
+# authenticated request 401s, the refresh fails, tokens are cleared and the user
+# is redirected to Login (auto-logout).
+#
+# Simulating expiry on a real device needs backend cooperation. Pick ONE:
+#   1. Point the app at a staging backend with a deliberately short token TTL,
+#      then `- waitForAnimationToEnd` / sleep past it before acting.
+#   2. Use a backend test hook to revoke the session for EMAIL mid-flow.
+#   3. Run against a mock server (see docs/AUTH_TESTING.md → "API Mocking") that
+#      returns 401 on the first authenticated call and 401 on /auth/refresh.
+#
+# This flow assumes option 2/3: the session is revoked out-of-band after login,
+# so the next navigation triggers the auto-logout path.
+appId: com.farmcalcy.pcfms
+name: Session - Expiry Auto Logout
+tags:
+  - auth
+  - session
+---
+- runFlow: ../shared/launch-fresh.yaml
+- runFlow: ../shared/login.yaml
+- extendedWaitUntil:
+    notVisible:
+      id: "login-screen"
+    timeout: 10000
+# --- Revoke the session here (backend hook / mock) before continuing. ---
+# Trigger any authenticated action; the 401 → failed refresh → clearTokens path
+# redirects back to Login.
+- tapOn:
+    id: "logout-button"
+    optional: true
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 15000

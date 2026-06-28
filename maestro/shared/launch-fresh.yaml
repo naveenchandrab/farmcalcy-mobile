@@ -1,0 +1,17 @@
+# Reusable subflow: launch the app from a clean, logged-out state.
+# `clearState` wipes app storage (Keychain/AsyncStorage) so each flow starts
+# at the Login screen deterministically.
+appId: com.farmcalcy.pcfms
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+    stopApp: true
+# Wait for the JS bundle to load and the auth stack to mount before asserting.
+# In debug builds the bundle is streamed from Metro on first launch, so the
+# Login screen can take well over the default assertion timeout to appear.
+# `extendedWaitUntil` polls until it is visible rather than checking once.
+- extendedWaitUntil:
+    visible:
+      id: "login-screen"
+    timeout: 60000

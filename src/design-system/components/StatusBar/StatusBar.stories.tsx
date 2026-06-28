@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { View } from 'react-native';
 import React from 'react';
-import AppStatusBar from './StatusBar';
+import { View } from 'react-native';
+
 import Typography from '../Typography/Typography';
+
+import AppStatusBar from './StatusBar';
+
 
 const meta: Meta<typeof AppStatusBar> = {
   title: 'Design System/AppStatusBar',

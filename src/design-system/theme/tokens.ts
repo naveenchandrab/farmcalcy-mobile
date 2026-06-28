@@ -3,10 +3,10 @@
  * Components consume these through `useTheme()`, never importing raw palette values.
  */
 import { semanticColors } from '../tokens/colors';
-import { fontFamily, fontSize, fontWeight, letterSpacing, lineHeight, textPresets } from '../tokens/typography';
-import { spacing, layout } from '../tokens/spacing';
 import { radius } from '../tokens/radius';
 import { shadows } from '../tokens/shadows';
+import { spacing, layout } from '../tokens/spacing';
+import { fontFamily, fontSize, fontWeight, letterSpacing, lineHeight, textPresets } from '../tokens/typography';
 import { zIndex } from '../tokens/zIndex';
 
 const sharedTokens = {

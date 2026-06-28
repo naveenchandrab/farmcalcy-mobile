@@ -1,0 +1,19 @@
+# E2E: a valid email + password signs the user in and lands on the app home.
+#
+# Prereq: the backend is reachable and a seeded user matching EMAIL/PASSWORD
+# exists with mustChangePassword = false.
+appId: com.farmcalcy.pcfms
+name: Login - Successful
+tags:
+  - auth
+  - login
+  - smoke
+---
+- runFlow: ../shared/launch-fresh.yaml
+- runFlow: ../shared/login.yaml
+# After a normal login the conditional root stack swaps to the app.
+# The Login screen must disappear (we are no longer on the auth stack).
+- extendedWaitUntil:
+    notVisible:
+      id: "login-screen"
+    timeout: 10000

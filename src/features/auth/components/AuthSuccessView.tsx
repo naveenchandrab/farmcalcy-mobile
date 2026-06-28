@@ -13,6 +13,10 @@ interface AuthSuccessViewProps {
   /** Primary CTA label (e.g. "Back to Login"). */
   ctaLabel: string;
   onCtaPress: () => void;
+  /** Stable id applied to the root for tests / E2E. */
+  testID?: string;
+  /** Stable id for the CTA button. */
+  ctaTestID?: string;
 }
 
 /**
@@ -25,11 +29,14 @@ const AuthSuccessView: React.FC<AuthSuccessViewProps> = ({
   message,
   ctaLabel,
   onCtaPress,
+  testID,
+  ctaTestID,
 }) => {
   const insets = useSafeAreaInsets();
 
   return (
     <View
+      testID={testID}
       style={[
         styles.container,
         { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 },
@@ -49,7 +56,7 @@ const AuthSuccessView: React.FC<AuthSuccessViewProps> = ({
         </Animated.Text>
       </View>
 
-      <AuthButton label={ctaLabel} onPress={onCtaPress} />
+      <AuthButton testID={ctaTestID} label={ctaLabel} onPress={onCtaPress} />
     </View>
   );
 };

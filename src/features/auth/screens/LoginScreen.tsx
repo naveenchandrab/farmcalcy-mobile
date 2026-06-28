@@ -18,6 +18,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { STORAGE_KEY_REMEMBERED_EMAIL } from '@constants';
+import { TEST_IDS } from '@constants/testIDs';
 import type { AuthScreenProps } from '@navigation/types';
 
 import AuthButton from '../components/AuthButton';
@@ -38,6 +39,20 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { mutate: login, isPending } = useLogin();
   const [secure, setSecure] = useState(true);
   const passwordRef = useRef<TextInput>(null);
+  const scrollRef = useRef<ScrollView>(null);
+
+  // Keep the focused field + the Login button above the soft keyboard. Android
+  // 15 (API 35) enforces edge-to-edge, so `adjustResize` no longer shrinks the
+  // window — the KeyboardAvoidingView must do it ('height') and we scroll the
+  // content up when the keyboard appears.
+  useEffect(() => {
+    const showEvent =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const sub = Keyboard.addListener(showEvent, () => {
+      requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
+    });
+    return () => sub.remove();
+  }, []);
 
   const {
     control,
@@ -103,11 +118,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
+      testID={TEST_IDS.login.screen}
       style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <ScrollView
+          ref={scrollRef}
           style={styles.flex}
           contentContainerStyle={[
             styles.content,
@@ -134,6 +151,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <AuthInput
+                  testID={TEST_IDS.login.emailInput}
                   leftIcon="email-outline"
                   placeholder="Email Address"
                   value={value}
@@ -165,9 +183,11 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               render={({ field: { onChange, onBlur, value } }) => (
                 <AuthInput
                   ref={passwordRef}
+                  testID={TEST_IDS.login.passwordInput}
                   leftIcon="lock-outline"
                   rightIcon={secure ? 'eye-off-outline' : 'eye-outline'}
                   onRightIconPress={toggleSecure}
+                  rightIconTestID={TEST_IDS.login.passwordToggle}
                   placeholder="Password"
                   value={value}
                   onChangeText={onChange}
@@ -195,10 +215,16 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               control={control}
               name="rememberMe"
               render={({ field: { onChange, value } }) => (
-                <Checkbox value={value ?? false} onValueChange={onChange} label="Remember me" />
+                <Checkbox
+                  testID={TEST_IDS.login.rememberMe}
+                  value={value ?? false}
+                  onValueChange={onChange}
+                  label="Remember me"
+                />
               )}
             />
             <TouchableOpacity
+              testID={TEST_IDS.login.forgotPasswordLink}
               onPress={goToForgot}
               activeOpacity={0.7}
               accessibilityRole="button"
@@ -212,7 +238,12 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
             entering={FadeInDown.delay(460).duration(ENTER_DURATION)}
             style={styles.loginWrap}
           >
-            <AuthButton label="Login" onPress={() => void submit()} loading={isPending} />
+            <AuthButton
+              testID={TEST_IDS.login.submitButton}
+              label="Login"
+              onPress={() => void submit()}
+              loading={isPending}
+            />
           </Animated.View>
 
           <Animated.View
@@ -221,6 +252,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           >
             <Text style={styles.registerMuted}>Don&apos;t have an account? </Text>
             <TouchableOpacity
+              testID={TEST_IDS.login.registerLink}
               onPress={goToRegister}
               activeOpacity={0.7}
               accessibilityRole="button"

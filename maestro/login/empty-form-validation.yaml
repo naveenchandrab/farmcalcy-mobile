@@ -1,0 +1,17 @@
+# E2E: submitting an empty form surfaces inline validation and never calls the API.
+appId: com.farmcalcy.pcfms
+name: Login - Empty Form Validation
+tags:
+  - auth
+  - login
+  - validation
+---
+- runFlow: ../shared/launch-fresh.yaml
+- tapOn:
+    id: "login-button"
+- assertVisible:
+    text: "Email is required"
+- assertVisible:
+    text: "Password is required"
+- assertVisible:
+    id: "login-screen"

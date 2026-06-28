@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import type { ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useTheme } from '../../theme';
@@ -41,8 +42,8 @@ const IconButton: React.FC<IconButtonProps> = ({
   const iconColor = color ?? (disabled ? colors.textDisabled : colors.textSecondary);
 
   const bg = (): string => {
-    if (variant === 'soft') return colors.surfaceVariant;
-    if (variant === 'outlined') return 'transparent';
+    if (variant === 'soft') {return colors.surfaceVariant;}
+    if (variant === 'outlined') {return 'transparent';}
     return 'transparent';
   };
 

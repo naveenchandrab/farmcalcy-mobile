@@ -17,6 +17,8 @@ export interface AuthInputProps extends TextInputProps {
   /** Trailing MaterialCommunityIcons glyph name (e.g. password reveal). */
   rightIcon?: string;
   onRightIconPress?: () => void;
+  /** Stable id for the trailing toggle (e.g. password reveal) in tests / E2E. */
+  rightIconTestID?: string;
   /** Inline validation message rendered below the field. */
   errorMessage?: string;
 }
@@ -35,6 +37,7 @@ const AuthInput = forwardRef<TextInput, AuthInputProps>(
       leftIcon,
       rightIcon,
       onRightIconPress,
+      rightIconTestID,
       errorMessage,
       onFocus,
       onBlur,
@@ -89,10 +92,12 @@ const AuthInput = forwardRef<TextInput, AuthInputProps>(
 
           {rightIcon && (
             <TouchableOpacity
+              testID={rightIconTestID}
               onPress={onRightIconPress}
               disabled={!onRightIconPress}
               hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
               accessibilityRole="button"
+              accessibilityLabel="Toggle password visibility"
               style={styles.rightIcon}
             >
               <Icon name={rightIcon} size={22} color={AUTH_COLORS.placeholder} />

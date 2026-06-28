@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import type { User, UserStatus } from '@app-types';
 import { extractErrorMessage } from '@services/ApiErrorMapper';
 import { showError, showSuccess } from '@utils/toast';
-import type { User, UserStatus } from '@app-types';
 
 import { usersService } from '../services/users.service';
 import type {

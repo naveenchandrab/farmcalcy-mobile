@@ -153,7 +153,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(
           )}
           {maxLength && (
             <Text style={[styles.charCount, { color: colors.textDisabled, fontSize: font.size.xs }]}>
-              {(value as string).length}/{maxLength}
+              {(value).length}/{maxLength}
             </Text>
           )}
         </View>

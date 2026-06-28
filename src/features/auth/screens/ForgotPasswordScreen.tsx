@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Keyboard, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { TEST_IDS } from '@constants/testIDs';
 import type { AuthScreenProps } from '@navigation/types';
 
 import AuthButton from '../components/AuthButton';
@@ -54,6 +55,8 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <AuthScreenLayout
+      testID={TEST_IDS.forgotPassword.screen}
+      backTestID={TEST_IDS.forgotPassword.backButton}
       title="Forgot Password?"
       subtitle="Enter the email linked to your account and we'll send you a one-time code to reset your password."
       onBack={goBack}
@@ -64,6 +67,7 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <AuthInput
+              testID={TEST_IDS.forgotPassword.emailInput}
               leftIcon="email-outline"
               placeholder="Email Address"
               value={value}
@@ -88,7 +92,12 @@ const ForgotPasswordScreen: React.FC<Props> = ({ navigation }) => {
         entering={FadeInDown.delay(200).duration(450)}
         style={styles.buttonWrap}
       >
-        <AuthButton label="Send OTP" onPress={() => void submit()} loading={isPending} />
+        <AuthButton
+          testID={TEST_IDS.forgotPassword.submitButton}
+          label="Send OTP"
+          onPress={() => void submit()}
+          loading={isPending}
+        />
       </Animated.View>
 
       <View style={styles.spacer} />

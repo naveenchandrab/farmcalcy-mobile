@@ -61,7 +61,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   const displayText = value ? formatDate(value, mode) : null;
 
   const handlePress = () => {
-    if (disabled) return;
+    if (disabled) {return;}
     if (Platform.OS === 'android') {
       // On Android, use the native picker directly via the package
       setOpen(true);

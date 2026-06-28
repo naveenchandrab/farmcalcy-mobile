@@ -3,8 +3,8 @@ import { Appearance } from 'react-native';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-import { STORAGE_KEY_THEME } from '@constants';
 import type { ActiveTheme, ThemeMode } from '@app-types';
+import { STORAGE_KEY_THEME } from '@constants';
 
 interface ThemeState {
   /** User's explicit preference, or 'system' to follow OS setting. */

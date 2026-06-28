@@ -1,9 +1,9 @@
 import React from 'react';
 
+import type { UserRole } from '@app-types';
+import { ROLE_LABELS } from '@constants';
 import { Select } from '@design-system';
 import type { SelectOption } from '@design-system';
-import { ROLE_LABELS } from '@constants';
-import type { UserRole } from '@app-types';
 
 interface RoleSelectorProps {
   value: UserRole;

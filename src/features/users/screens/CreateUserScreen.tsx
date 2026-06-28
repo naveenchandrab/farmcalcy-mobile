@@ -1,20 +1,20 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useTheme, Typography } from '@design-system';
+import type { UserRole } from '@app-types';
 import Button from '@components/Button';
 import Input from '@components/Input';
 import KeyboardAvoidingWrapper from '@components/KeyboardAvoidingWrapper';
+import { useTheme, Typography } from '@design-system';
 import type { SaasAdminScreenProps } from '@navigation/types';
-import type { UserRole } from '@app-types';
 
+import RoleSelector from '../components/RoleSelector';
 import { useCreateUser } from '../hooks/useUsers';
 import { createUserSchema } from '../types';
 import type { CreateUserFormValues } from '../types';
-import RoleSelector from '../components/RoleSelector';
 
 type Props = SaasAdminScreenProps<'CreateUser'>;
 

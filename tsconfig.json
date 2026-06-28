@@ -46,7 +46,9 @@
       "@api": ["src/api"],
       "@api/*": ["src/api/*"],
       "@design-system": ["src/design-system/index.ts"],
-      "@design-system/*": ["src/design-system/*"]
+      "@design-system/*": ["src/design-system/*"],
+      "@test-utils": ["src/test-utils"],
+      "@test-utils/*": ["src/test-utils/*"]
     }
   },
   "include": ["src", "App.tsx", "index.js", "*.d.ts"],

@@ -1,0 +1,22 @@
+# E2E: a logged-in session survives an app restart (tokens restored from the
+# secure store at startup — no re-login required).
+appId: com.farmcalcy.pcfms
+name: Session - Restore On Restart
+tags:
+  - auth
+  - session
+  - smoke
+---
+- runFlow: ../shared/launch-fresh.yaml
+- runFlow: ../shared/login.yaml
+- extendedWaitUntil:
+    notVisible:
+      id: "login-screen"
+    timeout: 10000
+# Relaunch WITHOUT clearing state — the store's initialize() should restore
+# the session and skip the Login screen entirely.
+- launchApp:
+    clearState: false
+    stopApp: true
+- assertNotVisible:
+    id: "login-screen"

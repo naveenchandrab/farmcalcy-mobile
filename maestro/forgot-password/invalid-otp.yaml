@@ -1,0 +1,30 @@
+# E2E: an incorrect OTP is rejected up-front on the OTP screen — the user sees
+# an inline error and is NOT advanced to the password-reset screen.
+#
+# The OTP screen validates the code via `/otp/verify` (which does NOT consume
+# it) before navigating, so a wrong code never reaches the reset form.
+#
+# Prereq: WRONG_OTP is a 6-digit code that is NOT the one issued to EMAIL.
+appId: com.farmcalcy.pcfms
+name: Forgot Password - Invalid OTP
+tags:
+  - auth
+  - forgot-password
+env:
+  WRONG_OTP: "000000"
+---
+- runFlow: request-otp.yaml
+# Enter a wrong (but well-formed) code. Server validation rejects it.
+- tapOn:
+    id: "otp-input-0"
+- inputText: ${WRONG_OTP}
+# The inline error appears and the user STAYS on the OTP screen.
+- extendedWaitUntil:
+    visible:
+      text: ".*code you entered is incorrect.*"
+    timeout: 10000
+- assertVisible:
+    id: "otp-screen"
+# Crucially, the reset-password screen must NOT be reached with a bad code.
+- assertNotVisible:
+    id: "reset-password-screen"

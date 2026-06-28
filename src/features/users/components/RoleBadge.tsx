@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Typography } from '@design-system';
-import { ROLE_LABELS } from '@constants';
 import type { UserRole } from '@app-types';
+import { ROLE_LABELS } from '@constants';
+import { Typography } from '@design-system';
 
 interface RoleBadgeProps {
   role: UserRole;

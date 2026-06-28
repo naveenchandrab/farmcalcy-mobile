@@ -1,18 +1,21 @@
 import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { useTheme, Typography, Chip } from '@design-system';
+import type { User } from '@app-types';
 import EmptyState from '@components/EmptyState';
 import Loader from '@components/Loader';
 import SearchBar from '@components/SearchBar';
+import { TEST_IDS } from '@constants/testIDs';
+import { useTheme, Typography, Chip } from '@design-system';
+import { useLogout } from '@features/auth/hooks/useLogout';
 import type { SaasAdminScreenProps } from '@navigation/types';
-import type { User } from '@app-types';
 
+import UserListItem from '../components/UserListItem';
 import { useUserList } from '../hooks/useUsers';
 import type { UserRoleFilter, UserStatusFilter } from '../types';
-import UserListItem from '../components/UserListItem';
 
 type Props = SaasAdminScreenProps<'UserList'>;
 
@@ -45,6 +48,8 @@ const STATUS_LABELS: Record<UserStatusFilter, string> = {
  */
 const UserListScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -83,10 +88,23 @@ const UserListScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View style={[styles.screen, { backgroundColor: colors.background }]}>
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.primary }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Icon name="arrow-left" size={24} color="#fff" />
+      {/* Header — pad for the status bar so its controls aren't drawn under it. */}
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: colors.primary, paddingTop: insets.top, height: 56 + insets.top },
+        ]}
+      >
+        <TouchableOpacity
+          testID={TEST_IDS.session.logoutButton}
+          accessibilityRole="button"
+          accessibilityLabel="Log out"
+          disabled={isLoggingOut}
+          onPress={() => logout()}
+          style={styles.headerBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Icon name="logout" size={24} color="#fff" />
         </TouchableOpacity>
         <Typography preset="headingSm" style={styles.headerTitle}>Users</Typography>
         <TouchableOpacity onPress={() => navigation.navigate('CreateUser')} style={styles.headerBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>

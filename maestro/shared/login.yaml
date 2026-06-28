@@ -1,0 +1,15 @@
+# Reusable subflow: perform a successful login with the provided credentials.
+# Expects EMAIL + PASSWORD in the environment (see maestro/config.yaml).
+appId: com.farmcalcy.pcfms
+---
+- tapOn:
+    id: "login-email-input"
+- inputText: ${EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${PASSWORD}
+# No `hideKeyboard`: on Android it issues a BACK gesture that is unreliable on
+# the root screen (it can background the app). The Login button is kept above
+# the keyboard by the screen's keyboard-avoidance, so we tap it directly.
+- tapOn:
+    id: "login-button"

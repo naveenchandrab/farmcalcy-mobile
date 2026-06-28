@@ -5,6 +5,7 @@ import type { TextInput} from 'react-native';
 import { Keyboard, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { TEST_IDS } from '@constants/testIDs';
 import type { AuthScreenProps } from '@navigation/types';
 import { getErrorStatus } from '@services/ApiErrorMapper';
 import { showError } from '@utils/toast';
@@ -96,6 +97,8 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
   if (succeeded) {
     return (
       <AuthSuccessView
+        testID={TEST_IDS.resetPassword.successView}
+        ctaTestID={TEST_IDS.resetPassword.successCta}
         title="Password Reset"
         message="Your password has been changed successfully. Please log in with your new password."
         ctaLabel="Back to Login"
@@ -106,6 +109,8 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
 
   return (
     <AuthScreenLayout
+      testID={TEST_IDS.resetPassword.screen}
+      backTestID={TEST_IDS.resetPassword.backButton}
       title="Reset Password"
       subtitle="Create a new password. Make it strong and don't reuse an old one."
       onBack={goBack}
@@ -116,9 +121,11 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           name="newPassword"
           render={({ field: { onChange, onBlur, value } }) => (
             <AuthInput
+              testID={TEST_IDS.resetPassword.newPasswordInput}
               leftIcon="lock-outline"
               rightIcon={secure ? 'eye-off-outline' : 'eye-outline'}
               onRightIconPress={toggleSecure}
+              rightIconTestID={TEST_IDS.resetPassword.newPasswordToggle}
               placeholder="New Password"
               value={value}
               onChangeText={onChange}
@@ -152,9 +159,11 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
           render={({ field: { onChange, onBlur, value } }) => (
             <AuthInput
               ref={confirmRef}
+              testID={TEST_IDS.resetPassword.confirmPasswordInput}
               leftIcon="lock-check-outline"
               rightIcon={confirmSecure ? 'eye-off-outline' : 'eye-outline'}
               onRightIconPress={toggleConfirm}
+              rightIconTestID={TEST_IDS.resetPassword.confirmPasswordToggle}
               placeholder="Confirm Password"
               value={value}
               onChangeText={onChange}
@@ -178,6 +187,7 @@ const ResetPasswordScreen: React.FC<Props> = ({ navigation, route }) => {
         style={styles.buttonWrap}
       >
         <AuthButton
+          testID={TEST_IDS.resetPassword.submitButton}
           label="Reset Password"
           onPress={() => void submit()}
           loading={isPending}
