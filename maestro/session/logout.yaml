@@ -1,8 +1,8 @@
 # E2E: logging out clears the session and returns the user to Login.
 #
-# Prereq: the post-login home screen exposes a control with testID
-# "logout-button" (see TEST_IDS.session.logoutButton). Adjust the navigation
-# steps below to reach it for your role's home screen.
+# Logout lives in the hamburger drawer (not the home screen). We open the drawer
+# via "open-menu-button" (TEST_IDS.session.openMenuButton) then tap
+# "logout-button" (TEST_IDS.session.logoutButton).
 appId: com.farmcalcy.pcfms
 name: Session - Logout
 tags:
@@ -15,6 +15,9 @@ tags:
     notVisible:
       id: "login-screen"
     timeout: 10000
+# Open the hamburger drawer, then log out from it.
+- tapOn:
+    id: "open-menu-button"
 - tapOn:
     id: "logout-button"
 # Back to the auth stack.

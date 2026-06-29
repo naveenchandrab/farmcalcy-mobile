@@ -2,17 +2,32 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import DrawerHeaderBar from '@navigation/DrawerHeaderBar';
+import ScreenHeader from '@navigation/ScreenHeader';
 
 interface ComingSoonScreenProps {
   title: string;
   icon: string;
+  /** Optional right-side header action (e.g. `plus` to add a record). */
+  rightIcon?: string;
+  rightLabel?: string;
+  onRightPress?: () => void;
 }
 
 /** Placeholder body for tabs/sections whose screens are not built yet. */
-const ComingSoonScreen: React.FC<ComingSoonScreenProps> = ({ title, icon }) => (
+const ComingSoonScreen: React.FC<ComingSoonScreenProps> = ({
+  title,
+  icon,
+  rightIcon,
+  rightLabel,
+  onRightPress,
+}) => (
   <View style={styles.root}>
-    <DrawerHeaderBar title={title} />
+    <ScreenHeader
+      title={title}
+      rightIcon={rightIcon}
+      rightLabel={rightLabel}
+      onRightPress={onRightPress}
+    />
     <View style={styles.body}>
       <View style={styles.iconCircle}>
         <Icon name={icon} size={40} color="#2E7D32" />

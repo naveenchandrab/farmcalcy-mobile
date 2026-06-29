@@ -8,9 +8,7 @@ import type { User } from '@app-types';
 import EmptyState from '@components/EmptyState';
 import Loader from '@components/Loader';
 import SearchBar from '@components/SearchBar';
-import { TEST_IDS } from '@constants/testIDs';
 import { useTheme, Typography, Chip } from '@design-system';
-import { useLogout } from '@features/auth/hooks/useLogout';
 import type { SaasAdminScreenProps } from '@navigation/types';
 
 import UserListItem from '../components/UserListItem';
@@ -19,7 +17,13 @@ import type { UserRoleFilter, UserStatusFilter } from '../types';
 
 type Props = SaasAdminScreenProps<'UserList'>;
 
-const ROLE_FILTERS: UserRoleFilter[] = ['ALL', 'SAAS_ADMIN', 'TENANT_ADMIN', 'SUPERVISOR', 'FARMER'];
+const ROLE_FILTERS: UserRoleFilter[] = [
+  'ALL',
+  'SAAS_ADMIN',
+  'TENANT_ADMIN',
+  'SUPERVISOR',
+  'FARMER',
+];
 const STATUS_FILTERS: UserStatusFilter[] = ['ALL', 'ACTIVE', 'INACTIVE', 'SUSPENDED'];
 
 const ROLE_LABELS: Record<UserRoleFilter, string> = {
@@ -49,7 +53,6 @@ const STATUS_LABELS: Record<UserStatusFilter, string> = {
 const UserListScreen: React.FC<Props> = ({ navigation }) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -96,18 +99,26 @@ const UserListScreen: React.FC<Props> = ({ navigation }) => {
         ]}
       >
         <TouchableOpacity
-          testID={TEST_IDS.session.logoutButton}
           accessibilityRole="button"
-          accessibilityLabel="Log out"
-          disabled={isLoggingOut}
-          onPress={() => logout()}
+          accessibilityLabel="Go back"
+          onPress={() =>
+            navigation.canGoBack()
+              ? navigation.goBack()
+              : navigation.navigate('DashboardTab' as never)
+          }
           style={styles.headerBtn}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Icon name="logout" size={24} color="#fff" />
+          <Icon name="arrow-left" size={24} color="#fff" />
         </TouchableOpacity>
-        <Typography preset="headingSm" style={styles.headerTitle}>Users</Typography>
-        <TouchableOpacity onPress={() => navigation.navigate('CreateUser')} style={styles.headerBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Typography preset="headingSm" style={styles.headerTitle}>
+          Users
+        </Typography>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('CreateUser')}
+          style={styles.headerBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Icon name="plus" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -168,9 +179,7 @@ const UserListScreen: React.FC<Props> = ({ navigation }) => {
           data={data?.items ?? []}
           keyExtractor={item => item.id}
           renderItem={renderItem}
-          contentContainerStyle={
-            (data?.items ?? []).length === 0 ? styles.flex : undefined
-          }
+          contentContainerStyle={(data?.items ?? []).length === 0 ? styles.flex : undefined}
           ListEmptyComponent={
             <EmptyState
               icon="account-group-outline"

@@ -5,6 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+import { TEST_IDS } from '@constants/testIDs';
+
 // ─── Palette (sampled from saas-admin-dashboard.png) ─────────────────────────
 const HEADER_TOP = '#1E8038';
 const HEADER_BOTTOM = '#14672A';
@@ -109,6 +111,7 @@ const SaasDashboardScreen: React.FC = () => {
 
         <View style={styles.headerTop}>
           <TouchableOpacity
+            testID={TEST_IDS.session.openMenuButton}
             hitSlop={hit}
             style={styles.menuBtn}
             accessibilityRole="button"

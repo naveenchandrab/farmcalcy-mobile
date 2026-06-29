@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 
 import ComingSoonScreen from '@features/dashboard/screens/ComingSoonScreen';
+import { showInfo } from '@utils/toast';
 
 import { createRoleNavigator } from './roleNavigation';
 import type { MenuItem, TabConfig } from './roleNavigation';
@@ -34,9 +35,23 @@ const UsersStackNavigator: React.FC = () => (
 );
 
 const TenantsTab: React.FC = () => (
-  <ComingSoonScreen title="Tenants" icon="office-building-outline" />
+  <ComingSoonScreen
+    title="Tenants"
+    icon="office-building-outline"
+    rightIcon="plus"
+    rightLabel="Add tenant"
+    onRightPress={() => showInfo('Add Tenant — coming soon')}
+  />
 );
-const ReportsTab: React.FC = () => <ComingSoonScreen title="Reports" icon="chart-box-outline" />;
+const ReportsTab: React.FC = () => (
+  <ComingSoonScreen
+    title="Reports"
+    icon="chart-box-outline"
+    rightIcon="calendar-blank-outline"
+    rightLabel="Pick date range"
+    onRightPress={() => showInfo('Date range — coming soon')}
+  />
+);
 const MoreTab: React.FC = () => (
   <ComingSoonScreen title="More" icon="dots-horizontal-circle-outline" />
 );

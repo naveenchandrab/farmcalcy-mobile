@@ -61,6 +61,7 @@ export const TEST_IDS = {
     differentAccountLink: 'force-change-different-account',
   },
   session: {
+    openMenuButton: 'open-menu-button',
     logoutButton: 'logout-button',
   },
 } as const;

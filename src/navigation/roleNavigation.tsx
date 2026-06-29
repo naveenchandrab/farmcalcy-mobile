@@ -14,9 +14,11 @@ import {
 import React, { Suspense } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import type { ImageSourcePropType } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Loader from '@components/Loader';
+import { TEST_IDS } from '@constants/testIDs';
 import { useAuthStore } from '@store/authStore';
 
 const GREEN = '#1E7D34';
@@ -71,6 +73,7 @@ const activeTabName = (state: DrawerContentComponentProps['state']): string | nu
 const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...props }) => {
   const { navigation, state } = props;
   const user = useAuthStore(s => s.user);
+  const insets = useSafeAreaInsets();
   const active = activeTabName(state);
 
   const go = (target: string) => {
@@ -79,7 +82,10 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
   };
 
   return (
-    <DrawerContentScrollView {...props} contentContainerStyle={styles.drawerContent}>
+    <DrawerContentScrollView
+      {...props}
+      contentContainerStyle={[styles.drawerContent, { paddingBottom: insets.bottom + 24 }]}
+    >
       {/* Brand */}
       <View style={styles.brand}>
         <Image
@@ -138,6 +144,9 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
 
       {/* Logout */}
       <TouchableOpacity
+        testID={TEST_IDS.session.logoutButton}
+        accessibilityRole="button"
+        accessibilityLabel="Log out"
         style={styles.logout}
         activeOpacity={0.7}
         onPress={() => {
@@ -159,38 +168,43 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
 /** Builds a role's reusable bottom-tab navigator from its tab config. */
 const buildTabs = (tabs: readonly TabConfig[]): React.FC => {
   const Tab = createBottomTabNavigator();
-  const TabsComponent: React.FC = () => (
-    <Suspense fallback={<Loader />}>
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarActiveTintColor: ACTIVE_TINT,
-          tabBarInactiveTintColor: INACTIVE_TINT,
-          tabBarLabelStyle: { fontSize: 11, marginTop: 2 },
-          tabBarStyle: {
-            height: 58,
-            paddingTop: 6,
-            paddingBottom: 6,
-            borderTopWidth: 1,
-            borderTopColor: '#EEEEEE',
-            backgroundColor: '#FFFFFF',
-          },
-        }}
-      >
-        {tabs.map(tab => (
-          <Tab.Screen
-            key={tab.name}
-            name={tab.name}
-            component={tab.component}
-            options={{
-              title: tab.label,
-              tabBarIcon: ({ color, size }) => <Icon name={tab.icon} size={size} color={color} />,
-            }}
-          />
-        ))}
-      </Tab.Navigator>
-    </Suspense>
-  );
+  const TabsComponent: React.FC = () => {
+    // Add the bottom safe-area inset so the bar clears the system navigation /
+    // gesture area on edge-to-edge devices (Android 15+) instead of being cut off.
+    const insets = useSafeAreaInsets();
+    return (
+      <Suspense fallback={<Loader />}>
+        <Tab.Navigator
+          screenOptions={{
+            headerShown: false,
+            tabBarActiveTintColor: ACTIVE_TINT,
+            tabBarInactiveTintColor: INACTIVE_TINT,
+            tabBarLabelStyle: { fontSize: 11, marginTop: 2 },
+            tabBarStyle: {
+              height: 58 + insets.bottom,
+              paddingTop: 6,
+              paddingBottom: 6 + insets.bottom,
+              borderTopWidth: 1,
+              borderTopColor: '#EEEEEE',
+              backgroundColor: '#FFFFFF',
+            },
+          }}
+        >
+          {tabs.map(tab => (
+            <Tab.Screen
+              key={tab.name}
+              name={tab.name}
+              component={tab.component}
+              options={{
+                title: tab.label,
+                tabBarIcon: ({ color, size }) => <Icon name={tab.icon} size={size} color={color} />,
+              }}
+            />
+          ))}
+        </Tab.Navigator>
+      </Suspense>
+    );
+  };
   return TabsComponent;
 };
 
