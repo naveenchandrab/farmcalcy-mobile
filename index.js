@@ -1,3 +1,6 @@
+// Must be the very first import — required by @react-navigation/drawer and
+// other gesture-driven navigators (initialises react-native-gesture-handler).
+import 'react-native-gesture-handler';
 import { AppRegistry } from 'react-native';
 
 import { name as appName } from './app.json';

@@ -55,6 +55,10 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
+    // Allow component-returning render props (React Navigation's `tabBarIcon`,
+    // `drawerContent`, `tabBar`, etc.) while still catching components defined
+    // inline in JSX bodies.
+    'react/no-unstable-nested-components': ['error', { allowAsProps: true }],
 
     // Imports
     'import/order': [

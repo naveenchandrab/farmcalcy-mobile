@@ -41,6 +41,24 @@ export type SaasAdminStackParamList = {
   Subscription: { companyId: string };
 };
 
+// ─── SAAS Admin: Drawer (hamburger) → Bottom Tabs ─────────────────────────────
+//
+// SAAS_ADMIN navigation is a Drawer whose single screen hosts a reusable
+// bottom-tab navigator. The hamburger opens the Drawer; the tab bar switches
+// the main sections. The Users tab nests the existing SaasAdmin stack.
+
+export type SaasTabParamList = {
+  DashboardTab: undefined;
+  TenantsTab: undefined;
+  UsersTab: NavigatorScreenParams<SaasAdminStackParamList> | undefined;
+  ReportsTab: undefined;
+  MoreTab: undefined;
+};
+
+export type SaasDrawerParamList = {
+  Home: NavigatorScreenParams<SaasTabParamList> | undefined;
+};
+
 // ─── Tenant Admin Stack ───────────────────────────────────────────────────────
 
 export type TenantAdminStackParamList = {

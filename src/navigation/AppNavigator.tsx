@@ -1,91 +1,33 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { Suspense } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Loader from '@components/Loader';
 import { useAuthStore } from '@store/authStore';
 
-import type {
-  SaasAdminStackParamList,
-  SupervisorStackParamList,
-  TenantAdminStackParamList,
-} from './types';
+import SaasAdminNavigator from './saasAdminNavigation';
 
-// ─── Screen lazy imports ──────────────────────────────────────────────────────
-// Lazy loading keeps the initial bundle small. Each role group loads
-// independently so TENANT_ADMIN never downloads SAAS_ADMIN screens.
+// Each role uses the shared Drawer + bottom-tab shell (roleNavigation.tsx)
+// configured with its own tabs and hamburger-menu options. SAAS_ADMIN is wired;
+// Company Admin / Supervisor / Farm Owner get their own config files as their
+// screens land — until then they show a standalone placeholder.
 
-// SAAS Admin screens
-const UserListScreen = React.lazy(
-  () => import('@features/users/screens/UserListScreen'),
-);
-const UserDetailsScreen = React.lazy(
-  () => import('@features/users/screens/UserDetailsScreen'),
-);
-const CreateUserScreen = React.lazy(
-  () => import('@features/users/screens/CreateUserScreen'),
-);
-const EditUserScreen = React.lazy(
-  () => import('@features/users/screens/EditUserScreen'),
-);
-
-// ─── SAAS Admin Navigator ────────────────────────────────────────────────────
-
-const SaasStack = createNativeStackNavigator<SaasAdminStackParamList>();
-
-const SaasAdminNavigator: React.FC = () => (
-  <SaasStack.Navigator
-    screenOptions={{
-      headerShown: false,
-      animation: 'slide_from_right',
-    }}
-  >
-    {/* Phase 1: User Management */}
-    <SaasStack.Screen name="UserList" component={UserListScreen} />
-    <SaasStack.Screen name="UserDetails" component={UserDetailsScreen} />
-    <SaasStack.Screen name="CreateUser" component={CreateUserScreen} />
-    <SaasStack.Screen name="EditUser" component={EditUserScreen} />
-
-    {/* Phase 2: Company Management (screens added when phase ships) */}
-    {/* <SaasStack.Screen name="SaasDashboard" component={SaasDashboardScreen} /> */}
-    {/* <SaasStack.Screen name="CompanyList" component={CompanyListScreen} /> */}
-  </SaasStack.Navigator>
-);
-
-// ─── Tenant Admin Navigator ───────────────────────────────────────────────────
-
-const TenantStack = createNativeStackNavigator<TenantAdminStackParamList>();
-
-const TenantAdminNavigator: React.FC = () => (
-  <TenantStack.Navigator
-    screenOptions={{
-      headerShown: false,
-      animation: 'slide_from_right',
-    }}
-  >
-    {/* Phase 3+ screens added progressively */}
-  </TenantStack.Navigator>
-);
-
-// ─── Supervisor Navigator ─────────────────────────────────────────────────────
-
-const SupervisorStack = createNativeStackNavigator<SupervisorStackParamList>();
-
-const SupervisorNavigator: React.FC = () => (
-  <SupervisorStack.Navigator
-    screenOptions={{
-      headerShown: false,
-      animation: 'slide_from_right',
-    }}
-  >
-    {/* Phase 4+ screens added progressively */}
-  </SupervisorStack.Navigator>
-);
-
-// ─── Role-based router ────────────────────────────────────────────────────────
+const RolePlaceholder: React.FC<{ role: string }> = ({ role }) => {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={[styles.placeholder, { paddingTop: insets.top }]}>
+      <View style={styles.iconCircle}>
+        <Icon name="hammer-wrench" size={40} color="#2E7D32" />
+      </View>
+      <Text style={styles.title}>{role}</Text>
+      <Text style={styles.subtitle}>This experience is coming soon.</Text>
+    </View>
+  );
+};
 
 /**
  * Renders the appropriate navigator based on the authenticated user's role.
- * All role-specific screen bundles are lazy-loaded to keep cold start fast.
  */
 const AppNavigator: React.FC = () => {
   const role = useAuthStore(state => state.user?.role);
@@ -93,11 +35,32 @@ const AppNavigator: React.FC = () => {
   return (
     <Suspense fallback={<Loader />}>
       {role === 'SAAS_ADMIN' && <SaasAdminNavigator />}
-      {role === 'TENANT_ADMIN' && <TenantAdminNavigator />}
-      {role === 'SUPERVISOR' && <SupervisorNavigator />}
-      {/* FARMER role navigator added in Phase 3+ */}
+      {role === 'TENANT_ADMIN' && <RolePlaceholder role="Company Admin" />}
+      {role === 'SUPERVISOR' && <RolePlaceholder role="Supervisor" />}
+      {role === 'FARMER' && <RolePlaceholder role="Farm Owner" />}
     </Suspense>
   );
 };
+
+const styles = StyleSheet.create({
+  placeholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 24,
+  },
+  iconCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    backgroundColor: '#E8F5E9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  title: { fontSize: 18, fontWeight: '700', color: '#1A1A1A' },
+  subtitle: { fontSize: 14, color: '#7A7A7A', marginTop: 6 },
+});
 
 export default AppNavigator;
