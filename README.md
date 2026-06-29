@@ -3,11 +3,18 @@
 **Poultry Contract Farming Management System (PCFMS)**  
 React Native mobile app for Android and iOS.
 
+> **New to this repo?** Read in this order:
+> 1. [Overview](#overview) — what the app is and the roles it serves.
+> 2. [Getting Started](#getting-started) → [Backend API (local development)](#backend-api-local-development) → [Running the App](#running-the-app) — get it building and talking to the API.
+> 3. [docs/architecture.md](docs/architecture.md) + [docs/state-management.md](docs/state-management.md) + [docs/navigation.md](docs/navigation.md) — how the app is wired.
+> 4. [docs/coding-guidelines.md](docs/coding-guidelines.md) — conventions to follow before your first PR.
+
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Documentation](#documentation)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
@@ -20,6 +27,7 @@ React Native mobile app for Android and iOS.
 - [Architecture](#architecture)
 - [Build & Release](#build--release)
 - [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 
 ---
 
@@ -35,6 +43,25 @@ FarmCalcy is the mobile client for PCFMS — a platform that manages poultry con
 | **FARM_OWNER** | Read-only: own farm performance dashboard |
 
 **Phase 1 is complete** — authentication, session management, and SAAS admin user management are fully implemented. See [docs/PHASES.md](docs/PHASES.md) for the full roadmap.
+
+---
+
+## Documentation
+
+| Doc | What it covers |
+|---|---|
+| [project-context-mobile.md](docs/project-context-mobile.md) | Product overview, domain, user roles |
+| [architecture.md](docs/architecture.md) | App layering, folders, data flow |
+| [state-management.md](docs/state-management.md) | Zustand vs TanStack Query, selector rules |
+| [navigation.md](docs/navigation.md) | Navigator tree and role-based routing |
+| [api-integration.md](docs/api-integration.md) | Axios setup, interceptors, error mapping |
+| [ui-design-system.md](docs/ui-design-system.md) | Design tokens, components, theming |
+| [coding-guidelines.md](docs/coding-guidelines.md) | Code style, naming, commit conventions |
+| [android-emulator-setup.md](docs/android-emulator-setup.md) | Emulator install, PATH, common emulator errors |
+| [AUTH_TESTING.md](docs/AUTH_TESTING.md) | Manual auth-flow test scenarios |
+| [QA_REPORT.md](docs/QA_REPORT.md) | QA findings and verification status |
+| [maestro/README.md](maestro/README.md) | End-to-end (Maestro) test suite |
+| [feature-roadmap.md](docs/feature-roadmap.md) · [PHASES.md](docs/PHASES.md) | Feature roadmap and delivery phases |
 
 ---
 
@@ -417,6 +444,8 @@ farmcalcy-mobile/
 
 ## Architecture
 
+> Full references: [docs/architecture.md](docs/architecture.md) (layering & data flow), [docs/state-management.md](docs/state-management.md), [docs/navigation.md](docs/navigation.md), and [docs/api-integration.md](docs/api-integration.md). The sections below are the essentials.
+
 ### State management
 
 | State type | Tool | Rule |
@@ -605,7 +634,9 @@ npm run android                     # build + install + launch
 ```
 
 Confirm the device is visible with `adb devices` before building. For a physical
-device, enable USB debugging and accept the RSA prompt.
+device, enable USB debugging and accept the RSA prompt. For emulator install,
+PATH setup, and other emulator errors, see
+[docs/android-emulator-setup.md](docs/android-emulator-setup.md).
 
 ### `TypeError: Cannot read property 'getConfig' of null`
 
