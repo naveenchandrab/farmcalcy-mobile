@@ -90,7 +90,6 @@ const menuItems: MenuItem[] = [
   { label: 'Reports', icon: 'chart-box-outline', target: 'ReportsTab', chevron: true },
   { label: 'Analytics', icon: 'chart-donut', target: 'MoreTab', chevron: true },
   { label: 'Subscriptions & Billing', icon: 'wallet-outline', target: 'MoreTab', chevron: true },
-  { label: 'Notifications', icon: 'bell-outline', target: 'MoreTab' },
   { label: 'Activity Logs', icon: 'history', target: 'MoreTab' },
   { label: 'Settings', icon: 'cog-outline', target: 'MoreTab' },
   { label: 'Help & Support', icon: 'help-circle-outline', target: 'MoreTab' },

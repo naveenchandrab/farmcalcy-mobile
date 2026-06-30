@@ -82,84 +82,89 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
   };
 
   return (
-    <DrawerContentScrollView
-      {...props}
-      contentContainerStyle={[styles.drawerContent, { paddingBottom: insets.bottom + 24 }]}
-    >
-      {/* Brand */}
-      <View style={styles.brand}>
-        <Image
-          source={require('@assets/images/splash-logo.png') as ImageSourcePropType}
-          style={styles.brandLogo}
-          resizeMode="contain"
-        />
-        <View style={styles.brandTextCol}>
-          <Text style={styles.brandTitle}>PCFMS</Text>
-          <Text style={styles.brandSub}>POULTRY CONTRACT FARMING{'\n'}MANAGEMENT SYSTEM</Text>
+    <View style={styles.flex}>
+      {/* Fixed header — logo + profile stay put while the menu scrolls */}
+      <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
+        {/* Brand */}
+        <View style={styles.brand}>
+          <Image
+            source={require('@assets/images/compact-logo-transparent.png') as ImageSourcePropType}
+            style={styles.brandLogo}
+            resizeMode="contain"
+          />
         </View>
-      </View>
 
-      {/* Profile */}
-      <View style={styles.profileCard}>
-        <View style={styles.profileAvatar}>
-          <Icon name="account" size={28} color="#9AA0A6" />
-        </View>
-        <View style={styles.flex}>
-          <Text style={styles.profileName}>{user?.name ?? roleLabel}</Text>
-          <Text style={styles.profileEmail} numberOfLines={1}>
-            {user?.email ?? '—'}
-          </Text>
-          <View style={styles.roleBadge}>
-            <Text style={styles.roleBadgeText}>{roleLabel}</Text>
+        {/* Profile */}
+        <View style={styles.profileCard}>
+          <View style={styles.profileAvatar}>
+            <Icon name="account" size={28} color="#9AA0A6" />
           </View>
+          <View style={styles.flex}>
+            <Text style={styles.profileName}>{user?.name ?? roleLabel}</Text>
+            <Text style={styles.profileEmail} numberOfLines={1}>
+              {user?.email ?? '—'}
+            </Text>
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleBadgeText}>{roleLabel}</Text>
+            </View>
+          </View>
+          <Icon name="chevron-down" size={20} color="#9AA0A6" />
         </View>
-        <Icon name="chevron-down" size={20} color="#9AA0A6" />
       </View>
 
-      {/* Menu */}
-      <View style={styles.menu}>
-        {menuItems.map(item => {
-          const isActive = item.target === active && item.target !== 'MoreTab';
-          return (
-            <TouchableOpacity
-              key={item.label}
-              style={[styles.item, isActive && styles.itemActive]}
-              activeOpacity={0.7}
-              onPress={() => go(item.target)}
-            >
-              <Icon
-                name={item.icon}
-                size={22}
-                color={isActive ? GREEN : '#3A3A3A'}
-                style={styles.itemIcon}
-              />
-              <Text style={[styles.itemLabel, isActive && styles.itemLabelActive]}>
-                {item.label}
-              </Text>
-              {item.chevron && <Icon name="chevron-right" size={20} color="#B5B5B5" />}
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Logout */}
-      <TouchableOpacity
-        testID={TEST_IDS.session.logoutButton}
-        accessibilityRole="button"
-        accessibilityLabel="Log out"
-        style={styles.logout}
-        activeOpacity={0.7}
-        onPress={() => {
-          navigation.closeDrawer();
-          void useAuthStore.getState().logout();
-        }}
+      {/* Scrollable menu */}
+      <DrawerContentScrollView
+        {...props}
+        style={styles.flex}
+        contentContainerStyle={[styles.drawerContent, { paddingBottom: 24 }]}
       >
-        <Icon name="logout" size={22} color={DANGER} style={styles.itemIcon} />
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
+        <View style={styles.menu}>
+          {menuItems.map(item => {
+            const isActive = item.target === active && item.target !== 'MoreTab';
+            return (
+              <TouchableOpacity
+                key={item.label}
+                style={[styles.item, isActive && styles.itemActive]}
+                activeOpacity={0.7}
+                onPress={() => go(item.target)}
+              >
+                <Icon
+                  name={item.icon}
+                  size={22}
+                  color={isActive ? GREEN : '#3A3A3A'}
+                  style={styles.itemIcon}
+                />
+                <Text style={[styles.itemLabel, isActive && styles.itemLabelActive]}>
+                  {item.label}
+                </Text>
+                {item.chevron && <Icon name="chevron-right" size={20} color="#B5B5B5" />}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </DrawerContentScrollView>
 
-      <Text style={styles.version}>v1.0.0</Text>
-    </DrawerContentScrollView>
+      {/* Fixed footer — stays put while the menu scrolls */}
+      <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
+        {/* Logout */}
+        <TouchableOpacity
+          testID={TEST_IDS.session.logoutButton}
+          accessibilityRole="button"
+          accessibilityLabel="Log out"
+          style={styles.logout}
+          activeOpacity={0.7}
+          onPress={() => {
+            navigation.closeDrawer();
+            void useAuthStore.getState().logout();
+          }}
+        >
+          <Icon name="logout" size={22} color={DANGER} style={styles.itemIcon} />
+          <Text style={styles.logoutText}>Logout</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.version}>v1.0.0</Text>
+      </View>
+    </View>
   );
 };
 
@@ -233,13 +238,12 @@ export const createRoleNavigator = (config: RoleNavConfig): React.FC => {
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  header: { paddingHorizontal: 16, backgroundColor: '#FFFFFF' },
   drawerContent: { paddingTop: 8, paddingHorizontal: 16, paddingBottom: 24 },
 
-  brand: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12 },
-  brandLogo: { width: 56, height: 56 },
-  brandTextCol: { marginLeft: 10 },
-  brandTitle: { fontSize: 22, fontWeight: '800', color: GREEN, letterSpacing: 0.5 },
-  brandSub: { fontSize: 8, fontWeight: '700', color: GREEN, marginTop: 2, lineHeight: 11 },
+  brand: { alignItems: 'center', paddingTop: 8, paddingBottom: 4 },
+  // Fixed height + "contain" fits the wide logo (1536×580) snugly with no vertical gaps.
+  brandLogo: { width: '100%', height: 64 },
 
   profileCard: {
     flexDirection: 'row',
@@ -284,6 +288,13 @@ const styles = StyleSheet.create({
   itemLabel: { flex: 1, fontSize: 15, color: '#3A3A3A', fontWeight: '500' },
   itemLabelActive: { color: GREEN, fontWeight: '700' },
 
+  footer: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#E6E6E6',
+    backgroundColor: '#FFFFFF',
+  },
   logout: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -291,10 +302,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 10,
     backgroundColor: '#FBEBEA',
-    marginTop: 16,
   },
   logoutText: { fontSize: 15, fontWeight: '700', color: DANGER },
-  version: { textAlign: 'center', fontSize: 12, color: '#9AA0A6', marginTop: 16 },
+  version: { textAlign: 'center', fontSize: 12, color: '#9AA0A6', marginTop: 12 },
 });
 
 export default createRoleNavigator;
