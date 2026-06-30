@@ -154,8 +154,13 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
           style={styles.logout}
           activeOpacity={0.7}
           onPress={() => {
-            navigation.closeDrawer();
-            void useAuthStore.getState().logout();
+            // Defer the auth-state swap one frame so the drawer's press interaction
+            // settles before the Root navigator tears down this tree. Doing it
+            // synchronously (esp. alongside closeDrawer) races Fabric's view
+            // reconciliation and throws "child already has a parent".
+            requestAnimationFrame(() => {
+              void useAuthStore.getState().logout();
+            });
           }}
         >
           <Icon name="logout" size={22} color={DANGER} style={styles.itemIcon} />
