@@ -57,6 +57,7 @@ export type SaasAdminStackParamList = {
   EditUser: { userId: string };
   CompanyList: undefined;
   CompanyDetails: { companyId: string };
+  RegisterCompany: undefined;
   CreateCompany: undefined;
   EditCompany: { companyId: string };
   CompanyStatus: { companyId: string };

@@ -31,6 +31,13 @@ const RegistrationDetailScreen = React.lazy(
 const NotificationsScreen = React.lazy(
   () => import('@features/notifications/screens/NotificationsScreen'),
 );
+const TenantsScreen = React.lazy(() => import('@features/companies/screens/TenantsScreen'));
+const CompanyDetailScreen = React.lazy(
+  () => import('@features/companies/screens/CompanyDetailScreen'),
+);
+const RegisterCompanyScreen = React.lazy(
+  () => import('@features/companies/screens/RegisterCompanyScreen'),
+);
 
 // Users tab nests the existing user-management stack.
 const UsersStack = createNativeStackNavigator<SaasAdminStackParamList>();
@@ -57,15 +64,16 @@ const RegistrationsStackNavigator: React.FC = () => (
   </RegistrationsStack.Navigator>
 );
 
-const TenantsTab: React.FC = () => (
-  <ComingSoonScreen
-    title="Tenants"
-    icon="office-building-outline"
-    rightIcon="plus"
-    rightLabel="Add tenant"
-    onRightPress={() => showInfo('Add Tenant — coming soon')}
-  />
+// Tenants tab: company list → detail, plus SaaS-admin-initiated company registration.
+const TenantsStack = createNativeStackNavigator<SaasAdminStackParamList>();
+const TenantsStackNavigator: React.FC = () => (
+  <TenantsStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+    <TenantsStack.Screen name="CompanyList" component={TenantsScreen} />
+    <TenantsStack.Screen name="CompanyDetails" component={CompanyDetailScreen} />
+    <TenantsStack.Screen name="RegisterCompany" component={RegisterCompanyScreen} />
+  </TenantsStack.Navigator>
 );
+
 const ReportsTab: React.FC = () => (
   <ComingSoonScreen
     title="Reports"
@@ -88,7 +96,12 @@ const tabs: TabConfig[] = [
     icon: 'home-variant',
     component: SaasDashboardScreen,
   },
-  { name: 'TenantsTab', label: 'Tenants', icon: 'office-building-outline', component: TenantsTab },
+  {
+    name: 'TenantsTab',
+    label: 'Tenants',
+    icon: 'office-building-outline',
+    component: TenantsStackNavigator,
+  },
   {
     name: 'UsersTab',
     label: 'Users',

@@ -62,10 +62,23 @@ export interface RegistrationResponse {
   companyCode: string | null;
   companyEmail: string | null;
   companyPhone: string | null;
+  /** Composed single-line address (legacy/back-compat). */
   companyAddress: string | null;
+  // Structured address (applicant/company).
+  addressLine1: string | null;
+  addressLine2: string | null;
+  taluk: string | null;
+  village: string | null;
+  landmark: string | null;
+  district: string | null;
+  state: string | null;
+  pincode: string | null;
   gpsLatitude: number | null;
   gpsLongitude: number | null;
   gstNumber: string | null;
+  /** Owner Aadhaar image references (reviewer-only stream via /uploads/aadhaar/:id). */
+  aadhaarFrontUrl: string | null;
+  aadhaarBackUrl: string | null;
   firstName: string;
   lastName: string;
   phoneNumber: string;
@@ -74,11 +87,15 @@ export interface RegistrationResponse {
   tenantId: string | null;
   approvedBy: string | null;
   approvedAt: string | null;
+  approvalNotes: string | null;
   rejectedBy: string | null;
   rejectedAt: string | null;
   rejectionReason: string | null;
   createdUserId: string | null;
   createdCompanyId: string | null;
+  /** Submission provenance (audit). */
+  ipAddress: string | null;
+  sourceDevice: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -86,7 +86,18 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
         <Text style={styles.title}>{title}</Text>
         <View style={styles.flex} />
 
-        {variant === 'dashboard' && (
+        {variant === 'dashboard' && rightIcon && (
+          <TouchableOpacity
+            hitSlop={hit}
+            accessibilityRole="button"
+            accessibilityLabel={rightLabel}
+            onPress={onRightPress}
+          >
+            <Icon name={rightIcon} size={26} color="#FFFFFF" />
+          </TouchableOpacity>
+        )}
+
+        {variant === 'dashboard' && !rightIcon && (
           <TouchableOpacity
             hitSlop={hit}
             accessibilityRole="button"

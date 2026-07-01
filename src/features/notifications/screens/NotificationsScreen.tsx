@@ -98,6 +98,11 @@ const NotificationsScreen: React.FC = () => {
 
   const unreadCount = data?.unreadCount ?? 0;
 
+  // Client-side filter so optimistically-read items disappear from the Unread
+  // tab instantly, without waiting for the background refetch to complete.
+  const rawItems = data?.items ?? [];
+  const displayItems = unreadOnly ? rawItems.filter(n => !n.read) : rawItems;
+
   return (
     <View style={styles.flex}>
       <ScreenHeader title="Notifications" variant="back" />
@@ -132,7 +137,7 @@ const NotificationsScreen: React.FC = () => {
         </View>
       ) : (
         <FlatList
-          data={data?.items ?? []}
+          data={displayItems}
           keyExtractor={item => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.listContent}

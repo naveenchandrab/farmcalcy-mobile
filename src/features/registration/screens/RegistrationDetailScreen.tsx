@@ -13,6 +13,7 @@ import {
 import ScreenHeader from '@navigation/ScreenHeader';
 import type { RegistrationsScreenProps } from '@navigation/types';
 
+import AadhaarImageView from '../components/AadhaarImageView';
 import {
   useApproveRegistration,
   useRegistration,
@@ -84,7 +85,9 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
             </View>
           </View>
 
-          <Text style={styles.sectionLabel}>Applicant</Text>
+          <Text style={styles.sectionLabel}>
+            {req.requestType === 'TENANT' ? 'Owner / Founder (as per Aadhaar)' : 'Applicant'}
+          </Text>
           <View style={styles.card}>
             <Row label="Name" value={`${req.firstName} ${req.lastName}`} />
             <Row label="Phone" value={req.phoneNumber} />
@@ -99,9 +102,8 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                 <Row label="Name" value={req.companyName} />
                 <Row label="Email" value={req.companyEmail} />
                 <Row label="Phone" value={req.companyPhone} />
-                <Row label="Address" value={req.companyAddress} />
                 <Row label="GST" value={req.gstNumber} />
-                <Row label="GPS" value={gps} />
+                <Row label="HQ GPS" value={gps} />
               </View>
             </>
           ) : (
@@ -115,6 +117,43 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
             </>
           )}
 
+          <Text style={styles.sectionLabel}>
+            {req.requestType === 'TENANT' ? 'Company address' : 'Address'}
+          </Text>
+          <View style={styles.card}>
+            <Row label="Address line 1" value={req.addressLine1} />
+            <Row label="Address line 2" value={req.addressLine2} />
+            <Row label="Village" value={req.village} />
+            <Row label="Taluk" value={req.taluk} />
+            <Row label="Landmark" value={req.landmark} />
+            <Row label="District" value={req.district} />
+            <Row label="State" value={req.state} />
+            <Row label="PIN code" value={req.pincode} />
+          </View>
+
+          {req.requestType === 'TENANT' && (req.aadhaarFrontUrl || req.aadhaarBackUrl) ? (
+            <>
+              <Text style={styles.sectionLabel}>Owner Aadhaar</Text>
+              <View style={[styles.card, styles.aadhaarCard]}>
+                {req.aadhaarFrontUrl ? (
+                  <AadhaarImageView label="Front" fileRef={req.aadhaarFrontUrl} />
+                ) : null}
+                {req.aadhaarBackUrl ? (
+                  <AadhaarImageView label="Back" fileRef={req.aadhaarBackUrl} />
+                ) : null}
+              </View>
+            </>
+          ) : null}
+
+          {req.status === 'APPROVED' && req.approvalNotes ? (
+            <>
+              <Text style={styles.sectionLabel}>Approval notes</Text>
+              <View style={styles.card}>
+                <Text style={styles.reason}>{req.approvalNotes}</Text>
+              </View>
+            </>
+          ) : null}
+
           {req.status === 'REJECTED' && req.rejectionReason ? (
             <>
               <Text style={styles.sectionLabel}>Rejection reason</Text>
@@ -122,6 +161,13 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                 <Text style={styles.reason}>{req.rejectionReason}</Text>
               </View>
             </>
+          ) : null}
+
+          {req.ipAddress || req.sourceDevice ? (
+            <Text style={styles.audit}>
+              Submitted from {req.sourceDevice ?? 'unknown device'}
+              {req.ipAddress ? ` · ${req.ipAddress}` : ''}
+            </Text>
           ) : null}
         </ScrollView>
 
@@ -253,6 +299,8 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   reason: { fontSize: 14, color: '#1A1A1A', paddingVertical: 12, lineHeight: 20 },
+  aadhaarCard: { flexDirection: 'row', gap: 12, paddingVertical: 12 },
+  audit: { fontSize: 11, color: '#9AA0A6', marginTop: 8, textAlign: 'center' },
   actions: {
     flexDirection: 'row',
     gap: 12,
