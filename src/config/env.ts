@@ -20,7 +20,7 @@ const resolveConfig = (): AppConfig => {
 
   if (!baseUrl) {
     throw new Error(
-      '[FarmCalcy] BASE_URL is not defined. ' +
+      '[FarmsEasy] BASE_URL is not defined. ' +
         'Check your .env.* file and rebuild the native bundle.',
     );
   }

@@ -1,7 +1,7 @@
 # Reusable subflow: launch the app from a clean, logged-out state.
 # `clearState` wipes app storage (Keychain/AsyncStorage) so each flow starts
 # at the Login screen deterministically.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 ---
 - launchApp:
     clearState: true

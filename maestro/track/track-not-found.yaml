@@ -1,6 +1,6 @@
 # E2E: tracking with an email/phone that has no registration shows a friendly
 # "not found" message (enumeration-safe self-service check).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Track Registration - Not Found
 tags:
   - auth

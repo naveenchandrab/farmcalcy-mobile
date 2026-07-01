@@ -1,7 +1,7 @@
 # E2E: a complete company registration (company details + structured address +
 # owner as-per-Aadhaar) creates a PENDING request and lands on the "submitted"
 # screen. Uses a timestamp so the email/phone are unique on every run.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Registration - Company Happy Path
 tags:
   - auth

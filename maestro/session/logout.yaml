@@ -3,7 +3,7 @@
 # Logout lives in the hamburger drawer (not the home screen). We open the drawer
 # via "open-menu-button" (TEST_IDS.session.openMenuButton) then tap
 # "logout-button" (TEST_IDS.session.logoutButton).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Session - Logout
 tags:
   - auth

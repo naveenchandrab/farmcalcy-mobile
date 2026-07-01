@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# End-to-end runner for the FarmCalcy auth suite on a booted Android emulator.
+# End-to-end runner for the FarmsEasy auth suite on a booted Android emulator.
 #
 # Most flows are self-contained, but the password-reset HAPPY path needs the
 # REAL one-time code that the backend emails. In local/dev the API delivers mail
@@ -9,18 +9,18 @@
 #
 # Prerequisites:
 #   • Android emulator booted, app installed, Metro running (npm start)
-#   • farmcalcy-api running on the host (reachable at 10.0.2.2:3000 from the AVD)
-#   • Mailpit running (docker compose up in farmcalcy-api) — only for the
+#   • farmseasy-api running on the host (reachable at 10.0.2.2:3000 from the AVD)
+#   • Mailpit running (docker compose up in farmseasy-api) — only for the
 #     reset-success happy path
 #
 # Usage:
-#   EMAIL=admin@farmcalcy.com PASSWORD='ChangeMe123@' ./maestro/run-e2e.sh
+#   EMAIL=admin@farmseasy.com PASSWORD='ChangeMe123@' ./maestro/run-e2e.sh
 set -uo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-EMAIL="${EMAIL:-admin@farmcalcy.com}"
+EMAIL="${EMAIL:-admin@farmseasy.com}"
 PASSWORD="${PASSWORD:-ChangeMe123@}"
-ADMIN_EMAIL="${ADMIN_EMAIL:-admin@farmcalcy.com}"
+ADMIN_EMAIL="${ADMIN_EMAIL:-admin@farmseasy.com}"
 ADMIN_PASSWORD="${ADMIN_PASSWORD:-ChangeMe123@}"
 MAILPIT="${MAILPIT:-http://localhost:8025}"
 

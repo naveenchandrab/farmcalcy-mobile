@@ -1,6 +1,6 @@
 # Reusable subflow: perform a successful login with the provided credentials.
 # Expects EMAIL + PASSWORD in the environment (see maestro/config.yaml).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 ---
 - tapOn:
     id: "login-email-input"

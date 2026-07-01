@@ -1,4 +1,4 @@
-# FarmCalcy Mobile — Android QA & Bug-Fix Report
+# FarmsEasy Mobile — Android QA & Bug-Fix Report
 
 **Scope:** Full validation of the Android app run as a real user — build, emulator
 boot, install, launch, and end-to-end automation of every implemented auth flow,
@@ -12,7 +12,7 @@ fixing the application (not the tests) wherever a flow failed.
 | Node / npm | 22.14 / 10.9 |
 | JDK | **Temurin/OpenJDK 17** (installed for the build; system default was JDK 23, which Gradle 8.10 rejects) |
 | Gradle / AGP | 8.10.2 / RN 0.76.5 defaults, compileSdk 35 |
-| Backend | `farmcalcy-api` (NestJS + Prisma + Postgres 15), Mailpit for OTP email capture |
+| Backend | `farmseasy-api` (NestJS + Prisma + Postgres 15), Mailpit for OTP email capture |
 | Automation | Maestro (e2e), Jest + RNTL (unit/integration) |
 
 **Result:** App builds, installs, launches, and **all 11 runnable auth e2e flows pass**;
@@ -69,10 +69,10 @@ submit → only then bounced back.
 **Fix (app):** [src/features/auth/screens/OtpVerificationScreen.tsx](src/features/auth/screens/OtpVerificationScreen.tsx)
 + new [src/features/auth/hooks/useVerifyOtp.ts](src/features/auth/hooks/useVerifyOtp.ts)
 + [src/features/auth/services/otp.service.ts](src/features/auth/services/otp.service.ts).
-**Fix (backend):** `farmcalcy-api/src/modules/otp/otp.service.ts` — `verify()` now
+**Fix (backend):** `farmseasy-api/src/modules/otp/otp.service.ts` — `verify()` now
 validates **without** consuming (failed attempts still counted); `verifyAndConsume()`
 (used by reset/change) consumes. Verified: wrong→401, correct→200 (repeatable),
-reset→consumes, post-reset verify→invalid. Spec: `farmcalcy-api/src/modules/otp/otp.service.spec.ts`.
+reset→consumes, post-reset verify→invalid. Spec: `farmseasy-api/src/modules/otp/otp.service.spec.ts`.
 
 ### Bug 5 — no logout / header under status bar
 **Fix:** [src/features/users/screens/UserListScreen.tsx](src/features/users/screens/UserListScreen.tsx).
@@ -129,7 +129,7 @@ Run them all: see [maestro/run-e2e.sh](../maestro/run-e2e.sh) and [maestro/READM
 `src/features/auth/screens/{LoginScreen.tsx,OtpVerificationScreen.tsx}`,
 `src/features/auth/services/otp.service.ts`, `src/features/auth/types/index.ts`.
 **New:** `src/features/auth/hooks/useVerifyOtp.ts`.
-**Backend:** `farmcalcy-api/src/modules/otp/otp.service.ts` (+ `.spec.ts`).
+**Backend:** `farmseasy-api/src/modules/otp/otp.service.ts` (+ `.spec.ts`).
 **Tooling/tests:** `tsconfig.json`, `babel.config.js`, `.eslintrc.js`,
 `src/test-utils/mockNavigation.ts`, `src/api/__tests__/interceptors.test.ts`,
 `src/features/users/__tests__/mapApiUser.test.ts`,

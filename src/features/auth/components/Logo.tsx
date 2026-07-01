@@ -23,7 +23,7 @@ const LeafAccent: React.FC = () => (
 );
 
 /**
- * Brand logo block: circular FarmCalcy badge, "FarmCalcy" wordmark
+ * Brand logo block: circular FarmsEasy badge, "FarmsEasy" wordmark
  * (green + orange with a leaf accent) and the "Poultry Suite" sub-label
  * flanked by rules.
  *
@@ -50,7 +50,7 @@ const Logo: React.FC = () => {
         style={styles.badge}
         resizeMode="contain"
         accessibilityRole="image"
-        accessibilityLabel="FarmCalcy logo"
+        accessibilityLabel="FarmsEasy logo"
       />
 
       <View style={styles.wordmarkRow}>

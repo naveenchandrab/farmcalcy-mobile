@@ -1,5 +1,5 @@
 /**
- * FarmCalcy / PCFMS brand color palette.
+ * FarmsEasy / PCFMS brand color palette.
  *
  * Derived directly from the UI reference designs (June 2025).
  * All screen headers, navigation bars, and CTA buttons use the

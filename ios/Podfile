@@ -1,4 +1,4 @@
-# FarmCalcy — CocoaPods configuration for React Native 0.76.5
+# FarmsEasy — CocoaPods configuration for React Native 0.76.5
 # Run: cd ios && pod install
 # After updating native deps: pod install --repo-update
 
@@ -21,7 +21,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'FarmCalcy' do
+target 'FarmsEasy' do
   config = use_native_modules!
 
   use_react_native!(
@@ -58,7 +58,7 @@ target 'FarmCalcy' do
   # react-native-reanimated
   pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
 
-  target 'FarmCalcyTests' do
+  target 'FarmsEasyTests' do
     inherit! :complete
   end
 

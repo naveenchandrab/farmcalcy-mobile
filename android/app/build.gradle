@@ -27,10 +27,10 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.farmcalcy.pcfms"
+    namespace "com.farmseasy.pcfms"
 
     defaultConfig {
-        applicationId "com.farmcalcy.pcfms"
+        applicationId "com.farmseasy.pcfms"
         minSdkVersion rootProject.ext.minSdkVersion      // 24 (Android 7.0)
         targetSdkVersion rootProject.ext.targetSdkVersion // 35
         versionCode 1

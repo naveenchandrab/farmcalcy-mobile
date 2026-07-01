@@ -6,10 +6,10 @@ on:
   push:
     branches: [main, develop]
     paths:
-      - 'farmcalcy-mobile/**'
+      - 'farmseasy-mobile/**'
   pull_request:
     paths:
-      - 'farmcalcy-mobile/**'
+      - 'farmseasy-mobile/**'
   workflow_dispatch:
 
 # Cancel superseded runs on the same ref to save CI minutes.
@@ -19,7 +19,7 @@ concurrency:
 
 defaults:
   run:
-    working-directory: farmcalcy-mobile
+    working-directory: farmseasy-mobile
 
 jobs:
   unit-integration:
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: farmcalcy-mobile/package-lock.json
+          cache-dependency-path: farmseasy-mobile/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -56,7 +56,7 @@ jobs:
         if: always()
         with:
           name: Jest Results
-          path: farmcalcy-mobile/reports/junit.xml
+          path: farmseasy-mobile/reports/junit.xml
           reporter: jest-junit
 
       - name: Upload coverage artifact
@@ -64,7 +64,7 @@ jobs:
         if: always()
         with:
           name: coverage
-          path: farmcalcy-mobile/coverage
+          path: farmseasy-mobile/coverage
           retention-days: 14
 
   # E2E is a separate, optional job: Maestro needs an emulator and a reachable
@@ -82,7 +82,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: farmcalcy-mobile/package-lock.json
+          cache-dependency-path: farmseasy-mobile/package-lock.json
       - name: Install dependencies
         run: npm ci
       - name: Install Maestro
@@ -94,7 +94,7 @@ jobs:
         with:
           api-level: 31
           arch: x86_64
-          working-directory: farmcalcy-mobile
+          working-directory: farmseasy-mobile
           script: |
             npm run build:android:dev
             maestro test maestro/ --format junit --output reports/maestro-junit.xml
@@ -103,4 +103,4 @@ jobs:
         if: always()
         with:
           name: maestro-report
-          path: farmcalcy-mobile/reports
+          path: farmseasy-mobile/reports

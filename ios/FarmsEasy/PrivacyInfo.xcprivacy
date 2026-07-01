@@ -8,7 +8,7 @@
   See: https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
 
   Third-party SDKs (RN, Firebase, etc.) must ship their own xcprivacy files.
-  This file covers ONLY direct usage in FarmCalcy JS/native code.
+  This file covers ONLY direct usage in FarmsEasy JS/native code.
 -->
 <dict>
 

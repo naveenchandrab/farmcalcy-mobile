@@ -1,4 +1,4 @@
-package com.farmcalcy.pcfms
+package com.farmseasy.pcfms
 
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -15,7 +15,7 @@ class MainActivity : ReactActivity() {
     super.onCreate(savedInstanceState)
   }
 
-  override fun getMainComponentName(): String = "FarmCalcy"
+  override fun getMainComponentName(): String = "FarmsEasy"
 
   override fun createReactActivityDelegate(): ReactActivityDelegate =
       DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)

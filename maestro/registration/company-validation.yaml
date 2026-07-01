@@ -1,6 +1,6 @@
 # E2E: submitting an empty company form surfaces inline validation for the
 # required company + structured-address fields and never calls the API.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Registration - Company Validation
 tags:
   - auth

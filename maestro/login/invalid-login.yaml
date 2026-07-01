@@ -1,6 +1,6 @@
 # E2E: wrong credentials are rejected; the user stays on the Login screen and
 # a non-revealing error toast appears.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Login - Invalid Credentials
 tags:
   - auth

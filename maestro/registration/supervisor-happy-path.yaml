@@ -3,7 +3,7 @@
 #
 # Prereq: COMPANY_CODE must be an existing, approved company's code. Override with
 #   -e COMPANY_CODE=FCC-XXXXXX   (see maestro/config.yaml for the default).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Registration - Supervisor Happy Path
 tags:
   - auth

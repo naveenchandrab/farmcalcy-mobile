@@ -1,6 +1,6 @@
 # E2E: a logged-in session survives an app restart (tokens restored from the
 # secure store at startup — no re-login required).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Session - Restore On Restart
 tags:
   - auth

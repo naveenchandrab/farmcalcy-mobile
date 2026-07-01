@@ -2,7 +2,7 @@
 #
 # Prereq: the backend is reachable and a seeded user matching EMAIL/PASSWORD
 # exists with mustChangePassword = false.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Login - Successful
 tags:
   - auth

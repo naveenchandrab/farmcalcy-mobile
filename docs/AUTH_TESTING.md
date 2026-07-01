@@ -1,6 +1,6 @@
 # Authentication Test Suite
 
-Production-grade automated tests for the entire FarmCalcy authentication module:
+Production-grade automated tests for the entire FarmsEasy authentication module:
 login, forgot-password (OTP), reset-password, forced first-login change, session
 management and the supporting services/store/interceptors.
 
@@ -36,7 +36,7 @@ covers a thin set of critical end-to-end journeys.
 ### Folder structure
 
 ```
-farmcalcy-mobile/
+farmseasy-mobile/
 ├── jest.config.js               # preset, aliases, coverage thresholds
 ├── jest.setup.js                # global native-module mocks
 ├── src/
@@ -59,7 +59,7 @@ farmcalcy-mobile/
 
 ## 2. How to Run Tests
 
-All commands run from `farmcalcy-mobile/`.
+All commands run from `farmseasy-mobile/`.
 
 ```bash
 # Install dependencies (first time)

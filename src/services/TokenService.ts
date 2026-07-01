@@ -7,7 +7,7 @@ import { KEYCHAIN_SERVICE } from '@constants';
  * The "username" field in Keychain is repurposed as a fixed key.
  * Keychain stores the payload under SERVICE + this identifier.
  */
-const TOKEN_USERNAME = 'farmcalcy_auth_tokens';
+const TOKEN_USERNAME = 'farmseasy_auth_tokens';
 
 interface StoredTokenPayload {
   accessToken: string;

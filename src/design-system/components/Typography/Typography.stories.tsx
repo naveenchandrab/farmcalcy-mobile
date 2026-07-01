@@ -15,10 +15,17 @@ const meta: Meta<typeof Typography> = {
     preset: {
       control: 'select',
       options: [
-        'displayLg', 'displayMd',
-        'headingLg', 'headingMd', 'headingSm',
-        'bodyLg', 'bodyMd', 'bodySm',
-        'labelLg', 'labelMd', 'labelSm',
+        'displayLg',
+        'displayMd',
+        'headingLg',
+        'headingMd',
+        'headingSm',
+        'bodyLg',
+        'bodyMd',
+        'bodySm',
+        'labelLg',
+        'labelMd',
+        'labelSm',
         'caption',
       ],
     },
@@ -35,10 +42,26 @@ type Story = StoryObj<typeof Typography>;
 export const AllPresets: Story = {
   render: () => (
     <View style={{ padding: 16, gap: 8 }}>
-      {(['displayLg', 'displayMd', 'headingLg', 'headingMd', 'headingSm',
-        'bodyLg', 'bodyMd', 'bodySm', 'labelLg', 'labelMd', 'labelSm', 'caption'] as const).map(preset => (
+      {(
+        [
+          'displayLg',
+          'displayMd',
+          'headingLg',
+          'headingMd',
+          'headingSm',
+          'bodyLg',
+          'bodyMd',
+          'bodySm',
+          'labelLg',
+          'labelMd',
+          'labelSm',
+          'caption',
+        ] as const
+      ).map(preset => (
         <View key={preset} style={{ marginBottom: 4 }}>
-          <Typography preset="labelSm" color="#9E9E9E">{preset}</Typography>
+          <Typography preset="labelSm" color="#9E9E9E">
+            {preset}
+          </Typography>
           <Typography preset={preset}>Farm Management Dashboard</Typography>
         </View>
       ))}
@@ -46,9 +69,13 @@ export const AllPresets: Story = {
   ),
 };
 
-export const DisplayLg: Story = { args: { preset: 'displayLg', children: 'FarmCalcy' } };
-export const HeadingMd: Story = { args: { preset: 'headingMd', children: 'Batch #7 — Cycle Report' } };
-export const BodyMd: Story = { args: { preset: 'bodyMd', children: 'Total FCR: 1.82 | Mortality: 2.4%' } };
+export const DisplayLg: Story = { args: { preset: 'displayLg', children: 'FarmsEasy' } };
+export const HeadingMd: Story = {
+  args: { preset: 'headingMd', children: 'Batch #7 — Cycle Report' },
+};
+export const BodyMd: Story = {
+  args: { preset: 'bodyMd', children: 'Total FCR: 1.82 | Mortality: 2.4%' },
+};
 export const Caption: Story = { args: { preset: 'caption', children: 'Updated 26 Jun 2026' } };
 export const Centered: Story = { args: { align: 'center', children: 'Centered label text' } };
 export const CustomColor: Story = { args: { color: '#E67E22', children: 'Brand orange text' } };

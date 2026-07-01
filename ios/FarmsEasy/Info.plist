@@ -5,7 +5,7 @@
 
   <!-- ─── App Identity ─────────────────────────────────────────────────── -->
   <key>CFBundleDisplayName</key>
-  <string>FarmCalcy</string>
+  <string>FarmsEasy</string>
 
   <key>CFBundleIdentifier</key>
   <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
@@ -62,28 +62,28 @@
 
   <!-- Camera: photo capture for mortality / weight / harvest records (Phase 8+) -->
   <key>NSCameraUsageDescription</key>
-  <string>FarmCalcy needs camera access to capture photos for batch and mortality records.</string>
+  <string>FarmsEasy needs camera access to capture photos for batch and mortality records.</string>
 
   <!-- Photo Library: attach saved photos to records -->
   <key>NSPhotoLibraryUsageDescription</key>
-  <string>FarmCalcy needs photo library access to attach images to your farm records.</string>
+  <string>FarmsEasy needs photo library access to attach images to your farm records.</string>
 
   <!-- Photo Library Add: save captured photos -->
   <key>NSPhotoLibraryAddUsageDescription</key>
-  <string>FarmCalcy needs permission to save photos to your photo library.</string>
+  <string>FarmsEasy needs permission to save photos to your photo library.</string>
 
   <!-- Face ID: biometric unlock (Phase 12) -->
   <!-- CRITICAL: omitting this causes a crash on Face ID devices at runtime -->
   <key>NSFaceIDUsageDescription</key>
-  <string>FarmCalcy uses Face ID for quick and secure app unlock.</string>
+  <string>FarmsEasy uses Face ID for quick and secure app unlock.</string>
 
   <!-- Push Notifications: batch alerts, payment reminders (Phase 11) -->
   <key>NSUserNotificationUsageDescription</key>
-  <string>FarmCalcy sends notifications for batch updates, payment alerts, and contract reminders.</string>
+  <string>FarmsEasy sends notifications for batch updates, payment alerts, and contract reminders.</string>
 
   <!-- Location: farm-owner "use my current location" on the registration map picker -->
   <key>NSLocationWhenInUseUsageDescription</key>
-  <string>FarmCalcy uses your location to set your farm's position on the map during registration.</string>
+  <string>FarmsEasy uses your location to set your farm's position on the map during registration.</string>
 
   <!-- ─── Background Modes ──────────────────────────────────────────────── -->
   <!-- remote-notification: FCM push in background / quit state (Phase 11) -->
@@ -95,7 +95,7 @@
   <!-- ─── React Native / Metro ─────────────────────────────────────────── -->
   <!-- Points Xcode to the JS bundle. Metro updates this automatically. -->
   <key>NSLocationAlwaysUsageDescription</key>
-  <string>FarmCalcy uses your location to set your farm's position on the map during registration.</string>
+  <string>FarmsEasy uses your location to set your farm's position on the map during registration.</string>
 
   <!-- ─── Status Bar ────────────────────────────────────────────────────── -->
   <!-- Let React Native manage the status bar style -->
@@ -129,7 +129,7 @@
   </array>
 
   <!-- ─── Privacy Manifest (required iOS 17.4+ / App Store 2024+) ───────── -->
-  <!-- See ios/FarmCalcy/PrivacyInfo.xcprivacy -->
+  <!-- See ios/FarmsEasy/PrivacyInfo.xcprivacy -->
   <!-- Declared API reasons for: UserDefaults (NSPrivacyAccessedAPICategoryUserDefaults) -->
 
 </dict>

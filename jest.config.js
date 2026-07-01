@@ -1,5 +1,5 @@
 /**
- * Jest configuration for FarmCalcy.
+ * Jest configuration for FarmsEasy.
  *
  * Layered on the official `react-native` preset, this config wires up:
  *  - the same `@`-aliases used by Babel/TypeScript (so tests import like app code)

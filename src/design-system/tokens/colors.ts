@@ -1,5 +1,5 @@
 /**
- * FarmCalcy / PCFMS color palette.
+ * FarmsEasy / PCFMS color palette.
  *
  * Two-level structure:
  *  1. Raw scale  — concrete hex values (orange.500, green.900 …)
@@ -108,19 +108,19 @@ export const palette = {
 
 export const semanticColors = {
   // Interactive / brand
-  primary: palette.green[900],          // #1B3D1B — headers, nav, primary buttons
+  primary: palette.green[900], // #1B3D1B — headers, nav, primary buttons
   primaryHover: palette.green[800],
   primaryLight: palette.green[500],
-  primaryContainer: palette.green[50],  // #F1F8E9 — input focus bg, chip bg
+  primaryContainer: palette.green[50], // #F1F8E9 — input focus bg, chip bg
 
-  brand: palette.orange[500],           // #E67E22 — logo, brand accent
+  brand: palette.orange[500], // #E67E22 — logo, brand accent
   brandContainer: palette.orange[50],
 
-  secondary: palette.green[800],        // #2E7D32 — secondary actions, badges
+  secondary: palette.green[800], // #2E7D32 — secondary actions, badges
   secondaryContainer: palette.green[100],
 
   // Financial / payment
-  financial: palette.amber[500],        // #F9A825 — "Make Payment" button
+  financial: palette.amber[500], // #F9A825 — "Make Payment" button
   financialContainer: palette.amber[50],
 
   // Semantic
@@ -128,13 +128,13 @@ export const semanticColors = {
   successContainer: palette.green[50],
   warning: palette.amber[500],
   warningContainer: palette.amber[50],
-  error: palette.red[700],              // #D32F2F — mortality, errors, logout
+  error: palette.red[700], // #D32F2F — mortality, errors, logout
   errorContainer: palette.red[50],
   info: palette.blue[700],
   infoContainer: palette.blue[50],
 
   // Surface / background
-  background: '#F7F9F7',               // very slight green tint on white
+  background: '#F7F9F7', // very slight green tint on white
   surface: palette.neutral[0],
   surfaceElevated: palette.neutral[50],
   surfaceVariant: '#F0F7F0',
@@ -143,7 +143,7 @@ export const semanticColors = {
   textPrimary: palette.neutral[900],
   textSecondary: palette.neutral[600],
   textDisabled: palette.neutral[400],
-  textOnPrimary: palette.neutral[0],    // white on green buttons
+  textOnPrimary: palette.neutral[0], // white on green buttons
   textOnBrand: palette.neutral[0],
 
   // Border / divider

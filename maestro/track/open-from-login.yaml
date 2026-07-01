@@ -1,6 +1,6 @@
 # E2E: the "Track your registration" link on Login opens the tracking screen and
 # validates its input.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Track Registration - Open + Validate
 tags:
   - auth

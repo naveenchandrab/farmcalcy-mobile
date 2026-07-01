@@ -1,4 +1,4 @@
-package com.farmcalcy.pcfms
+package com.farmseasy.pcfms
 
 import android.app.Application
 import com.facebook.react.PackageList

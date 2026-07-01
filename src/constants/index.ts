@@ -54,18 +54,18 @@ export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 128;
 
 /** AsyncStorage key for the remembered login email (never the password). */
-export const STORAGE_KEY_REMEMBERED_EMAIL = 'farmcalcy:remembered-email';
+export const STORAGE_KEY_REMEMBERED_EMAIL = 'farmseasy:remembered-email';
 
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
 /** Keychain service name — must match across iOS Keychain & Android Keystore. */
-export const KEYCHAIN_SERVICE = 'com.farmcalcy.pcfms';
+export const KEYCHAIN_SERVICE = 'com.farmseasy.pcfms';
 
 /** Key used to store the serialised User object in AsyncStorage / MMKV. */
-export const STORAGE_KEY_USER = 'farmcalcy:user';
+export const STORAGE_KEY_USER = 'farmseasy:user';
 
 /** Key used to persist the selected theme mode. */
-export const STORAGE_KEY_THEME = 'farmcalcy:theme';
+export const STORAGE_KEY_THEME = 'farmseasy:theme';
 
 // ─── UI ──────────────────────────────────────────────────────────────────────
 

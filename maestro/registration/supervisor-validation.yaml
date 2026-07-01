@@ -1,6 +1,6 @@
 # E2E: the supervisor form requires personal details, a company code and a full
 # structured address; an empty submit surfaces those errors and never calls the API.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Registration - Supervisor Validation
 tags:
   - auth

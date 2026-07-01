@@ -1,4 +1,4 @@
-// Top-level build.gradle for FarmCalcy Android project.
+// Top-level build.gradle for FarmsEasy Android project.
 // Module-level configuration lives in android/app/build.gradle.
 
 buildscript {

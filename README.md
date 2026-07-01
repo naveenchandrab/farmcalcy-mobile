@@ -1,4 +1,4 @@
-# FarmCalcy Mobile
+# FarmsEasy Mobile
 
 **Poultry Contract Farming Management System (PCFMS)**  
 React Native mobile app for Android and iOS.
@@ -33,7 +33,7 @@ React Native mobile app for Android and iOS.
 
 ## Overview
 
-FarmCalcy is the mobile client for PCFMS — a platform that manages poultry contract farming operations across four user roles:
+FarmsEasy is the mobile client for PCFMS — a platform that manages poultry contract farming operations across four user roles:
 
 | Role | Access |
 |------|--------|
@@ -129,8 +129,8 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/naveenchandrab/farmcalcy-mobile.git
-cd farmcalcy-mobile
+git clone https://github.com/naveenchandrab/farmseasy-mobile.git
+cd farmseasy-mobile
 npm install
 ```
 
@@ -205,13 +205,13 @@ APP_ENV=development                      # development | staging | production
 
 ## Backend API (local development)
 
-The app talks to the **FarmCalcy NestJS API** (`../farmcalcy-api`). Auth screens
+The app talks to the **FarmsEasy NestJS API** (`../farmseasy-api`). Auth screens
 (Login, Forgot Password, OTP, Reset Password) will show **"Unable to connect to
 the server"** until that API — and its Postgres, Redis and mail services — are
-running. Start them from the `farmcalcy-api` directory:
+running. Start them from the `farmseasy-api` directory:
 
 ```bash
-cd ../farmcalcy-api
+cd ../farmseasy-api
 
 # 1. Start Postgres + Redis (Docker Desktop must be running)
 docker compose up -d postgres redis
@@ -231,7 +231,7 @@ Verify it is up: `curl http://localhost:3000/api/v1/health` → `{"status":"ok",
 
 | Field | Value |
 |-------|-------|
-| Email | `admin@farmcalcy.com` |
+| Email | `admin@farmseasy.com` |
 | Password | `ChangeMe123@` |
 | Role | `SAAS_ADMIN` |
 
@@ -242,7 +242,7 @@ sends to SMTP `localhost:1025`. Run a local inbox to read the codes — Mailpit 
 a maintained, Apple-Silicon-native, MailHog-compatible drop-in on the same ports:
 
 ```bash
-docker run -d --name farmcalcy-mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
+docker run -d --name farmseasy-mailpit -p 1025:1025 -p 8025:8025 axllent/mailpit
 ```
 
 Open the inbox at **http://localhost:8025** to read the 6-digit OTP (valid 10
@@ -250,14 +250,14 @@ minutes, 5 attempts). Trigger one from the app's Forgot Password screen, or:
 
 ```bash
 curl -X POST http://localhost:3000/api/v1/auth/forgot-password \
-  -H "Content-Type: application/json" -d '{"email":"admin@farmcalcy.com"}'
+  -H "Content-Type: application/json" -d '{"email":"admin@farmseasy.com"}'
 ```
 
 ### Shutting down
 
 ```bash
-docker rm -f farmcalcy-mailpit          # stop the mail inbox
-cd ../farmcalcy-api && docker compose down   # stop Postgres + Redis
+docker rm -f farmseasy-mailpit          # stop the mail inbox
+cd ../farmseasy-api && docker compose down   # stop Postgres + Redis
 ```
 
 ---
@@ -316,7 +316,7 @@ npm run build:android:dev
 
 ## Storybook
 
-FarmCalcy includes a full on-device Storybook powered by `@storybook/react-native` v8 with 27 story files covering every design system component.
+FarmsEasy includes a full on-device Storybook powered by `@storybook/react-native` v8 with 27 story files covering every design system component.
 
 ### How it works
 
@@ -352,18 +352,18 @@ src/design-system/components/TextInput/TextInput.stories.tsx
 ## Project Structure
 
 ```
-farmcalcy-mobile/
+farmseasy-mobile/
 ├── .storybook/              # Storybook config (main.ts, preview.tsx, index.ts)
 ├── android/                 # Android native project
 │   ├── app/
 │   │   ├── build.gradle     # App-level build config, signing, dotenv.gradle
-│   │   └── src/main/java/com/farmcalcy/pcfms/
+│   │   └── src/main/java/com/farmseasy/pcfms/
 │   │       ├── MainApplication.kt
 │   │       └── MainActivity.kt
 │   ├── gradle.properties    # New Architecture enabled, JVM heap, parallelism
 │   └── settings.gradle      # Autolinking via autolinkLibrariesFromCommand()
 ├── ios/                     # iOS native project
-│   ├── FarmCalcy/
+│   ├── FarmsEasy/
 │   │   ├── Info.plist       # Permissions, background modes, ATS config
 │   │   └── PrivacyInfo.xcprivacy   # App Store privacy manifest (iOS 17.4+)
 │   └── Podfile
@@ -497,8 +497,8 @@ API calls
 
 ### Splash screen
 
-`src/screens/SplashScreen.tsx` renders the branded FarmCalcy splash (logo badge,
-"FarmCalcy / Poultry Suite" wordmark, farm banner with a misty top and curved
+`src/screens/SplashScreen.tsx` renders the branded FarmsEasy splash (logo badge,
+"FarmsEasy / Poultry Suite" wordmark, farm banner with a misty top and curved
 bottom wave, and animated loading dots). It is shown by `RootNavigator` while
 `authStore.initialize()` restores the session. The brief native launch screen
 (Android 12+ `SplashTheme`) uses `@color/splash_background` so it blends into it.
@@ -513,7 +513,7 @@ The launcher icon is an Android **adaptive icon**:
   (circle / squircle / rounded-square) never crops the logo. Legacy
   `ic_launcher.png` / `ic_launcher_round.png` carry the same safe padding.
 - Master source: `../Logo/app-icon.png`. iOS variants live in
-  `ios/FarmCalcy/Images.xcassets/AppIcon.appiconset/`.
+  `ios/FarmsEasy/Images.xcassets/AppIcon.appiconset/`.
 
 ### Fonts (Inter)
 
@@ -525,7 +525,7 @@ Wiring:
 
 - **Registration:** `react-native.config.js` → `assets: ['./src/assets/fonts']`
 - **Android:** copied to `android/app/src/main/assets/fonts/`
-- **iOS:** registered via `UIAppFonts` in `ios/FarmCalcy/Info.plist`
+- **iOS:** registered via `UIAppFonts` in `ios/FarmsEasy/Info.plist`
 
 After adding or changing a font file, re-link the native projects:
 
@@ -571,7 +571,7 @@ ENVFILE=.env.production ./gradlew bundleRelease
 
 ### iOS release (macOS only)
 
-Open `ios/FarmCalcy.xcworkspace` in Xcode, select a real device or "Any iOS Device", then **Product → Archive**.
+Open `ios/FarmsEasy.xcworkspace` in Xcode, select a real device or "Any iOS Device", then **Product → Archive**.
 
 ---
 

@@ -1,5 +1,5 @@
 # E2E: an invalid email is rejected client-side before any request is sent.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Forgot Password - Invalid Email Validation
 tags:
   - auth

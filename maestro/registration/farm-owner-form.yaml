@@ -1,6 +1,6 @@
 # E2E: the farm-owner form carries the personal + company-code + address fields
 # AND the farm-location map picker (which is unique to farm owners, not supervisors).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Registration - Farm Owner Form
 tags:
   - auth

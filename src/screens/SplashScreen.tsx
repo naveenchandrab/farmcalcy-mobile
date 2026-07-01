@@ -20,7 +20,7 @@ const FARM_H = H * 0.26;
 
 // ─── Logo badge ──────────────────────────────────────────────────────────────
 const LOGO_H = H * 0.19;
-const LOGO_W = LOGO_H * 1.088; // content aspect of cropped asset (668 / 614)
+const LOGO_W = LOGO_H; // content aspect of the asset (1024 / 1024)
 
 // ─── Corner leaf artwork ─────────────────────────────────────────────────────
 // Decorative leaf images from the design (UI/UX/Screens) that bleed off the

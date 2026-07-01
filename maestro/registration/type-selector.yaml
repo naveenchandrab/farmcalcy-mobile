@@ -1,6 +1,6 @@
 # E2E: the Register link opens a type selector offering the three registration
 # kinds, and each option routes to its form.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Registration - Type Selector
 tags:
   - auth

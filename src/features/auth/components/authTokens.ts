@@ -1,5 +1,5 @@
 /**
- * Auth screen design tokens — sourced directly from the FarmCalcy login design.
+ * Auth screen design tokens — sourced directly from the FarmsEasy login design.
  *
  * These are intentionally local to the auth feature: the login screen uses the
  * brand's medium "kelly" green (#0B7A3E) and placeholder-style inputs, which

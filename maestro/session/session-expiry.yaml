@@ -11,7 +11,7 @@
 #
 # This flow assumes option 2/3: the session is revoked out-of-band after login,
 # so the next navigation triggers the auto-logout path.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Session - Expiry Auto Logout
 tags:
   - auth

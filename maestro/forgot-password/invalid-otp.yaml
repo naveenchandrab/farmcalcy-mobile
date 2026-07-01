@@ -5,7 +5,7 @@
 # it) before navigating, so a wrong code never reaches the reset form.
 #
 # Prereq: WRONG_OTP is a 6-digit code that is NOT the one issued to EMAIL.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Forgot Password - Invalid OTP
 tags:
   - auth

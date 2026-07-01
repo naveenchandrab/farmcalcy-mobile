@@ -14,9 +14,9 @@ describe('TokenService', () => {
     await TokenService.saveTokens(makeTokens());
 
     expect(Keychain.setGenericPassword).toHaveBeenCalledWith(
-      'farmcalcy_auth_tokens',
+      'farmseasy_auth_tokens',
       JSON.stringify({ accessToken: 'access-token-abc123', refreshToken: 'refresh-token-xyz789' }),
-      expect.objectContaining({ service: 'com.farmcalcy.pcfms' }),
+      expect.objectContaining({ service: 'com.farmseasy.pcfms' }),
     );
   });
 

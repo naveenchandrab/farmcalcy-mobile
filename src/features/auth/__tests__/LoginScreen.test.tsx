@@ -122,7 +122,7 @@ describe('LoginScreen', () => {
       fireEvent.press(screen.getByTestId(ID.submitButton));
 
       await waitFor(async () =>
-        expect(await AsyncStorage.getItem('farmcalcy:remembered-email')).toBe(
+        expect(await AsyncStorage.getItem('farmseasy:remembered-email')).toBe(
           'rajesh@abcpoultry.com',
         ),
       );
@@ -161,7 +161,7 @@ describe('LoginScreen', () => {
     });
 
     it('clears the remembered email when "Remember me" is unchecked', async () => {
-      await AsyncStorage.setItem('farmcalcy:remembered-email', 'old@abcpoultry.com');
+      await AsyncStorage.setItem('farmseasy:remembered-email', 'old@abcpoultry.com');
       mockLogin.mockResolvedValueOnce(makeLoginResponse());
       renderLogin();
 
@@ -171,7 +171,7 @@ describe('LoginScreen', () => {
       fireEvent.press(screen.getByTestId(ID.submitButton));
 
       await waitFor(async () =>
-        expect(await AsyncStorage.getItem('farmcalcy:remembered-email')).toBeNull(),
+        expect(await AsyncStorage.getItem('farmseasy:remembered-email')).toBeNull(),
       );
     });
 
@@ -224,7 +224,7 @@ describe('LoginScreen', () => {
 
   describe('remembered email', () => {
     it('restores a previously remembered email on mount', async () => {
-      await AsyncStorage.setItem('farmcalcy:remembered-email', 'saved@abcpoultry.com');
+      await AsyncStorage.setItem('farmseasy:remembered-email', 'saved@abcpoultry.com');
       renderLogin();
 
       await waitFor(() =>

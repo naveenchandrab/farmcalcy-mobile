@@ -4,7 +4,7 @@ import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from '@constants';
  * Password policy for newly chosen passwords (reset / change / force-change).
  *
  * The backend enforces only length (min 8 / max 128 — see ResetPasswordDto and
- * ChangePasswordDto in farmcalcy-api). These client-side rules are a strict
+ * ChangePasswordDto in farmseasy-api). These client-side rules are a strict
  * superset of the backend contract: every password that passes here also passes
  * server validation, so the client never sends a request the server will reject
  * on policy grounds. The extra character-class rules raise the baseline strength
@@ -61,15 +61,24 @@ export const evaluatePasswordStrength = (value: string): PasswordStrengthResult 
   }
 
   let score = 0;
-  if (value.length >= PASSWORD_MIN_LENGTH) {score += 1;}
-  if (value.length >= 12) {score += 1;}
-  if (/[A-Z]/.test(value) && /[a-z]/.test(value)) {score += 1;}
-  if (/\d/.test(value)) {score += 1;}
-  if (/[^A-Za-z0-9]/.test(value)) {score += 1;}
+  if (value.length >= PASSWORD_MIN_LENGTH) {
+    score += 1;
+  }
+  if (value.length >= 12) {
+    score += 1;
+  }
+  if (/[A-Z]/.test(value) && /[a-z]/.test(value)) {
+    score += 1;
+  }
+  if (/\d/.test(value)) {
+    score += 1;
+  }
+  if (/[^A-Za-z0-9]/.test(value)) {
+    score += 1;
+  }
 
   const normalized = Math.min(score, 4);
-  const level: PasswordStrength =
-    normalized <= 1 ? 'weak' : normalized <= 3 ? 'fair' : 'strong';
+  const level: PasswordStrength = normalized <= 1 ? 'weak' : normalized <= 3 ? 'fair' : 'strong';
 
   return { score: normalized, level };
 };

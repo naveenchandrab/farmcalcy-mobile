@@ -1,6 +1,6 @@
 # Maestro E2E — Auth & Registration
 
-End-to-end UI flows for the FarmCalcy auth + registration modules, driven by
+End-to-end UI flows for the FarmsEasy auth + registration modules, driven by
 [Maestro](https://maestro.mobile.dev). They run against a **real build** on an
 emulator/simulator or device and exercise the same `testID`s the Jest suite
 uses (see `src/constants/testIDs.ts`).
@@ -57,7 +57,7 @@ maestro/
 ```bash
 # Recommended — runs the whole suite and captures the real emailed OTP for the
 # reset happy path (see "OTP capture" below). Needs the API + Mailpit running.
-EMAIL=admin@farmcalcy.com PASSWORD='ChangeMe123@' ./maestro/run-e2e.sh
+EMAIL=admin@farmseasy.com PASSWORD='ChangeMe123@' ./maestro/run-e2e.sh
 
 # Or individual areas / flows:
 npm run e2e:login           # just maestro/login
@@ -66,7 +66,7 @@ npm run e2e:session         # just maestro/session
 maestro test maestro/login/successful-login.yaml   # a single flow
 
 # Override test data at runtime:
-maestro test -e EMAIL=qa@farmcalcy.com -e PASSWORD=Secret123 maestro/login
+maestro test -e EMAIL=qa@farmseasy.com -e PASSWORD=Secret123 maestro/login
 ```
 
 > Don't run `maestro test maestro/` over the whole tree directly: `reset-password-success.yaml`
@@ -77,7 +77,7 @@ maestro test -e EMAIL=qa@farmcalcy.com -e PASSWORD=Secret123 maestro/login
 
 `/otp/verify` and `/auth/reset-password` need the **real** 6-digit code the backend
 emails. Locally the API delivers mail to **Mailpit** (`docker compose up` in
-`farmcalcy-api`; SMTP `:1025`, web/API `:8025`). `run-e2e.sh`:
+`farmseasy-api`; SMTP `:1025`, web/API `:8025`). `run-e2e.sh`:
 
 1. drives the app to the OTP screen (which triggers the email),
 2. reads the latest code back from Mailpit's API (`GET :8025/api/v1/messages`),

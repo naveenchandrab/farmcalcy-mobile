@@ -4,7 +4,7 @@
 # capture the real emailed OTP between requesting it and entering it.
 #
 #   maestro test -e OTP=<captured> maestro/forgot-password/_reset-continue.yaml
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 env:
   NEW_PASSWORD: "NewStr0ngPass"
 ---

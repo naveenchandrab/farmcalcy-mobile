@@ -1,5 +1,5 @@
 # Reusable subflow: from a fresh launch, open the registration type selector.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 ---
 - runFlow: ./launch-fresh.yaml
 - tapOn:

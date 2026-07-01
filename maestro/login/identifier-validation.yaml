@@ -1,7 +1,7 @@
 # E2E: the login field accepts an email OR a phone number (unified identifier).
 #  - a value that is neither → inline "invalid identifier" error, no API call.
 #  - a valid phone number    → that error clears (phone is a valid identifier).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Login - Identifier Validation (email or phone)
 tags:
   - auth

@@ -6,7 +6,7 @@ app/release/
 local.properties
 
 # Keystore — NEVER commit real keystore or properties to git
-keystore/farmcalcy-release.keystore
+keystore/farmseasy-release.keystore
 keystore/keystore.properties
 
 # Android Studio

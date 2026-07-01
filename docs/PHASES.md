@@ -1,6 +1,6 @@
 # PCFMS Mobile App — Implementation Phases
 
-Poultry Contract Farming Management System (FarmCalcy)  
+Poultry Contract Farming Management System (FarmsEasy)  
 Mobile App: React Native · TypeScript · React Navigation v7 · Zustand · TanStack Query · Custom Design System · Storybook  
 Platform: **Android** (active) · **iOS** (upcoming)
 
@@ -55,7 +55,7 @@ These apply across all phases. Verify both platforms at each phase boundary.
 - [x] Toast notification utility — custom imperative API (`showSuccess`, `showError`, `showInfo`, `showWarning`)
 - [x] App entry point wiring: `NavigationContainer`, `ThemeProvider`, `QueryClientProvider`, `ToastProvider`
 - [x] **Android:** `gradle.properties` heap (4 GB JVM, parallel + caching) + `app/build.gradle` signing config (keystore.properties file, CI env-var fallback, R8 + shrinkResources on release, ProGuard rules) — `android/` directory created
-- [x] **iOS:** `ios/Podfile` (platform 15.0, New Arch, all third-party pods) + `ios/FarmCalcy/Info.plist` (all permission strings, background modes, ATS localhost exception) + `ios/FarmCalcy/PrivacyInfo.xcprivacy` (App Store privacy manifest, required since May 2024)
+- [x] **iOS:** `ios/Podfile` (platform 15.0, New Arch, all third-party pods) + `ios/FarmsEasy/Info.plist` (all permission strings, background modes, ATS localhost exception) + `ios/FarmsEasy/PrivacyInfo.xcprivacy` (App Store privacy manifest, required since May 2024)
 
 ### Branding & Native Assets
 
@@ -138,7 +138,7 @@ Custom component library built on React Native primitives. **React Native Paper 
 - [x] **Login Screen** — React Hook Form + Zod; email or 10-digit mobile validation; redesigned with auth UI kit
 - [x] **Register Screen** — new sign-up form; wired into Auth stack (`Register` route)
 - [x] Login API call (`POST /auth/login`) via TanStack Query mutation (`useLogin`)
-- [x] Store access + refresh tokens in Keychain (`com.farmcalcy.pcfms` service name)
+- [x] Store access + refresh tokens in Keychain (`com.farmseasy.pcfms` service name)
 - [x] `AuthStore` (Zustand): `user`, `isAuthenticated`, `isInitializing`, `login()`, `logout()`, `initialize()`
 - [x] **Logout** — `onSettled` pattern (clears local state even on API failure); `queryClient.clear()` before logout
 - [x] Session restore on app launch — `Promise.all([Keychain, AsyncStorage])` in `initialize()`

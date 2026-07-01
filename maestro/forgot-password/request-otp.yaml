@@ -1,5 +1,5 @@
 # E2E: from Login, request a reset code and reach the OTP screen.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Forgot Password - Request OTP
 tags:
   - auth

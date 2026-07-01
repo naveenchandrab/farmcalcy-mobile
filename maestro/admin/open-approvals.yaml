@@ -3,7 +3,7 @@
 #
 # Prereq: ADMIN_EMAIL/ADMIN_PASSWORD is a seeded SAAS_ADMIN with
 # mustChangePassword = false (the default seed admin).
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Admin - Open Registration Approvals
 tags:
   - admin

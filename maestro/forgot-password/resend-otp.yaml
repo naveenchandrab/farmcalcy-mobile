@@ -1,5 +1,5 @@
 # E2E: the resend control is gated by a cooldown timer, then issues a new code.
-appId: com.farmcalcy.pcfms
+appId: com.farmseasy.pcfms
 name: Forgot Password - Resend OTP Cooldown
 tags:
   - auth
