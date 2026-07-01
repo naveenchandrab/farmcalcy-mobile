@@ -508,9 +508,10 @@ bottom wave, and animated loading dots). It is shown by `RootNavigator` while
 The launcher icon is an Android **adaptive icon**:
 
 - `mipmap-anydpi-v26/ic_launcher.xml` composes `@color/ic_launcher_background`
-  (`#03441A`, matching the icon's green) with `ic_launcher_foreground.png`.
-- The foreground art is scaled to **~80% of the canvas** so the OEM mask
-  (circle / squircle / rounded-square) never crops the logo. Legacy
+  (`#0B7131`, matching the icon's green) with `ic_launcher_foreground.png`.
+- The foreground art is scaled to **~66% of the canvas** (the standard
+  adaptive-icon safe zone) so the OEM mask (circle / squircle /
+  rounded-square) never crops the logo. Legacy
   `ic_launcher.png` / `ic_launcher_round.png` carry the same safe padding.
 - Master source: `../Logo/app-icon.png`. iOS variants live in
   `ios/FarmsEasy/Images.xcassets/AppIcon.appiconset/`.
@@ -692,6 +693,34 @@ lsof -ti:8081 | xargs kill -9
 ### Gradle build fails on `generateCodegenSchema`
 
 A native module in `node_modules` uses codegen spec features not supported by RN 0.76's `@react-native/codegen`. Check which module is failing in the error output and pin it to a version compatible with RN 0.76.
+
+### `./android/gradlew clean` fails with CMake `add_subdirectory ... which is not an existing directory`
+
+`clean` also runs `:app:externalNativeBuildCleanDebug`/`...Release`, which reconfigures
+CMake. The generated `Android-autolinking.cmake` unconditionally
+`add_subdirectory()`s every autolinked library's codegen JNI folder
+(`node_modules/<lib>/android/build/generated/source/codegen/jni/`), but those
+folders are only created by each library's own codegen task as part of a real
+build — `clean` never runs them. If those folders don't exist yet (fresh clone,
+fresh `npm install`, or anything that wiped `node_modules/*/android/build`),
+the native clean step fails with this CMake error even though nothing is
+actually wrong with the project.
+
+Skip the native clean sub-tasks (the JS/Java clean still runs, which is enough
+to force fresh resources like the app icon to be repackaged):
+
+```bash
+./android/gradlew -p android clean -x :app:externalNativeBuildCleanDebug -x :app:externalNativeBuildCleanRelease
+```
+
+Or just delete the build output directories directly instead of invoking Gradle's clean:
+
+```bash
+rm -rf android/app/build android/app/.cxx
+```
+
+Either way, `npm run android` afterwards regenerates the codegen artifacts and
+native build fresh, so this doesn't leave the project in a broken state.
 
 ### Clean build (when all else fails)
 
