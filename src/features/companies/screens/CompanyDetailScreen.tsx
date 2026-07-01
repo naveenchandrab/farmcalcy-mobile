@@ -1,9 +1,19 @@
-import React from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
+import React, { useCallback } from 'react';
+import {
+  ActivityIndicator,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import ScreenHeader from '@navigation/ScreenHeader';
 import type { SaasAdminScreenProps } from '@navigation/types';
+import { showSuccess } from '@utils/toast';
 
 import { useCompanyDetail } from '../hooks/useCompanies';
 import type { SubscriptionStatus } from '../types';
@@ -22,23 +32,40 @@ const SUB_BADGE: Record<SubscriptionStatus, { text: string; bg: string }> = {
   CANCELLED: { text: '#616161', bg: '#F5F5F5' },
 };
 
-const InfoRow: React.FC<{ icon: string; label: string; value: string | null | undefined }> = ({
-  icon,
-  label,
-  value,
-}) => {
+interface InfoRowProps {
+  icon: string;
+  label: string;
+  value: string | null | undefined;
+  onPress?: () => void;
+  actionIcon?: string;
+}
+
+const InfoRow: React.FC<InfoRowProps> = ({ icon, label, value, onPress, actionIcon }) => {
   if (!value) {
     return null;
   }
-  return (
+
+  const content = (
     <View style={styles.infoRow}>
       <Icon name={icon} size={18} color={GREEN} style={styles.infoIcon} />
       <View style={styles.infoText}>
         <Text style={styles.infoLabel}>{label}</Text>
-        <Text style={styles.infoValue}>{value}</Text>
+        <Text style={[styles.infoValue, onPress && styles.infoValueLink]}>{value}</Text>
       </View>
+      {actionIcon ? (
+        <Icon name={actionIcon} size={16} color={GREEN} style={styles.actionIcon} />
+      ) : null}
     </View>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity activeOpacity={0.7} onPress={onPress}>
+        {content}
+      </TouchableOpacity>
+    );
+  }
+  return content;
 };
 
 const SectionHeader: React.FC<{ title: string }> = ({ title }) => (
@@ -59,6 +86,22 @@ const formatDate = (iso: string | null | undefined): string | null => {
 const CompanyDetailScreen: React.FC<Props> = ({ route }) => {
   const { companyId } = route.params;
   const { data: company, isLoading, isError, refetch } = useCompanyDetail(companyId);
+
+  const copyCode = useCallback(() => {
+    if (!company) {
+      return;
+    }
+    Clipboard.setString(company.code);
+    showSuccess(`Company code ${company.code} copied to clipboard`);
+  }, [company]);
+
+  const openPhone = useCallback((phone: string) => {
+    void Linking.openURL(`tel:${phone}`);
+  }, []);
+
+  const openEmail = useCallback((email: string) => {
+    void Linking.openURL(`mailto:${email}`);
+  }, []);
 
   if (isLoading) {
     return (
@@ -104,7 +147,15 @@ const CompanyDetailScreen: React.FC<Props> = ({ route }) => {
           </View>
           <View style={styles.identityBody}>
             <Text style={styles.companyName}>{company.name}</Text>
-            <Text style={styles.companyCode}>{company.code}</Text>
+            <TouchableOpacity
+              style={styles.codeRow}
+              activeOpacity={0.7}
+              onPress={copyCode}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.companyCode}>{company.code}</Text>
+              <Icon name="content-copy" size={14} color={GREEN} style={styles.copyIcon} />
+            </TouchableOpacity>
           </View>
           <View style={styles.statusColumn}>
             <View style={[styles.badge, { backgroundColor: badge.bg }]}>
@@ -129,8 +180,20 @@ const CompanyDetailScreen: React.FC<Props> = ({ route }) => {
         {/* Contact */}
         <SectionHeader title="Contact" />
         <View style={styles.section}>
-          <InfoRow icon="email-outline" label="Email" value={company.email} />
-          <InfoRow icon="phone-outline" label="Phone" value={company.phone} />
+          <InfoRow
+            icon="email-outline"
+            label="Email"
+            value={company.email}
+            onPress={company.email ? () => openEmail(company.email) : undefined}
+            actionIcon="open-in-new"
+          />
+          <InfoRow
+            icon="phone-outline"
+            label="Phone"
+            value={company.phone}
+            onPress={company.phone ? () => openPhone(company.phone!) : undefined}
+            actionIcon="phone-forward-outline"
+          />
         </View>
 
         {/* Address */}
@@ -210,7 +273,9 @@ const styles = StyleSheet.create({
   avatarInitial: { fontSize: 22, fontWeight: '700', color: GREEN },
   identityBody: { flex: 1 },
   companyName: { fontSize: 16, fontWeight: '700', color: '#1A1A1A' },
-  companyCode: { fontSize: 12, color: MUTED, marginTop: 2 },
+  codeRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3, gap: 5 },
+  companyCode: { fontSize: 12, color: MUTED },
+  copyIcon: { opacity: 0.7 },
   statusColumn: { alignItems: 'flex-end', gap: 6 },
   badge: { borderRadius: 6, paddingHorizontal: 9, paddingVertical: 4 },
   badgeText: { fontSize: 11, fontWeight: '700' },
@@ -251,6 +316,8 @@ const styles = StyleSheet.create({
   infoText: { flex: 1 },
   infoLabel: { fontSize: 12, color: MUTED },
   infoValue: { fontSize: 14, color: '#1A1A1A', marginTop: 2, fontWeight: '500' },
+  infoValueLink: { color: GREEN },
+  actionIcon: { alignSelf: 'center', marginLeft: 8, opacity: 0.6 },
 
   // Stats
   statsRow: {

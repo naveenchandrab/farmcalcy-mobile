@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
+  Linking,
   Modal,
   ScrollView,
   StyleSheet,
@@ -35,13 +36,29 @@ const STATUS_BADGE: Record<RegistrationStatus, { text: string; bg: string; label
   REJECTED: { text: RED, bg: '#FFEBEE', label: 'Rejected' },
 };
 
-const Row: React.FC<{ label: string; value?: string | null }> = ({ label, value }) =>
-  value ? (
+const Row: React.FC<{ label: string; value?: string | null; link?: string }> = ({
+  label,
+  value,
+  link,
+}) => {
+  if (!value) {
+    return null;
+  }
+  const inner = (
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
+      <Text style={[styles.rowValue, link && styles.rowLink]}>{value}</Text>
     </View>
-  ) : null;
+  );
+  if (link) {
+    return (
+      <TouchableOpacity activeOpacity={0.7} onPress={() => void Linking.openURL(link)}>
+        {inner}
+      </TouchableOpacity>
+    );
+  }
+  return inner;
+};
 
 const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { id } = route.params;
@@ -94,8 +111,12 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
           </Text>
           <View style={styles.card}>
             <Row label="Name" value={`${req.firstName} ${req.lastName}`} />
-            <Row label="Phone" value={req.phoneNumber} />
-            <Row label="Email" value={req.email ?? '— (phone only)'} />
+            <Row label="Phone" value={req.phoneNumber} link={`tel:${req.phoneNumber}`} />
+            <Row
+              label="Email"
+              value={req.email ?? '— (phone only)'}
+              link={req.email ? `mailto:${req.email}` : undefined}
+            />
             <Row label="Requested role" value={req.requestedRole} />
           </View>
 
@@ -104,8 +125,16 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
               <Text style={styles.sectionLabel}>Company</Text>
               <View style={styles.card}>
                 <Row label="Name" value={req.companyName} />
-                <Row label="Email" value={req.companyEmail} />
-                <Row label="Phone" value={req.companyPhone} />
+                <Row
+                  label="Email"
+                  value={req.companyEmail}
+                  link={req.companyEmail ? `mailto:${req.companyEmail}` : undefined}
+                />
+                <Row
+                  label="Phone"
+                  value={req.companyPhone}
+                  link={req.companyPhone ? `tel:${req.companyPhone}` : undefined}
+                />
                 <Row label="GST" value={req.gstNumber} />
                 <Row label="HQ GPS" value={gps} />
               </View>
@@ -311,6 +340,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     textAlign: 'right',
   },
+  rowLink: { color: GREEN },
   reason: { fontSize: 14, color: '#1A1A1A', paddingVertical: 12, lineHeight: 20 },
   aadhaarCard: { flexDirection: 'row', gap: 12, paddingVertical: 12 },
   audit: { fontSize: 11, color: '#9AA0A6', marginTop: 8, textAlign: 'center' },
