@@ -32,6 +32,7 @@ const RegistrationDetailScreen = React.lazy(
 const NotificationsScreen = React.lazy(
   () => import('@features/notifications/screens/NotificationsScreen'),
 );
+const ProfileScreen = React.lazy(() => import('@features/profile/screens/ProfileScreen'));
 
 // Registration approvals tab nests the review stack (list → detail).
 const RegistrationsStack = createNativeStackNavigator<RegistrationsStackParamList>();
@@ -105,6 +106,13 @@ const tabs: TabConfig[] = [
     label: 'Notifications',
     icon: 'bell-outline',
     component: NotificationsScreen,
+    hidden: true,
+  },
+  {
+    name: 'ProfileTab',
+    label: 'My Profile',
+    icon: 'account-circle-outline',
+    component: ProfileScreen,
     hidden: true,
   },
 ];

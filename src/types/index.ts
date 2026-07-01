@@ -19,6 +19,8 @@ export interface User {
   name: string;
   email: string;
   phone?: string;
+  /** Profile photo URL. Undefined/null until the user uploads one. */
+  avatarUrl?: string | null;
   role: UserRole;
   status: UserStatus;
   companyId?: string;

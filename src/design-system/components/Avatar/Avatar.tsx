@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useTheme } from '../../theme';
 import Typography from '../Typography/Typography';
@@ -12,6 +13,8 @@ interface AvatarProps {
   size?: AvatarSize;
   backgroundColor?: string;
   textColor?: string;
+  /** Show a generic person icon instead of initials when there's no image (e.g. profile photos, where "no photo yet" reads better than initials). */
+  placeholderIcon?: boolean;
 }
 
 const SIZE_PX: Record<AvatarSize, number> = {
@@ -44,6 +47,7 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 'md',
   backgroundColor,
   textColor,
+  placeholderIcon = false,
 }) => {
   const { colors } = useTheme();
 
@@ -69,10 +73,9 @@ const Avatar: React.FC<AvatarProps> = ({
       ]}
     >
       {imageUri ? (
-        <Image
-          source={{ uri: imageUri }}
-          style={{ width: px, height: px, borderRadius: px / 2 }}
-        />
+        <Image source={{ uri: imageUri }} style={{ width: px, height: px, borderRadius: px / 2 }} />
+      ) : placeholderIcon ? (
+        <Icon name="account" size={px * 0.6} color={tc} />
       ) : (
         <Typography style={{ fontSize, fontWeight: '700', color: tc }}>{initials}</Typography>
       )}

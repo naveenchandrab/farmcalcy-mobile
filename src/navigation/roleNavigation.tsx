@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Loader from '@components/Loader';
 import { TEST_IDS } from '@constants/testIDs';
+import { Avatar } from '@design-system';
 import { useAuthStore } from '@store/authStore';
 
 const GREEN = '#1E7D34';
@@ -65,6 +66,9 @@ export interface RoleNavConfig {
 type DrawerProps = DrawerContentComponentProps & {
   roleLabel: string;
   menuItems: readonly MenuItem[];
+  /** First tab in the role's config — used as the highlighted item until the
+   *  nested tab navigator's own state has mounted and reported up. */
+  defaultActiveTab?: string;
 };
 
 /** Reads the focused bottom-tab name out of the nested drawer state. */
@@ -77,11 +81,16 @@ const activeTabName = (state: DrawerContentComponentProps['state']): string | nu
   return tabState.routeNames[tabState.index] ?? null;
 };
 
-const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...props }) => {
+const AppDrawerContent: React.FC<DrawerProps> = ({
+  roleLabel,
+  menuItems,
+  defaultActiveTab,
+  ...props
+}) => {
   const { navigation, state } = props;
   const user = useAuthStore(s => s.user);
   const insets = useSafeAreaInsets();
-  const active = activeTabName(state);
+  const active = activeTabName(state) ?? defaultActiveTab ?? null;
 
   const go = (target: string) => {
     navigation.navigate('Home', { screen: target });
@@ -95,17 +104,28 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
         {/* Brand */}
         <View style={styles.brand}>
           <Image
-            source={require('@assets/images/compact-logo-transparent.png') as ImageSourcePropType}
+            source={require('@assets/images/horizontal-logo.png') as ImageSourcePropType}
             style={styles.brandLogo}
             resizeMode="contain"
           />
         </View>
 
-        {/* Profile */}
-        <View style={styles.profileCard}>
-          <View style={styles.profileAvatar}>
-            <Icon name="account" size={28} color="#9AA0A6" />
-          </View>
+        {/* Profile — whole tile opens the current user's Profile page */}
+        <TouchableOpacity
+          style={styles.profileCard}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="View profile"
+          onPress={() => go('ProfileTab')}
+        >
+          <Avatar
+            name={user?.name}
+            imageUri={user?.avatarUrl ?? undefined}
+            size="md"
+            backgroundColor="#E2E5E2"
+            textColor="#9AA0A6"
+            placeholderIcon
+          />
           <View style={styles.flex}>
             <Text style={styles.profileName}>{user?.name ?? roleLabel}</Text>
             <Text style={styles.profileEmail} numberOfLines={1}>
@@ -116,7 +136,7 @@ const AppDrawerContent: React.FC<DrawerProps> = ({ roleLabel, menuItems, ...prop
             </View>
           </View>
           <Icon name="chevron-down" size={20} color="#9AA0A6" />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* Scrollable menu */}
@@ -238,7 +258,12 @@ export const createRoleNavigator = (config: RoleNavConfig): React.FC => {
   const RoleNavigator: React.FC = () => (
     <Drawer.Navigator
       drawerContent={props => (
-        <AppDrawerContent {...props} roleLabel={config.roleLabel} menuItems={config.menuItems} />
+        <AppDrawerContent
+          {...props}
+          roleLabel={config.roleLabel}
+          menuItems={config.menuItems}
+          defaultActiveTab={config.tabs[0]?.name}
+        />
       )}
       screenOptions={{
         headerShown: false,
@@ -271,14 +296,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 12,
     gap: 10,
-  },
-  profileAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#E2E5E2',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   profileName: { fontSize: 14, fontWeight: '700', color: '#1A1A1A' },
   profileEmail: { fontSize: 12, color: '#7A7A7A', marginTop: 1 },

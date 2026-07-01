@@ -31,6 +31,7 @@ const RegistrationDetailScreen = React.lazy(
 const NotificationsScreen = React.lazy(
   () => import('@features/notifications/screens/NotificationsScreen'),
 );
+const ProfileScreen = React.lazy(() => import('@features/profile/screens/ProfileScreen'));
 const TenantsScreen = React.lazy(() => import('@features/companies/screens/TenantsScreen'));
 const CompanyDetailScreen = React.lazy(
   () => import('@features/companies/screens/CompanyDetailScreen'),
@@ -123,6 +124,13 @@ const tabs: TabConfig[] = [
     label: 'Notifications',
     icon: 'bell-outline',
     component: NotificationsScreen,
+    hidden: true,
+  },
+  {
+    name: 'ProfileTab',
+    label: 'My Profile',
+    icon: 'account-circle-outline',
+    component: ProfileScreen,
     hidden: true,
   },
 ];

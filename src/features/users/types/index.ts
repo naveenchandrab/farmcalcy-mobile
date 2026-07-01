@@ -9,10 +9,7 @@ export const createUserSchema = z.object({
     .string()
     .min(2, 'Name must be at least 2 characters')
     .max(100, 'Name must be under 100 characters'),
-  email: z
-    .string()
-    .min(1, 'Email is required')
-    .email('Enter a valid email address'),
+  email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
   phone: z
     .string()
     .regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit mobile number')
@@ -28,17 +25,12 @@ export const createUserSchema = z.object({
     .regex(/[0-9]/, 'Must contain at least one number'),
 });
 
-export const editUserSchema = createUserSchema
-  .omit({ password: true })
-  .extend({
-    password: z
-      .string()
-      .optional()
-      .refine(
-        val => !val || val.length >= 8,
-        'Password must be at least 8 characters',
-      ),
-  });
+export const editUserSchema = createUserSchema.omit({ password: true }).extend({
+  password: z
+    .string()
+    .optional()
+    .refine(val => !val || val.length >= 8, 'Password must be at least 8 characters'),
+});
 
 export type CreateUserFormValues = z.infer<typeof createUserSchema>;
 export type EditUserFormValues = z.infer<typeof editUserSchema>;
@@ -74,12 +66,7 @@ export interface ToggleUserStatusRequest {
 // normalised through `mapApiUserToUser` before it reaches the UI. Without this
 // the User screens crash on `status.toUpperCase()` (status is undefined).
 
-const KNOWN_ROLES: readonly UserRole[] = [
-  'SAAS_ADMIN',
-  'TENANT_ADMIN',
-  'SUPERVISOR',
-  'FARMER',
-];
+const KNOWN_ROLES: readonly UserRole[] = ['SAAS_ADMIN', 'TENANT_ADMIN', 'SUPERVISOR', 'FARMER'];
 
 const KNOWN_STATUSES: readonly UserStatus[] = ['ACTIVE', 'INACTIVE', 'SUSPENDED'];
 
@@ -89,6 +76,7 @@ export interface ApiUserDto {
   name: string;
   email: string;
   phone?: string | null;
+  avatarUrl?: string | null;
   /** Boolean activation flag from the current backend contract. */
   isActive?: boolean;
   /** Explicit status enum, if a future backend version provides it. */
@@ -103,11 +91,8 @@ export interface ApiUserDto {
 }
 
 const resolveRole = (dto: ApiUserDto): UserRole => {
-  const raw =
-    dto.roleName ?? (typeof dto.role === 'string' ? dto.role : dto.role?.name) ?? '';
-  return (KNOWN_ROLES as readonly string[]).includes(raw)
-    ? (raw as UserRole)
-    : 'FARMER';
+  const raw = dto.roleName ?? (typeof dto.role === 'string' ? dto.role : dto.role?.name) ?? '';
+  return (KNOWN_ROLES as readonly string[]).includes(raw) ? (raw as UserRole) : 'FARMER';
 };
 
 const resolveStatus = (dto: ApiUserDto): UserStatus => {
@@ -126,6 +111,7 @@ export const mapApiUserToUser = (dto: ApiUserDto): User => {
     name: dto.name,
     email: dto.email,
     phone: dto.phone ?? undefined,
+    avatarUrl: dto.avatarUrl ?? undefined,
     role: resolveRole(dto),
     status: resolveStatus(dto),
     companyId: dto.companyId ?? undefined,

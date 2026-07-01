@@ -6,6 +6,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { TEST_IDS } from '@constants/testIDs';
+import { Avatar } from '@design-system';
 import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
 import { useRegistrationList } from '@features/registration/hooks/useRegistrationReview';
 import { REGISTRATION_TYPE_LABEL } from '@features/registration/types';
@@ -66,11 +67,13 @@ const QUICK_LINKS = [
 const TenantAdminDashboardScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const userName = useAuthStore(s => s.user?.name);
+  const user = useAuthStore(s => s.user);
+  const userName = user?.name;
 
   const openDrawer = () => navigation.dispatch(DrawerActions.openDrawer());
   const openNotifications = () => navigation.navigate('NotificationsTab' as never);
   const openApprovals = () => navigation.navigate('RegistrationsTab' as never);
+  const openProfile = () => navigation.navigate('ProfileTab' as never);
 
   const openRequest = useCallback(
     (id: string) => {
@@ -134,9 +137,21 @@ const TenantAdminDashboardScreen: React.FC = () => {
             <Text style={styles.greetHi}>Hello, {userName ?? 'Company Admin'}!</Text>
             <Text style={styles.greetSub}>Here&apos;s what&apos;s happening today.</Text>
           </View>
-          <View style={styles.avatar}>
-            <Icon name="account" size={34} color="#9AA0A6" />
-          </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel="View profile"
+            style={styles.avatar}
+            onPress={openProfile}
+          >
+            <Avatar
+              name={user?.name}
+              imageUri={user?.avatarUrl ?? undefined}
+              size="lg"
+              backgroundColor="#E8EAED"
+              textColor="#9AA0A6"
+              placeholderIcon
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -257,12 +272,7 @@ const styles = StyleSheet.create({
   greetHi: { fontSize: 20, fontWeight: '700', color: '#FFFFFF' },
   greetSub: { fontSize: 13, color: 'rgba(255,255,255,0.88)', marginTop: 4 },
   avatar: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: '#E8EAED',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 30,
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.85)',
   },
