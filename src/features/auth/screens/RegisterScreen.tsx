@@ -1,75 +1,57 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useCallback, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import type {
-  TextInput} from 'react-native';
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native';
+import React, { useCallback } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import type { AuthScreenProps } from '@navigation/types';
-import { showSuccess } from '@utils/toast';
 
-import AuthButton from '../components/AuthButton';
-import AuthInput from '../components/AuthInput';
 import { AUTH_COLORS, AUTH_FONT, AUTH_SPACING, AUTH_TYPE } from '../components/authTokens';
 import Logo from '../components/Logo';
-import { registerSchema } from '../types';
-import type { RegisterFormValues } from '../types';
 
 type Props = AuthScreenProps<'Register'>;
 
-const ENTER_DURATION = 500;
+const ENTER_DURATION = 450;
+
+interface Option {
+  key: string;
+  icon: string;
+  title: string;
+  subtitle: string;
+  onPress: () => void;
+}
 
 const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const insets = useSafeAreaInsets();
-  const [secure, setSecure] = useState(true);
-  const [confirmSecure, setConfirmSecure] = useState(true);
 
-  const identifierRef = useRef<TextInput>(null);
-  const passwordRef = useRef<TextInput>(null);
-  const confirmRef = useRef<TextInput>(null);
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: '', email: '', password: '', confirmPassword: '' },
-  });
-
-  const onSubmit = useCallback(
-    (_values: RegisterFormValues): void => {
-      Keyboard.dismiss();
-      // No registration endpoint is exposed yet — confirm the form and return
-      // the user to Login. Wire to the real API once the backend ships.
-      showSuccess('Account details captured. Please log in to continue.');
-      navigation.goBack();
-    },
-    [navigation],
-  );
-
-  const submit = handleSubmit(onSubmit);
   const goBack = useCallback(() => navigation.goBack(), [navigation]);
-  const toggleSecure = useCallback(() => setSecure(prev => !prev), []);
-  const toggleConfirm = useCallback(() => setConfirmSecure(prev => !prev), []);
+
+  const options: Option[] = [
+    {
+      key: 'tenant',
+      icon: 'office-building-outline',
+      title: 'Register a Company',
+      subtitle: 'Onboard your poultry business as a new tenant',
+      onPress: () => navigation.navigate('RegisterTenant'),
+    },
+    {
+      key: 'supervisor',
+      icon: 'account-tie-outline',
+      title: 'Join as a Supervisor',
+      subtitle: 'Use your company code to request access',
+      onPress: () => navigation.navigate('RegisterSupervisor'),
+    },
+    {
+      key: 'farm-owner',
+      icon: 'home-group',
+      title: 'Join as a Farm Owner',
+      subtitle: 'Register your farm with its location',
+      onPress: () => navigation.navigate('RegisterFarmOwner'),
+    },
+  ];
 
   return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <View style={styles.flex}>
       <TouchableOpacity
         onPress={goBack}
         activeOpacity={0.7}
@@ -81,150 +63,62 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         <Icon name="arrow-left" size={26} color={AUTH_COLORS.textPrimary} />
       </TouchableOpacity>
 
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <ScrollView
-          style={styles.flex}
-          contentContainerStyle={[
-            styles.content,
-            { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 },
-          ]}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+      <ScrollView
+        style={styles.flex}
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: insets.top + 56, paddingBottom: insets.bottom + 24 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <Logo />
+
+        <Animated.View
+          entering={FadeInDown.delay(120).duration(ENTER_DURATION)}
+          style={styles.heroSection}
         >
-          <Logo />
+          <Text style={styles.heading} accessibilityRole="header">
+            Create Account
+          </Text>
+          <Text style={styles.subheading}>How would you like to register?</Text>
+        </Animated.View>
 
+        {options.map((opt, index) => (
           <Animated.View
-            entering={FadeInDown.delay(120).duration(ENTER_DURATION)}
-            style={styles.welcomeSection}
+            key={opt.key}
+            entering={FadeInDown.delay(200 + index * 80).duration(ENTER_DURATION)}
           >
-            <Text style={styles.heading}>Create Account</Text>
-            <Text style={styles.subheading}>Sign up to get started</Text>
-          </Animated.View>
-
-          <Animated.View entering={FadeInDown.delay(220).duration(ENTER_DURATION)}>
-            <Controller
-              control={control}
-              name="fullName"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <AuthInput
-                  leftIcon="account-outline"
-                  placeholder="Full Name"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  errorMessage={errors.fullName?.message}
-                  autoCapitalize="words"
-                  returnKeyType="next"
-                  onSubmitEditing={() => identifierRef.current?.focus()}
-                  blurOnSubmit={false}
-                />
-              )}
-            />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(290).duration(ENTER_DURATION)}
-            style={styles.fieldGap}
-          >
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <AuthInput
-                  ref={identifierRef}
-                  leftIcon="email-outline"
-                  placeholder="Email Address"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  errorMessage={errors.email?.message}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  returnKeyType="next"
-                  onSubmitEditing={() => passwordRef.current?.focus()}
-                  blurOnSubmit={false}
-                />
-              )}
-            />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(360).duration(ENTER_DURATION)}
-            style={styles.fieldGap}
-          >
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <AuthInput
-                  ref={passwordRef}
-                  leftIcon="lock-outline"
-                  rightIcon={secure ? 'eye-off-outline' : 'eye-outline'}
-                  onRightIconPress={toggleSecure}
-                  placeholder="Password"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  errorMessage={errors.password?.message}
-                  secureTextEntry={secure}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  returnKeyType="next"
-                  onSubmitEditing={() => confirmRef.current?.focus()}
-                  blurOnSubmit={false}
-                />
-              )}
-            />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(430).duration(ENTER_DURATION)}
-            style={styles.fieldGap}
-          >
-            <Controller
-              control={control}
-              name="confirmPassword"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <AuthInput
-                  ref={confirmRef}
-                  leftIcon="lock-check-outline"
-                  rightIcon={confirmSecure ? 'eye-off-outline' : 'eye-outline'}
-                  onRightIconPress={toggleConfirm}
-                  placeholder="Confirm Password"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  errorMessage={errors.confirmPassword?.message}
-                  secureTextEntry={confirmSecure}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  returnKeyType="done"
-                  onSubmitEditing={() => void submit()}
-                />
-              )}
-            />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(500).duration(ENTER_DURATION)}
-            style={styles.submitWrap}
-          >
-            <AuthButton label="Register" onPress={() => void submit()} />
-          </Animated.View>
-
-          <Animated.View
-            entering={FadeInDown.delay(580).duration(ENTER_DURATION)}
-            style={styles.footerRow}
-          >
-            <Text style={styles.footerMuted}>Already have an account? </Text>
-            <TouchableOpacity onPress={goBack} activeOpacity={0.7}>
-              <Text style={styles.footerLink}>Login</Text>
+            <TouchableOpacity
+              testID={`register-option-${opt.key}`}
+              activeOpacity={0.8}
+              onPress={opt.onPress}
+              style={styles.card}
+              accessibilityRole="button"
+              accessibilityLabel={opt.title}
+            >
+              <View style={styles.iconCircle}>
+                <Icon name={opt.icon} size={26} color={AUTH_COLORS.primary} />
+              </View>
+              <View style={styles.cardBody}>
+                <Text style={styles.cardTitle}>{opt.title}</Text>
+                <Text style={styles.cardSubtitle}>{opt.subtitle}</Text>
+              </View>
+              <Icon name="chevron-right" size={24} color={AUTH_COLORS.placeholder} />
             </TouchableOpacity>
           </Animated.View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        ))}
+
+        <Animated.View
+          entering={FadeInDown.delay(480).duration(ENTER_DURATION)}
+          style={styles.footerRow}
+        >
+          <Text style={styles.footerMuted}>Already have an account? </Text>
+          <TouchableOpacity onPress={goBack} activeOpacity={0.7}>
+            <Text style={styles.footerLink}>Login</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -243,7 +137,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: AUTH_SPACING.screenHorizontal,
   },
-  welcomeSection: {
+  heroSection: {
     alignItems: 'center',
     marginTop: AUTH_SPACING.logoToWelcome,
     marginBottom: AUTH_SPACING.welcomeToUsername,
@@ -259,17 +153,51 @@ const styles = StyleSheet.create({
     fontFamily: AUTH_FONT.regular,
     color: AUTH_COLORS.textSecondary,
   },
-  fieldGap: {
-    marginTop: AUTH_SPACING.fieldGap,
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: AUTH_COLORS.surface,
+    borderWidth: 1,
+    borderColor: AUTH_COLORS.inputBorder,
+    borderRadius: AUTH_SPACING.inputRadius,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 1,
   },
-  submitWrap: {
-    marginTop: AUTH_SPACING.rememberToLogin,
+  iconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#E8F3EC',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 14,
+  },
+  cardBody: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontFamily: AUTH_FONT.semibold,
+    color: AUTH_COLORS.textPrimary,
+  },
+  cardSubtitle: {
+    marginTop: 3,
+    fontSize: 13,
+    fontFamily: AUTH_FONT.regular,
+    color: AUTH_COLORS.textSecondary,
+    lineHeight: 18,
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: AUTH_SPACING.loginToRegister,
+    marginTop: 12,
   },
   footerMuted: {
     fontSize: AUTH_TYPE.register,

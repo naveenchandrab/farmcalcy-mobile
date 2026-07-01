@@ -1,0 +1,41 @@
+# E2E: a signed-in SAAS_ADMIN reaches the Registration Approvals list from the
+# drawer and sees the Pending / Approved / Rejected tabs.
+#
+# Prereq: ADMIN_EMAIL/ADMIN_PASSWORD is a seeded SAAS_ADMIN with
+# mustChangePassword = false (the default seed admin).
+appId: com.farmcalcy.pcfms
+name: Admin - Open Registration Approvals
+tags:
+  - admin
+  - registration
+  - approvals
+---
+- runFlow: ../shared/launch-fresh.yaml
+
+# Sign in as the SAAS admin.
+- tapOn:
+    id: "login-email-input"
+- inputText: ${ADMIN_EMAIL}
+- tapOn:
+    id: "login-password-input"
+- inputText: ${ADMIN_PASSWORD}
+- tapOn:
+    id: "login-button"
+- extendedWaitUntil:
+    visible:
+      id: "open-menu-button"
+    timeout: 20000
+
+# Open the drawer and go to Registration Approvals.
+- tapOn:
+    id: "open-menu-button"
+- tapOn:
+    text: "Registration Approvals"
+- assertVisible:
+    text: "Registration Approvals"
+- assertVisible:
+    text: "Pending"
+- assertVisible:
+    text: "Approved"
+- assertVisible:
+    text: "Rejected"

@@ -2,8 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import type {
-  TextInput} from 'react-native';
+import type { TextInput } from 'react-native';
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -46,8 +45,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   // window — the KeyboardAvoidingView must do it ('height') and we scroll the
   // content up when the keyboard appears.
   useEffect(() => {
-    const showEvent =
-      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const sub = Keyboard.addListener(showEvent, () => {
       requestAnimationFrame(() => scrollRef.current?.scrollToEnd({ animated: true }));
     });
@@ -62,15 +60,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     mode: 'onBlur',
-    defaultValues: { email: '', password: '', rememberMe: true },
+    defaultValues: { identifier: '', password: '', rememberMe: true },
   });
 
-  // Restore the remembered email (never the password) on mount.
+  // Restore the remembered identifier (never the password) on mount.
   useEffect(() => {
     let active = true;
     void AsyncStorage.getItem(STORAGE_KEY_REMEMBERED_EMAIL).then(saved => {
       if (active && saved) {
-        setValue('email', saved);
+        setValue('identifier', saved);
       }
     });
     return () => {
@@ -78,16 +76,13 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     };
   }, [setValue]);
 
-  const persistRememberedEmail = useCallback(
-    (values: LoginFormValues): void => {
-      if (values.rememberMe) {
-        void AsyncStorage.setItem(STORAGE_KEY_REMEMBERED_EMAIL, values.email.trim());
-      } else {
-        void AsyncStorage.removeItem(STORAGE_KEY_REMEMBERED_EMAIL);
-      }
-    },
-    [],
-  );
+  const persistRememberedEmail = useCallback((values: LoginFormValues): void => {
+    if (values.rememberMe) {
+      void AsyncStorage.setItem(STORAGE_KEY_REMEMBERED_EMAIL, values.identifier.trim());
+    } else {
+      void AsyncStorage.removeItem(STORAGE_KEY_REMEMBERED_EMAIL);
+    }
+  }, []);
 
   const onSubmit = useCallback(
     (values: LoginFormValues): void => {
@@ -115,6 +110,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const focusPassword = useCallback(() => passwordRef.current?.focus(), []);
   const goToForgot = useCallback(() => navigation.navigate('ForgotPassword'), [navigation]);
   const goToRegister = useCallback(() => navigation.navigate('Register'), [navigation]);
+  const goToTrack = useCallback(() => navigation.navigate('TrackRegistration'), [navigation]);
 
   return (
     <KeyboardAvoidingView
@@ -148,26 +144,26 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
           <Animated.View entering={FadeInDown.delay(220).duration(ENTER_DURATION)}>
             <Controller
               control={control}
-              name="email"
+              name="identifier"
               render={({ field: { onChange, onBlur, value } }) => (
                 <AuthInput
                   testID={TEST_IDS.login.emailInput}
-                  leftIcon="email-outline"
-                  placeholder="Email Address"
+                  leftIcon="account-outline"
+                  placeholder="Email or Mobile Number"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  errorMessage={errors.email?.message}
+                  errorMessage={errors.identifier?.message}
                   keyboardType="email-address"
-                  textContentType="emailAddress"
-                  autoComplete="email"
+                  textContentType="username"
+                  autoComplete="username"
                   autoCapitalize="none"
                   autoCorrect={false}
                   returnKeyType="next"
                   onSubmitEditing={focusPassword}
                   blurOnSubmit={false}
                   editable={!isPending}
-                  accessibilityLabel="Email address"
+                  accessibilityLabel="Email or mobile number"
                 />
               )}
             />
@@ -261,6 +257,21 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.registerLink}>Register</Text>
             </TouchableOpacity>
           </Animated.View>
+
+          <Animated.View
+            entering={FadeInDown.delay(600).duration(ENTER_DURATION)}
+            style={styles.trackRow}
+          >
+            <TouchableOpacity
+              testID="login-track-link"
+              onPress={goToTrack}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Track your registration"
+            >
+              <Text style={styles.trackLink}>Track your registration</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -324,6 +335,16 @@ const styles = StyleSheet.create({
     fontSize: AUTH_TYPE.register,
     fontFamily: AUTH_FONT.medium,
     color: AUTH_COLORS.primary,
+  },
+  trackRow: {
+    alignItems: 'center',
+    marginTop: 14,
+  },
+  trackLink: {
+    fontSize: AUTH_TYPE.register,
+    fontFamily: AUTH_FONT.medium,
+    color: AUTH_COLORS.textSecondary,
+    textDecorationLine: 'underline',
   },
 });
 

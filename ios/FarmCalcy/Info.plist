@@ -81,11 +81,9 @@
   <key>NSUserNotificationUsageDescription</key>
   <string>FarmCalcy sends notifications for batch updates, payment alerts, and contract reminders.</string>
 
-  <!-- Location: farm geo-tagging (future) — placeholder, disabled until used -->
-  <!-- Uncomment when implementing geo-tagging:
+  <!-- Location: farm-owner "use my current location" on the registration map picker -->
   <key>NSLocationWhenInUseUsageDescription</key>
-  <string>FarmCalcy uses your location to tag farm records with GPS coordinates.</string>
-  -->
+  <string>FarmCalcy uses your location to set your farm's position on the map during registration.</string>
 
   <!-- ─── Background Modes ──────────────────────────────────────────────── -->
   <!-- remote-notification: FCM push in background / quit state (Phase 11) -->
@@ -97,7 +95,7 @@
   <!-- ─── React Native / Metro ─────────────────────────────────────────── -->
   <!-- Points Xcode to the JS bundle. Metro updates this automatically. -->
   <key>NSLocationAlwaysUsageDescription</key>
-  <string></string>
+  <string>FarmCalcy uses your location to set your farm's position on the map during registration.</string>
 
   <!-- ─── Status Bar ────────────────────────────────────────────────────── -->
   <!-- Let React Native manage the status bar style -->

@@ -11,7 +11,7 @@ import { showInfo } from '@utils/toast';
 
 import { createRoleNavigator } from './roleNavigation';
 import type { MenuItem, TabConfig } from './roleNavigation';
-import type { SaasAdminStackParamList } from './types';
+import type { RegistrationsStackParamList, SaasAdminStackParamList } from './types';
 
 // ─── Lazy screens ─────────────────────────────────────────────────────────────
 
@@ -22,6 +22,15 @@ const UserListScreen = React.lazy(() => import('@features/users/screens/UserList
 const UserDetailsScreen = React.lazy(() => import('@features/users/screens/UserDetailsScreen'));
 const CreateUserScreen = React.lazy(() => import('@features/users/screens/CreateUserScreen'));
 const EditUserScreen = React.lazy(() => import('@features/users/screens/EditUserScreen'));
+const RegistrationListScreen = React.lazy(
+  () => import('@features/registration/screens/RegistrationListScreen'),
+);
+const RegistrationDetailScreen = React.lazy(
+  () => import('@features/registration/screens/RegistrationDetailScreen'),
+);
+const NotificationsScreen = React.lazy(
+  () => import('@features/notifications/screens/NotificationsScreen'),
+);
 
 // Users tab nests the existing user-management stack.
 const UsersStack = createNativeStackNavigator<SaasAdminStackParamList>();
@@ -32,6 +41,20 @@ const UsersStackNavigator: React.FC = () => (
     <UsersStack.Screen name="CreateUser" component={CreateUserScreen} />
     <UsersStack.Screen name="EditUser" component={EditUserScreen} />
   </UsersStack.Navigator>
+);
+
+// Registration approvals tab nests the review stack (list → detail).
+const RegistrationsStack = createNativeStackNavigator<RegistrationsStackParamList>();
+const RegistrationsStackNavigator: React.FC = () => (
+  <RegistrationsStack.Navigator
+    screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
+  >
+    <RegistrationsStack.Screen name="RegistrationApprovalList" component={RegistrationListScreen} />
+    <RegistrationsStack.Screen
+      name="RegistrationApprovalDetail"
+      component={RegistrationDetailScreen}
+    />
+  </RegistrationsStack.Navigator>
 );
 
 const TenantsTab: React.FC = () => (
@@ -74,6 +97,21 @@ const tabs: TabConfig[] = [
   },
   { name: 'ReportsTab', label: 'Reports', icon: 'chart-box-outline', component: ReportsTab },
   { name: 'MoreTab', label: 'More', icon: 'dots-horizontal', component: MoreTab },
+  // Hidden tabs — reachable from the drawer / header bell, not the tab bar.
+  {
+    name: 'RegistrationsTab',
+    label: 'Approvals',
+    icon: 'clipboard-check-outline',
+    component: RegistrationsStackNavigator,
+    hidden: true,
+  },
+  {
+    name: 'NotificationsTab',
+    label: 'Notifications',
+    icon: 'bell-outline',
+    component: NotificationsScreen,
+    hidden: true,
+  },
 ];
 
 const menuItems: MenuItem[] = [
@@ -82,6 +120,12 @@ const menuItems: MenuItem[] = [
     label: 'Tenants (Companies)',
     icon: 'office-building-outline',
     target: 'TenantsTab',
+    chevron: true,
+  },
+  {
+    label: 'Registration Approvals',
+    icon: 'clipboard-check-outline',
+    target: 'RegistrationsTab',
     chevron: true,
   },
   { label: 'Users Management', icon: 'account-group-outline', target: 'UsersTab', chevron: true },

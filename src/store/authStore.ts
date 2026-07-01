@@ -47,6 +47,14 @@ interface AuthState {
    */
   completeForcedPasswordChange: (tokens: AuthTokens) => Promise<void>;
 
+  /**
+   * Forces the app into the mandatory change-password state in response to a
+   * backend PASSWORD_CHANGE_REQUIRED (403). Keeps the session tokens (so
+   * /auth/change-password can authenticate) but withholds access. A no-op when
+   * already in the forced-change state or logged out.
+   */
+  enterForcedPasswordChange: () => void;
+
   /** Clears all local state and storage (logout, or abandoning a forced change). */
   logout: () => Promise<void>;
 
@@ -77,10 +85,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         }
       } else {
         // Partial state (token without user or vice versa) — treat as logged out.
-        await Promise.all([
-          TokenService.clearTokens(),
-          AsyncStorage.removeItem(STORAGE_KEY_USER),
-        ]);
+        await Promise.all([TokenService.clearTokens(), AsyncStorage.removeItem(STORAGE_KEY_USER)]);
         set({ user: null, isAuthenticated: false, mustChangePassword: false });
       }
     } catch {
@@ -109,9 +114,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   completeForcedPasswordChange: async (tokens: AuthTokens) => {
     const current = get().user;
-    const updatedUser: User | null = current
-      ? { ...current, mustChangePassword: false }
-      : null;
+    const updatedUser: User | null = current ? { ...current, mustChangePassword: false } : null;
 
     await TokenService.saveTokens(tokens);
     if (updatedUser) {
@@ -121,11 +124,18 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     set({ user: updatedUser, isAuthenticated: true, mustChangePassword: false });
   },
 
+  enterForcedPasswordChange: () => {
+    const current = get().user;
+    if (!current || get().mustChangePassword) {
+      return;
+    }
+    const updated: User = { ...current, mustChangePassword: true };
+    void AsyncStorage.setItem(STORAGE_KEY_USER, JSON.stringify(updated));
+    set({ user: updated, isAuthenticated: false, mustChangePassword: true });
+  },
+
   logout: async () => {
-    await Promise.all([
-      TokenService.clearTokens(),
-      AsyncStorage.removeItem(STORAGE_KEY_USER),
-    ]);
+    await Promise.all([TokenService.clearTokens(), AsyncStorage.removeItem(STORAGE_KEY_USER)]);
     set({ user: null, isAuthenticated: false, mustChangePassword: false });
   },
 

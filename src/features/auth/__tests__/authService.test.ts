@@ -29,12 +29,12 @@ describe('authService', () => {
       mockPost.mockResolvedValueOnce(axiosResponse(response));
 
       const result = await authService.login({
-        email: 'rajesh@abcpoultry.com',
+        identifier: 'rajesh@abcpoultry.com',
         password: 'Password123',
       });
 
       expect(mockPost).toHaveBeenCalledWith('/auth/login', {
-        email: 'rajesh@abcpoultry.com',
+        identifier: 'rajesh@abcpoultry.com',
         password: 'Password123',
       });
       expect(result).toEqual(response);
@@ -43,7 +43,7 @@ describe('authService', () => {
     it('propagates a 401 from the server', async () => {
       mockPost.mockRejectedValueOnce(httpError(401));
       await expect(
-        authService.login({ email: 'x@y.com', password: 'Password123' }),
+        authService.login({ identifier: 'x@y.com', password: 'Password123' }),
       ).rejects.toMatchObject({ response: { status: 401 } });
     });
   });

@@ -1,0 +1,36 @@
+# E2E: submitting an empty company form surfaces inline validation for the
+# required company + structured-address fields and never calls the API.
+appId: com.farmcalcy.pcfms
+name: Registration - Company Validation
+tags:
+  - auth
+  - registration
+  - validation
+---
+- runFlow: ../shared/open-register.yaml
+- tapOn:
+    id: "register-option-tenant"
+- assertVisible:
+    text: "Register a Company"
+
+# Reach the submit button at the bottom and try to submit an empty form.
+- scrollUntilVisible:
+    element:
+      id: "registration-submit"
+    direction: DOWN
+- tapOn:
+    id: "registration-submit"
+
+# Validation fired — the required company + address errors are present.
+- scrollUntilVisible:
+    element:
+      text: "Company name is required"
+    direction: UP
+- scrollUntilVisible:
+    element:
+      text: "Address line 1 is required"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      text: "State is required"
+    direction: DOWN

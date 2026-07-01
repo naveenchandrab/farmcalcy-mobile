@@ -1,0 +1,35 @@
+# E2E: the login field accepts an email OR a phone number (unified identifier).
+#  - a value that is neither → inline "invalid identifier" error, no API call.
+#  - a valid phone number    → that error clears (phone is a valid identifier).
+appId: com.farmcalcy.pcfms
+name: Login - Identifier Validation (email or phone)
+tags:
+  - auth
+  - login
+  - validation
+---
+- runFlow: ../shared/launch-fresh.yaml
+
+# A value that is neither a valid email nor phone is rejected client-side.
+- tapOn:
+    id: "login-email-input"
+- inputText: "not-valid"
+- tapOn:
+    id: "login-password-input"
+- inputText: ${PASSWORD}
+- tapOn:
+    id: "login-button"
+- assertVisible:
+    text: "Enter a valid email address or mobile number"
+- assertVisible:
+    id: "login-screen"
+
+# Replacing it with a phone number clears the identifier error (phone is valid).
+- tapOn:
+    id: "login-email-input"
+- eraseText
+- inputText: "+919876543210"
+- tapOn:
+    id: "login-button"
+- assertNotVisible:
+    text: "Enter a valid email address or mobile number"

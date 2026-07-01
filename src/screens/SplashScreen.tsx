@@ -163,8 +163,8 @@ const SplashScreen: React.FC = () => {
         />
 
         <View style={styles.nameRow}>
-          <Text style={styles.nameFarm}>Farm</Text>
-          <Text style={styles.nameCalcy}>Calcy</Text>
+          <Text style={styles.nameFarm}>Farms</Text>
+          <Text style={styles.nameCalcy}>Easy</Text>
           <LeafAccent />
         </View>
 

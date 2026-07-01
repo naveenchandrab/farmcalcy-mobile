@@ -1,0 +1,31 @@
+# E2E: the "Track your registration" link on Login opens the tracking screen and
+# validates its input.
+appId: com.farmcalcy.pcfms
+name: Track Registration - Open + Validate
+tags:
+  - auth
+  - registration
+  - track
+  - validation
+---
+- runFlow: ../shared/launch-fresh.yaml
+- tapOn:
+    id: "login-track-link"
+- assertVisible:
+    text: "Track Registration"
+- assertVisible:
+    id: "track-identifier"
+
+# An invalid identifier is rejected client-side.
+- tapOn:
+    id: "track-identifier"
+- inputText: "not-valid"
+- tapOn:
+    id: "track-submit"
+- assertVisible:
+    text: "Enter a valid email address or mobile number"
+
+# Back returns to Login.
+- back
+- assertVisible:
+    id: "login-screen"

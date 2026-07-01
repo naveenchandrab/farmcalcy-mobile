@@ -57,18 +57,18 @@ describe('LoginScreen', () => {
       renderLogin();
       fireEvent.press(screen.getByTestId(ID.submitButton));
 
-      expect(await screen.findByText('Email is required')).toBeTruthy();
+      expect(await screen.findByText('Email or mobile number is required')).toBeTruthy();
       expect(screen.getByText('Password is required')).toBeTruthy();
       expect(mockLogin).not.toHaveBeenCalled();
     });
 
-    it('rejects a malformed email', async () => {
+    it('rejects an identifier that is neither email nor phone', async () => {
       renderLogin();
       fireEvent.changeText(screen.getByTestId(ID.emailInput), 'not-an-email');
       fireEvent.changeText(screen.getByTestId(ID.passwordInput), 'Password123');
       fireEvent.press(screen.getByTestId(ID.submitButton));
 
-      expect(await screen.findByText('Enter a valid email address')).toBeTruthy();
+      expect(await screen.findByText('Enter a valid email address or mobile number')).toBeTruthy();
       expect(mockLogin).not.toHaveBeenCalled();
     });
 
@@ -107,7 +107,7 @@ describe('LoginScreen', () => {
 
       await waitFor(() =>
         expect(mockLogin).toHaveBeenCalledWith({
-          email: 'rajesh@abcpoultry.com',
+          identifier: 'rajesh@abcpoultry.com',
           password: 'Password123',
         }),
       );
@@ -187,9 +187,7 @@ describe('LoginScreen', () => {
 
       // Wait for the button to flip into its loading (disabled) state…
       await waitFor(() =>
-        expect(screen.getByTestId(ID.submitButton).props.accessibilityState.disabled).toBe(
-          true,
-        ),
+        expect(screen.getByTestId(ID.submitButton).props.accessibilityState.disabled).toBe(true),
       );
       // …then additional taps must be no-ops.
       fireEvent.press(screen.getByTestId(ID.submitButton));

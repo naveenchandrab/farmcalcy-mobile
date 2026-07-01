@@ -1,6 +1,6 @@
-# Maestro E2E — Authentication
+# Maestro E2E — Auth & Registration
 
-End-to-end UI flows for the FarmCalcy auth module, driven by
+End-to-end UI flows for the FarmCalcy auth + registration modules, driven by
 [Maestro](https://maestro.mobile.dev). They run against a **real build** on an
 emulator/simulator or device and exercise the same `testID`s the Jest suite
 uses (see `src/constants/testIDs.ts`).
@@ -10,12 +10,26 @@ maestro/
 ├── config.yaml                 # appId + default test data (override with -e)
 ├── shared/                     # reusable subflows (runFlow targets)
 │   ├── launch-fresh.yaml       # cold launch from a clean, logged-out state
-│   └── login.yaml              # perform a successful login
+│   ├── login.yaml              # perform a successful login
+│   └── open-register.yaml      # open the registration type selector
 ├── login/
 │   ├── successful-login.yaml
 │   ├── invalid-login.yaml
 │   ├── empty-form-validation.yaml
+│   ├── identifier-validation.yaml   # email OR phone identifier
 │   └── password-visibility-toggle.yaml
+├── registration/
+│   ├── type-selector.yaml           # Register → company / supervisor / farm-owner
+│   ├── company-validation.yaml      # required company + structured-address errors
+│   ├── company-happy-path.yaml      # full company registration → "submitted"
+│   ├── supervisor-validation.yaml
+│   ├── supervisor-happy-path.yaml   # needs -e COMPANY_CODE=FCC-XXXXXX
+│   └── farm-owner-form.yaml         # address + farm-location map picker
+├── track/
+│   ├── open-from-login.yaml         # "Track your registration" link + validation
+│   └── track-not-found.yaml         # unknown email/phone → not found
+├── admin/
+│   └── open-approvals.yaml          # SAAS_ADMIN → Registration Approvals list
 ├── forgot-password/
 │   ├── request-otp.yaml
 │   ├── invalid-email-validation.yaml

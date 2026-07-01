@@ -1,0 +1,8 @@
+# Reusable subflow: from a fresh launch, open the registration type selector.
+appId: com.farmcalcy.pcfms
+---
+- runFlow: ./launch-fresh.yaml
+- tapOn:
+    id: "login-register-link"
+- assertVisible:
+    text: "Create Account"

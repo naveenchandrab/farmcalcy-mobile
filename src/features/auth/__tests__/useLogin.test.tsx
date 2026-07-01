@@ -45,15 +45,18 @@ describe('useLogin', () => {
     expect(useAuthStore.getState().mustChangePassword).toBe(false);
   });
 
-  it('trims the email before sending it to the API', async () => {
+  it('trims the identifier before sending it to the API', async () => {
     mockLogin.mockResolvedValueOnce(makeLoginResponse());
 
     const { result } = renderHookWithProviders(() => useLogin());
-    result.current.mutate({ email: '  rajesh@abcpoultry.com  ', password: 'Password123' } as any);
+    result.current.mutate({
+      identifier: '  rajesh@abcpoultry.com  ',
+      password: 'Password123',
+    } as any);
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockLogin).toHaveBeenCalledWith({
-      email: 'rajesh@abcpoultry.com',
+      identifier: 'rajesh@abcpoultry.com',
       password: 'Password123',
     });
   });
@@ -79,7 +82,7 @@ describe('useLogin', () => {
     result.current.mutate(validCredentials as any);
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(showError).toHaveBeenCalledWith('The email or password you entered is incorrect.');
+    expect(showError).toHaveBeenCalledWith('The credentials you entered are incorrect.');
     expect(useAuthStore.getState().isAuthenticated).toBe(false);
   });
 
@@ -90,8 +93,6 @@ describe('useLogin', () => {
     result.current.mutate(validCredentials as any);
 
     await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(showError).toHaveBeenCalledWith(
-      expect.stringMatching(/internet connection/i),
-    );
+    expect(showError).toHaveBeenCalledWith(expect.stringMatching(/internet connection/i));
   });
 });

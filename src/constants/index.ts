@@ -14,9 +14,26 @@ export const AUTH_SKIP_ENDPOINTS = [
   '/auth/reset-password',
   '/otp/send',
   '/otp/verify',
+  // Public registration endpoints (no session). Listed individually so the
+  // authenticated reviewer routes (/registrations, /registrations/:id/approve)
+  // are NOT skipped.
+  '/registrations/tenant',
+  '/registrations/supervisor',
+  '/registrations/farm-owner',
+  '/registrations/validate-company-code',
+  '/registrations/status/',
+  '/registrations/track',
+  '/uploads/aadhaar',
 ];
 
 export const REFRESH_TOKEN_ENDPOINT = '/auth/refresh';
+
+/**
+ * Backend error code (HTTP 403) returned when an authenticated user still has a
+ * forced password change pending. The API client routes the app into the
+ * mandatory change-password flow when it sees this.
+ */
+export const PASSWORD_CHANGE_REQUIRED_CODE = 'PASSWORD_CHANGE_REQUIRED';
 
 // ─── Auth / OTP ────────────────────────────────────────────────────────────────
 

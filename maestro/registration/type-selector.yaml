@@ -1,0 +1,41 @@
+# E2E: the Register link opens a type selector offering the three registration
+# kinds, and each option routes to its form.
+appId: com.farmcalcy.pcfms
+name: Registration - Type Selector
+tags:
+  - auth
+  - registration
+  - smoke
+---
+- runFlow: ../shared/open-register.yaml
+
+- assertVisible:
+    id: "register-option-tenant"
+- assertVisible:
+    id: "register-option-supervisor"
+- assertVisible:
+    id: "register-option-farm-owner"
+
+# Company → the tenant form.
+- tapOn:
+    id: "register-option-tenant"
+- assertVisible:
+    text: "Register a Company"
+- back
+- assertVisible:
+    text: "Create Account"
+
+# Supervisor → the supervisor form.
+- tapOn:
+    id: "register-option-supervisor"
+- assertVisible:
+    text: "Join as a Supervisor"
+- back
+- assertVisible:
+    text: "Create Account"
+
+# Farm owner → the farm-owner form.
+- tapOn:
+    id: "register-option-farm-owner"
+- assertVisible:
+    text: "Join as a Farm Owner"

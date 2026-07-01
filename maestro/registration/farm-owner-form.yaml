@@ -1,0 +1,38 @@
+# E2E: the farm-owner form carries the personal + company-code + address fields
+# AND the farm-location map picker (which is unique to farm owners, not supervisors).
+appId: com.farmcalcy.pcfms
+name: Registration - Farm Owner Form
+tags:
+  - auth
+  - registration
+  - smoke
+---
+- runFlow: ../shared/open-register.yaml
+- tapOn:
+    id: "register-option-farm-owner"
+- assertVisible:
+    text: "Join as a Farm Owner"
+
+# Company code + address block are present.
+- scrollUntilVisible:
+    element:
+      id: "registration-field-companyCode"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "registration-field-addressLine1"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "registration-select-state"
+    direction: DOWN
+
+# The farm-location map + "use my current location" are shown (farm-owner only).
+- scrollUntilVisible:
+    element:
+      text: "Farm location"
+    direction: DOWN
+- assertVisible:
+    id: "farm-location-map"
+- assertVisible:
+    id: "map-use-current-location"

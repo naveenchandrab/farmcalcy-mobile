@@ -54,9 +54,7 @@ export const makeTokens = (overrides: Partial<AuthTokens> = {}): AuthTokens => (
   ...overrides,
 });
 
-export const makeLoginResponse = (
-  overrides: Partial<LoginApiResponse> = {},
-): LoginApiResponse => ({
+export const makeLoginResponse = (overrides: Partial<LoginApiResponse> = {}): LoginApiResponse => ({
   accessToken: 'access-token-abc123',
   refreshToken: 'refresh-token-xyz789',
   user: makeAuthUserDto(),
@@ -73,6 +71,7 @@ export const makeChangePasswordResponse = (
 
 /** Valid credentials / values that satisfy the zod schemas. */
 export const validCredentials = {
+  identifier: 'rajesh@abcpoultry.com',
   email: 'rajesh@abcpoultry.com',
   password: 'Password123',
   strongPassword: 'NewStr0ngPass',

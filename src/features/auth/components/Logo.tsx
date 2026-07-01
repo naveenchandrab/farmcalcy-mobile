@@ -54,8 +54,8 @@ const Logo: React.FC = () => {
       />
 
       <View style={styles.wordmarkRow}>
-        <Text style={styles.wordFarm}>Farm</Text>
-        <Text style={styles.wordCalcy}>Calcy</Text>
+        <Text style={styles.wordFarm}>Farms</Text>
+        <Text style={styles.wordCalcy}>Easy</Text>
         <LeafAccent />
       </View>
 

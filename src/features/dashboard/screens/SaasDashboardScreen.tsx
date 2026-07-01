@@ -6,6 +6,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { TEST_IDS } from '@constants/testIDs';
+import { useUnreadCount } from '@features/notifications/hooks/useNotifications';
 
 // ─── Palette (sampled from saas-admin-dashboard.png) ─────────────────────────
 const HEADER_TOP = '#1E8038';
@@ -92,6 +93,9 @@ const SaasDashboardScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const openDrawer = () => navigation.dispatch(DrawerActions.openDrawer());
+  const openNotifications = () => navigation.navigate('NotificationsTab' as never);
+  const { data: unread } = useUnreadCount();
+  const hasUnread = (unread?.unreadCount ?? 0) > 0;
 
   return (
     <View style={styles.root}>
@@ -122,9 +126,14 @@ const SaasDashboardScreen: React.FC = () => {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Dashboard</Text>
           <View style={styles.flex} />
-          <TouchableOpacity hitSlop={hit}>
+          <TouchableOpacity
+            hitSlop={hit}
+            accessibilityRole="button"
+            accessibilityLabel="Notifications"
+            onPress={openNotifications}
+          >
             <Icon name="bell-outline" size={24} color="#FFFFFF" />
-            <View style={styles.bellDot} />
+            {hasUnread && <View style={styles.bellDot} />}
           </TouchableOpacity>
         </View>
 

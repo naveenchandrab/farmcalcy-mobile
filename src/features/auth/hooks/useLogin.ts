@@ -10,8 +10,8 @@ import type { LoginApiResponse, LoginFormValues } from '../types';
 
 /** Friendly, non-revealing copy for the statuses the login endpoint can return. */
 const LOGIN_ERROR_OVERRIDES: Partial<Record<number, string>> = {
-  400: 'Please enter a valid email and password.',
-  401: 'The email or password you entered is incorrect.',
+  400: 'Please enter a valid email/mobile number and password.',
+  401: 'The credentials you entered are incorrect.',
   403: 'Your account does not have access. Please contact your administrator.',
   429: 'Too many login attempts. Please wait a moment and try again.',
 };
@@ -35,7 +35,7 @@ export const useLogin = () => {
   return useMutation<LoginApiResponse, unknown, LoginFormValues>({
     mutationFn: async (values: LoginFormValues) =>
       authService.login({
-        email: values.email.trim(),
+        identifier: values.identifier.trim(),
         password: values.password,
       }),
     onSuccess: async response => {

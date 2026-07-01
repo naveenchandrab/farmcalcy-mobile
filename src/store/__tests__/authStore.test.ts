@@ -64,6 +64,27 @@ describe('forced password change sub-flow', () => {
     expect(state.user?.mustChangePassword).toBe(false);
     await expect(TokenService.getAccessToken()).resolves.toBe('fresh');
   });
+
+  it('enterForcedPasswordChange revokes access when the API returns PASSWORD_CHANGE_REQUIRED', async () => {
+    // Start as a normal authenticated user.
+    await useAuthStore.getState().login(makeUser({ mustChangePassword: false }), makeTokens());
+    expect(useAuthStore.getState().isAuthenticated).toBe(true);
+
+    // Backend 403 PASSWORD_CHANGE_REQUIRED → app forces the change-password flow.
+    useAuthStore.getState().enterForcedPasswordChange();
+
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(false);
+    expect(state.mustChangePassword).toBe(true);
+    expect(state.user?.mustChangePassword).toBe(true);
+    // Session tokens are retained so /auth/change-password can authenticate.
+    await expect(TokenService.isLoggedIn()).resolves.toBe(true);
+  });
+
+  it('enterForcedPasswordChange is a no-op when logged out', () => {
+    useAuthStore.getState().enterForcedPasswordChange();
+    expect(useAuthStore.getState().mustChangePassword).toBe(false);
+  });
 });
 
 describe('logout', () => {

@@ -10,7 +10,7 @@ tags:
 - tapOn:
     id: "login-button"
 - assertVisible:
-    text: "Email is required"
+    text: "Email or mobile number is required"
 - assertVisible:
     text: "Password is required"
 - assertVisible:

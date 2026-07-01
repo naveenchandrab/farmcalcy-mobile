@@ -20,6 +20,8 @@ set -uo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EMAIL="${EMAIL:-admin@farmcalcy.com}"
 PASSWORD="${PASSWORD:-ChangeMe123@}"
+ADMIN_EMAIL="${ADMIN_EMAIL:-admin@farmcalcy.com}"
+ADMIN_PASSWORD="${ADMIN_PASSWORD:-ChangeMe123@}"
 MAILPIT="${MAILPIT:-http://localhost:8025}"
 
 pass=0; fail=0
@@ -45,6 +47,7 @@ let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
 
 echo "=== Login ==="
 run "login/empty-form-validation"      "$DIR/login/empty-form-validation.yaml"
+run "login/identifier-validation"      -e PASSWORD="$PASSWORD" "$DIR/login/identifier-validation.yaml"
 run "login/password-visibility-toggle" "$DIR/login/password-visibility-toggle.yaml"
 run "login/successful-login"           -e EMAIL="$EMAIL" -e PASSWORD="$PASSWORD" "$DIR/login/successful-login.yaml"
 run "login/invalid-login"              -e EMAIL="$EMAIL" "$DIR/login/invalid-login.yaml"
@@ -76,6 +79,22 @@ fi
 echo "=== Session ==="
 run "session/session-restore"          -e EMAIL="$EMAIL" -e PASSWORD="$PASSWORD" "$DIR/session/session-restore.yaml"
 run "session/logout"                   -e EMAIL="$EMAIL" -e PASSWORD="$PASSWORD" "$DIR/session/logout.yaml"
+
+echo "=== Registration ==="
+run "registration/type-selector"        "$DIR/registration/type-selector.yaml"
+run "registration/company-validation"   "$DIR/registration/company-validation.yaml"
+run "registration/company-happy-path"    "$DIR/registration/company-happy-path.yaml"
+run "registration/supervisor-validation" "$DIR/registration/supervisor-validation.yaml"
+run "registration/farm-owner-form"       "$DIR/registration/farm-owner-form.yaml"
+# supervisor-happy-path needs a valid COMPANY_CODE — run manually:
+#   maestro test -e COMPANY_CODE=FCC-XXXXXX maestro/registration/supervisor-happy-path.yaml
+
+echo "=== Track registration ==="
+run "track/open-from-login"            "$DIR/track/open-from-login.yaml"
+run "track/track-not-found"            "$DIR/track/track-not-found.yaml"
+
+echo "=== Admin approvals ==="
+run "admin/open-approvals"             -e ADMIN_EMAIL="$ADMIN_EMAIL" -e ADMIN_PASSWORD="$ADMIN_PASSWORD" "$DIR/admin/open-approvals.yaml"
 
 echo
 echo "════════════════════════════════"

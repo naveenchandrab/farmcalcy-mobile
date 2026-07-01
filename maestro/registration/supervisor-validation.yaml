@@ -1,0 +1,34 @@
+# E2E: the supervisor form requires personal details, a company code and a full
+# structured address; an empty submit surfaces those errors and never calls the API.
+appId: com.farmcalcy.pcfms
+name: Registration - Supervisor Validation
+tags:
+  - auth
+  - registration
+  - validation
+---
+- runFlow: ../shared/open-register.yaml
+- tapOn:
+    id: "register-option-supervisor"
+- assertVisible:
+    text: "Join as a Supervisor"
+
+- scrollUntilVisible:
+    element:
+      id: "registration-submit"
+    direction: DOWN
+- tapOn:
+    id: "registration-submit"
+
+- scrollUntilVisible:
+    element:
+      text: "First name is required"
+    direction: UP
+- scrollUntilVisible:
+    element:
+      text: "Enter the company code"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      text: "Address line 1 is required"
+    direction: DOWN

@@ -1,0 +1,24 @@
+# E2E: tracking with an email/phone that has no registration shows a friendly
+# "not found" message (enumeration-safe self-service check).
+appId: com.farmcalcy.pcfms
+name: Track Registration - Not Found
+tags:
+  - auth
+  - registration
+  - track
+---
+- runFlow: ../shared/launch-fresh.yaml
+- tapOn:
+    id: "login-track-link"
+- assertVisible:
+    text: "Track Registration"
+
+- tapOn:
+    id: "track-identifier"
+- inputText: ${UNKNOWN_IDENTIFIER}
+- tapOn:
+    id: "track-submit"
+- extendedWaitUntil:
+    visible:
+      text: "No registration found"
+    timeout: 10000

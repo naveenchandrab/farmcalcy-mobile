@@ -8,7 +8,19 @@ import type {
 
 export type AuthStackParamList = {
   Login: undefined;
+  /** Registration type selector (company / supervisor / farm owner). */
   Register: undefined;
+  RegisterTenant: undefined;
+  RegisterSupervisor: undefined;
+  RegisterFarmOwner: undefined;
+  /** Terminal "pending approval" screen shown after a successful submission. */
+  RegistrationPending: {
+    registrationId: string;
+    requestType: 'TENANT' | 'SUPERVISOR' | 'FARM_OWNER';
+    email?: string | null;
+  };
+  /** Self-service status check by email/phone (reachable from Login). */
+  TrackRegistration: undefined;
   ForgotPassword: undefined;
   /** Carries the email the OTP was sent to. */
   OtpVerification: { email: string };
@@ -24,6 +36,16 @@ export type AuthStackParamList = {
    */
   ForceChangePassword: { email: string };
 };
+
+// ─── Registration Review Stack (shared by reviewer roles) ─────────────────────
+
+export type RegistrationsStackParamList = {
+  RegistrationApprovalList: undefined;
+  RegistrationApprovalDetail: { id: string };
+};
+
+export type RegistrationsScreenProps<T extends keyof RegistrationsStackParamList> =
+  NativeStackScreenProps<RegistrationsStackParamList, T>;
 
 // ─── SAAS Admin Stack ─────────────────────────────────────────────────────────
 

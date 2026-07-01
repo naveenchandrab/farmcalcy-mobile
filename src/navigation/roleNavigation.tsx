@@ -35,6 +35,13 @@ export interface TabConfig {
   label: string;
   icon: string;
   component: React.ComponentType;
+  /**
+   * When true the screen is registered in the tab navigator (so it is
+   * navigable from the drawer / a header action) but hidden from the bottom
+   * tab bar. Used for secondary screens like Registrations and Notifications
+   * that should not occupy one of the five primary tab slots.
+   */
+  hidden?: boolean;
 }
 
 export interface MenuItem {
@@ -208,6 +215,11 @@ const buildTabs = (tabs: readonly TabConfig[]): React.FC => {
               options={{
                 title: tab.label,
                 tabBarIcon: ({ color, size }) => <Icon name={tab.icon} size={size} color={color} />,
+                // Hidden screens stay navigable (drawer / header actions) but
+                // are removed from the bottom tab bar.
+                ...(tab.hidden
+                  ? { tabBarButton: () => null, tabBarItemStyle: { display: 'none' } }
+                  : {}),
               }}
             />
           ))}

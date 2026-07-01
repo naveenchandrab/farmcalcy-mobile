@@ -1,0 +1,77 @@
+# E2E: a complete supervisor registration against an existing company code creates
+# a PENDING request and lands on the "submitted" screen.
+#
+# Prereq: COMPANY_CODE must be an existing, approved company's code. Override with
+#   -e COMPANY_CODE=FCC-XXXXXX   (see maestro/config.yaml for the default).
+appId: com.farmcalcy.pcfms
+name: Registration - Supervisor Happy Path
+tags:
+  - auth
+  - registration
+---
+- runFlow: ../shared/open-register.yaml
+- evalScript: ${output.ts = Date.now(); output.phone = '+91' + (9000000000 + (output.ts % 1000000000))}
+
+- tapOn:
+    id: "register-option-supervisor"
+- assertVisible:
+    text: "Join as a Supervisor"
+
+- tapOn:
+    id: "registration-field-firstName"
+- inputText: "Suresh"
+- tapOn:
+    id: "registration-field-lastName"
+- inputText: "Babu"
+- tapOn:
+    id: "registration-field-phoneNumber"
+- inputText: ${output.phone}
+- scrollUntilVisible:
+    element:
+      id: "registration-field-companyCode"
+    direction: DOWN
+- tapOn:
+    id: "registration-field-companyCode"
+- inputText: ${COMPANY_CODE}
+
+# Structured address
+- scrollUntilVisible:
+    element:
+      id: "registration-field-addressLine1"
+    direction: DOWN
+- tapOn:
+    id: "registration-field-addressLine1"
+- inputText: "24 Gandhi Street"
+- scrollUntilVisible:
+    element:
+      id: "registration-field-district"
+    direction: DOWN
+- tapOn:
+    id: "registration-field-district"
+- inputText: "Coimbatore"
+- scrollUntilVisible:
+    element:
+      id: "registration-select-state"
+    direction: DOWN
+- tapOn:
+    id: "registration-select-state"
+- tapOn:
+    text: "Tamil Nadu"
+- scrollUntilVisible:
+    element:
+      id: "registration-field-pincode"
+    direction: DOWN
+- tapOn:
+    id: "registration-field-pincode"
+- inputText: "641002"
+
+- scrollUntilVisible:
+    element:
+      id: "registration-submit"
+    direction: DOWN
+- tapOn:
+    id: "registration-submit"
+- extendedWaitUntil:
+    visible:
+      text: "Registration Submitted"
+    timeout: 15000

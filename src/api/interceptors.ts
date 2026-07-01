@@ -3,8 +3,13 @@ import axios from 'axios';
 
 import type { ApiResponse, RefreshTokenResponse } from '@app-types';
 import { appConfig } from '@config/env';
-import { AUTH_SKIP_ENDPOINTS, REFRESH_TOKEN_ENDPOINT } from '@constants';
+import {
+  AUTH_SKIP_ENDPOINTS,
+  PASSWORD_CHANGE_REQUIRED_CODE,
+  REFRESH_TOKEN_ENDPOINT,
+} from '@constants';
 import { TokenService } from '@services/TokenService';
+import { useAuthStore } from '@store/authStore';
 
 // ─── Refresh Token Queue ──────────────────────────────────────────────────────
 //
@@ -94,6 +99,15 @@ const responseError = async (error: AxiosError): Promise<unknown> => {
   const originalRequest = error.config as InternalAxiosRequestConfig & {
     _retry?: boolean;
   };
+
+  // Forced password change pending (403 PASSWORD_CHANGE_REQUIRED): route the app
+  // into the mandatory change-password flow. This is the client-side safety net
+  // backing the backend's MustChangePasswordGuard — there is no bypass.
+  const responseData = error.response?.data as { code?: string } | undefined;
+  if (error.response?.status === 403 && responseData?.code === PASSWORD_CHANGE_REQUIRED_CODE) {
+    useAuthStore.getState().enterForcedPasswordChange();
+    return Promise.reject(error);
+  }
 
   const is401 = error.response?.status === 401;
   const isRefreshEndpoint = originalRequest?.url?.includes(REFRESH_TOKEN_ENDPOINT);

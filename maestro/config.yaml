@@ -1,13 +1,15 @@
 # Maestro shared configuration for the FarmCalcy auth E2E suite.
 #
 # Flows are organised by area:
-#   login/            — sign-in happy + unhappy paths
+#   login/            — sign-in happy + unhappy paths (email OR phone identifier)
+#   registration/     — company / supervisor / farm-owner self-registration
+#   track/            — self-service "track my registration" by email/phone
 #   forgot-password/  — the full OTP-based reset journey
 #   session/          — logout, session restore, session expiry
 #   shared/           — reusable subflows (runFlow) used across the above
 #
 # Run everything:        maestro test maestro/
-# Run one area:          maestro test maestro/login
+# Run one area:          maestro test maestro/registration
 # Run a single flow:     maestro test maestro/login/successful-login.yaml
 #
 # Override credentials at runtime:
@@ -18,6 +20,13 @@ appId: com.farmcalcy.pcfms
 - defineVariables:
     EMAIL: ${EMAIL ?: 'rajesh@abcpoultry.com'}
     PASSWORD: ${PASSWORD ?: 'Password123'}
+    # Seeded SAAS_ADMIN — reviews company registrations in the app.
+    ADMIN_EMAIL: ${ADMIN_EMAIL ?: 'admin@farmcalcy.com'}
+    ADMIN_PASSWORD: ${ADMIN_PASSWORD ?: 'ChangeMe123@'}
     WRONG_PASSWORD: ${WRONG_PASSWORD ?: 'WrongPass999'}
     OTP: ${OTP ?: '123456'}
     NEW_PASSWORD: ${NEW_PASSWORD ?: 'NewStr0ngPass'}
+    # Company code of an existing, approved company (for supervisor/farm-owner joins).
+    COMPANY_CODE: ${COMPANY_CODE ?: 'FCC-KVGCHW'}
+    # An email/phone with no registration on file (for the "not found" track test).
+    UNKNOWN_IDENTIFIER: ${UNKNOWN_IDENTIFIER ?: 'nobody-e2e@example.com'}

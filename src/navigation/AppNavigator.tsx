@@ -7,11 +7,12 @@ import Loader from '@components/Loader';
 import { useAuthStore } from '@store/authStore';
 
 import SaasAdminNavigator from './saasAdminNavigation';
+import TenantAdminNavigator from './tenantAdminNavigation';
 
 // Each role uses the shared Drawer + bottom-tab shell (roleNavigation.tsx)
-// configured with its own tabs and hamburger-menu options. SAAS_ADMIN is wired;
-// Company Admin / Supervisor / Farm Owner get their own config files as their
-// screens land — until then they show a standalone placeholder.
+// configured with its own tabs and hamburger-menu options. SAAS_ADMIN and
+// TENANT_ADMIN are wired; Supervisor / Farm Owner get their own config files as
+// their screens land — until then they show a standalone placeholder.
 
 const RolePlaceholder: React.FC<{ role: string }> = ({ role }) => {
   const insets = useSafeAreaInsets();
@@ -35,7 +36,7 @@ const AppNavigator: React.FC = () => {
   return (
     <Suspense fallback={<Loader />}>
       {role === 'SAAS_ADMIN' && <SaasAdminNavigator />}
-      {role === 'TENANT_ADMIN' && <RolePlaceholder role="Company Admin" />}
+      {role === 'TENANT_ADMIN' && <TenantAdminNavigator />}
       {role === 'SUPERVISOR' && <RolePlaceholder role="Supervisor" />}
       {role === 'FARMER' && <RolePlaceholder role="Farm Owner" />}
     </Suspense>
