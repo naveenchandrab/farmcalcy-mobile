@@ -12,6 +12,7 @@ import {
 
 import ScreenHeader from '@navigation/ScreenHeader';
 import type { RegistrationsScreenProps } from '@navigation/types';
+import { useAuthStore } from '@store/authStore';
 
 import AadhaarImageView from '../components/AadhaarImageView';
 import {
@@ -44,6 +45,7 @@ const Row: React.FC<{ label: string; value?: string | null }> = ({ label, value 
 
 const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const { id } = route.params;
+  const currentUser = useAuthStore(s => s.user);
   const { data, isLoading } = useRegistration(id);
   const { mutate: approve, isPending: approving } = useApproveRegistration(id);
   const { mutate: reject, isPending: rejecting } = useRejectRegistration(id);
@@ -67,6 +69,8 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
   const renderContent = (req: RegistrationResponse) => {
     const badge = STATUS_BADGE[req.status];
     const isPending = req.status === 'PENDING';
+    const isSelfSubmitted =
+      Boolean(req.submittedByUserId) && req.submittedByUserId === currentUser?.id;
     const gps =
       typeof req.gpsLatitude === 'number' && typeof req.gpsLongitude === 'number'
         ? `${req.gpsLatitude}, ${req.gpsLongitude}`
@@ -171,7 +175,16 @@ const RegistrationDetailScreen: React.FC<Props> = ({ route, navigation }) => {
           ) : null}
         </ScrollView>
 
-        {isPending && (
+        {isPending && isSelfSubmitted && (
+          <View style={styles.selfReviewBanner}>
+            <Text style={styles.selfReviewText}>
+              You cannot approve or reject this registration because you submitted it. Another SaaS
+              admin must review it.
+            </Text>
+          </View>
+        )}
+
+        {isPending && !isSelfSubmitted && (
           <View style={styles.actions}>
             <TouchableOpacity
               testID="reject-button"
@@ -301,6 +314,20 @@ const styles = StyleSheet.create({
   reason: { fontSize: 14, color: '#1A1A1A', paddingVertical: 12, lineHeight: 20 },
   aadhaarCard: { flexDirection: 'row', gap: 12, paddingVertical: 12 },
   audit: { fontSize: 11, color: '#9AA0A6', marginTop: 8, textAlign: 'center' },
+  selfReviewBanner: {
+    margin: 16,
+    padding: 14,
+    backgroundColor: '#FFF8E1',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FFE082',
+  },
+  selfReviewText: {
+    fontSize: 13,
+    color: '#6D4C00',
+    lineHeight: 19,
+    textAlign: 'center',
+  },
   actions: {
     flexDirection: 'row',
     gap: 12,

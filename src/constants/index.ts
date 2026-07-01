@@ -17,7 +17,10 @@ export const AUTH_SKIP_ENDPOINTS = [
   // Public registration endpoints (no session). Listed individually so the
   // authenticated reviewer routes (/registrations, /registrations/:id/approve)
   // are NOT skipped.
-  '/registrations/tenant',
+  // NOTE: /registrations/tenant is intentionally excluded so that a logged-in
+  // SaaS admin who submits via the in-app shell sends their JWT — the backend
+  // captures this as submittedByUserId to prevent self-approval. Anonymous
+  // public submissions (no token) are unaffected.
   '/registrations/supervisor',
   '/registrations/farm-owner',
   '/registrations/validate-company-code',

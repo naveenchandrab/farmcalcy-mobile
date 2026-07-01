@@ -96,6 +96,8 @@ export interface RegistrationResponse {
   /** Submission provenance (audit). */
   ipAddress: string | null;
   sourceDevice: string | null;
+  /** Set when a logged-in admin submitted this request; null for anonymous submissions. */
+  submittedByUserId: string | null;
   createdAt: string;
   updatedAt: string;
 }
